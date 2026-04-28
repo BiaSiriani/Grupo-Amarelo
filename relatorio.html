@@ -217,6 +217,64 @@
     .area-btn:hover { border-color: #bbb; color: var(--text); }
     .area-btn.sel { background: var(--accent); color: #fff; border-color: var(--accent); }
 
+    /* ── VIDEO UPLOAD ── */
+    .video-upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 28px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      background: var(--bg);
+    }
+    .video-upload-zone:hover,
+    .video-upload-zone.dragover { border-color: var(--accent); background: #f0efe9; }
+    .video-upload-zone.has-file { border-style: solid; border-color: var(--green); background: var(--green-bg); }
+    .video-upload-zone.error-zone { border-color: var(--red); background: var(--red-bg); }
+    .video-upload-zone input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-icon { font-size: 36px; margin-bottom: 8px; display: block; line-height: 1; }
+    .upload-required-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; background: var(--red-bg); border: 1px solid var(--red-border);
+      border-radius: 20px; font-size: 10px; font-weight: 700; color: var(--red);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;
+    }
+    .upload-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .upload-sub { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    .video-preview-wrap { display: none; margin-top: 12px; }
+    .video-preview-wrap.visible { display: block; }
+
+    .video-preview-info {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; background: var(--green-bg);
+      border: 1px solid var(--green-border); border-radius: 10px; margin-bottom: 8px;
+    }
+    .video-preview-icon { font-size: 20px; flex-shrink: 0; }
+    .video-preview-details { flex: 1; min-width: 0; }
+    .video-preview-name { font-size: 13px; font-weight: 600; color: var(--green); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .video-preview-size { font-size: 11px; color: var(--green); opacity: 0.75; margin-top: 2px; }
+    .video-remove-btn {
+      padding: 6px 10px; background: none; border: 1px solid var(--green-border);
+      border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 12px;
+      color: var(--green); cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+    }
+    .video-remove-btn:hover { background: var(--red-bg); border-color: var(--red-border); color: var(--red); }
+
+    video.preview-player {
+      width: 100%; border-radius: 10px; border: 1px solid var(--green-border);
+      max-height: 260px; background: #000; display: block;
+    }
+
+    .video-hint {
+      margin-bottom: 12px; padding: 10px 12px;
+      background: #E6F1FB; border: 1px solid #B5D4F4;
+      border-radius: 10px; font-size: 12px; color: #185FA5; line-height: 1.5;
+    }
+
     /* MANUT MODE TOGGLE */
     .manut-mode-toggle {
       display: flex; background: var(--bg); border: 1px solid var(--border);
@@ -368,7 +426,7 @@
         </button>
       </div>
 
-      <!-- Atender chamado -->
+      <!-- ── ATENDER CHAMADO ── -->
       <div id="panel-atender">
         <div class="card" id="rel-selector-card">
           <div class="card-title">Selecionar relatório em aberto</div>
@@ -435,6 +493,34 @@
             </div>
           </div>
 
+          <!-- VÍDEO — Atender chamado -->
+          <div class="card">
+            <div class="card-title">Vídeo do Atendimento *</div>
+            <div class="video-hint">
+              📹 Grave um vídeo mostrando o <strong>problema na máquina</strong> e o <strong>passo a passo do conserto</strong>. Este registro é <strong>obrigatório</strong> para finalizar o atendimento.
+            </div>
+            <div class="video-upload-zone" id="video-zone-atender"
+                 ondragover="onDragOver(event,'atender')" ondragleave="onDragLeave('atender')" ondrop="onDrop(event,'atender')">
+              <input type="file" id="video-input-atender" accept="video/*" capture="environment"
+                     onchange="onVideoSelect(event,'atender')"/>
+              <span class="upload-icon">🎥</span>
+              <div class="upload-required-badge">⚠ Obrigatório</div>
+              <div class="upload-title">Toque para gravar ou selecionar vídeo</div>
+              <div class="upload-sub">Formatos: MP4, MOV, AVI, WebM · Máx: 500 MB</div>
+            </div>
+            <div class="video-preview-wrap" id="video-preview-atender">
+              <div class="video-preview-info">
+                <span class="video-preview-icon">✅</span>
+                <div class="video-preview-details">
+                  <div class="video-preview-name" id="video-name-atender">—</div>
+                  <div class="video-preview-size" id="video-size-atender">—</div>
+                </div>
+                <button class="video-remove-btn" onclick="removeVideo('atender')">Remover</button>
+              </div>
+              <video class="preview-player" id="video-player-atender" controls playsinline></video>
+            </div>
+          </div>
+
           <div class="card">
             <div class="card-title">Observações</div>
             <div class="field">
@@ -460,7 +546,7 @@
         </div>
       </div>
 
-      <!-- Novo relatório pelo manutentor -->
+      <!-- ── NOVA PARADA PELO MANUTENTOR ── -->
       <div id="panel-novo-manut" style="display:none">
         <div class="info-pill">ℹ️ O relatório será criado e o atendimento preenchido automaticamente</div>
 
@@ -544,6 +630,34 @@
             <button class="area-btn" onclick="selAreaNovo(this)">Mecânica</button>
             <button class="area-btn" onclick="selAreaNovo(this)">Elétrica</button>
             <button class="area-btn" onclick="selAreaNovo(this)">Operacional</button>
+          </div>
+        </div>
+
+        <!-- VÍDEO — Nova parada pelo manutentor -->
+        <div class="card">
+          <div class="card-title">Vídeo do Atendimento *</div>
+          <div class="video-hint">
+            📹 Grave um vídeo mostrando o <strong>problema na máquina</strong> e o <strong>passo a passo do conserto</strong>. Este registro é <strong>obrigatório</strong> para finalizar o atendimento.
+          </div>
+          <div class="video-upload-zone" id="video-zone-novo"
+               ondragover="onDragOver(event,'novo')" ondragleave="onDragLeave('novo')" ondrop="onDrop(event,'novo')">
+            <input type="file" id="video-input-novo" accept="video/*" capture="environment"
+                   onchange="onVideoSelect(event,'novo')"/>
+            <span class="upload-icon">🎥</span>
+            <div class="upload-required-badge">⚠ Obrigatório</div>
+            <div class="upload-title">Toque para gravar ou selecionar vídeo</div>
+            <div class="upload-sub">Formatos: MP4, MOV, AVI, WebM · Máx: 500 MB</div>
+          </div>
+          <div class="video-preview-wrap" id="video-preview-novo">
+            <div class="video-preview-info">
+              <span class="video-preview-icon">✅</span>
+              <div class="video-preview-details">
+                <div class="video-preview-name" id="video-name-novo">—</div>
+                <div class="video-preview-size" id="video-size-novo">—</div>
+              </div>
+              <button class="video-remove-btn" onclick="removeVideo('novo')">Remover</button>
+            </div>
+            <video class="preview-player" id="video-player-novo" controls playsinline></video>
           </div>
         </div>
 
@@ -681,6 +795,9 @@
     let selTarefa = null, selMotivo = null, selCausa = null, _selArea = null, currentRelIdx = -1;
     let mnSelTarefa = null, mnSelMotivo = null, mnSelCausa = null, _mnSelArea = null;
 
+    // ── Video state ──
+    const videoFiles = { atender: null, novo: null };
+
     function buildCheckList(containerId, items, isMotivo, onSelect) {
       const el = document.getElementById(containerId);
       el.innerHTML = '';
@@ -733,6 +850,68 @@
     document.getElementById('mn-inicio').addEventListener('change', () => calcDur('mn-inicio', 'mn-fim', 'mn-dur-value'));
     document.getElementById('mn-fim').addEventListener('change', () => calcDur('mn-inicio', 'mn-fim', 'mn-dur-value'));
 
+    // ── Video helpers ──
+    function formatFileSize(bytes) {
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+      return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+    }
+
+    function onVideoSelect(event, panel) {
+      const file = event.target.files[0];
+      if (file) handleVideoFile(file, panel);
+    }
+
+    function onDragOver(event, panel) {
+      event.preventDefault();
+      document.getElementById('video-zone-' + panel).classList.add('dragover');
+    }
+
+    function onDragLeave(panel) {
+      document.getElementById('video-zone-' + panel).classList.remove('dragover');
+    }
+
+    function onDrop(event, panel) {
+      event.preventDefault();
+      document.getElementById('video-zone-' + panel).classList.remove('dragover');
+      const file = event.dataTransfer.files[0];
+      if (file && file.type.startsWith('video/')) handleVideoFile(file, panel);
+    }
+
+    function handleVideoFile(file, panel) {
+      if (file.size > 500 * 1024 * 1024) {
+        alert('Vídeo muito grande. Tamanho máximo: 500 MB.');
+        return;
+      }
+      videoFiles[panel] = file;
+      const zone = document.getElementById('video-zone-' + panel);
+      zone.classList.remove('error-zone');
+      zone.classList.add('has-file');
+
+      document.getElementById('video-name-' + panel).textContent = file.name;
+      document.getElementById('video-size-' + panel).textContent = formatFileSize(file.size);
+
+      const player = document.getElementById('video-player-' + panel);
+      player.style.display = '';
+      player.src = URL.createObjectURL(file);
+
+      document.getElementById('video-preview-' + panel).classList.add('visible');
+    }
+
+    function removeVideo(panel) {
+      videoFiles[panel] = null;
+      const zone = document.getElementById('video-zone-' + panel);
+      zone.classList.remove('has-file', 'error-zone');
+
+      const player = document.getElementById('video-player-' + panel);
+      if (player.src) URL.revokeObjectURL(player.src);
+      player.src = '';
+
+      document.getElementById('video-preview-' + panel).classList.remove('visible');
+      document.getElementById('video-input-' + panel).value = '';
+    }
+
+    // ── Relatórios ──
     function populateRelSelect() {
       const rels = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
       const abertos = rels.filter(r => !r.manutencao);
@@ -790,10 +969,22 @@
         document.getElementById('inicio-manut').value = m.inicioManut||'';
         document.getElementById('fim-manut').value   = m.fimManut||'';
         document.getElementById('btn-salvar-manut').textContent = 'Atualizar atendimento';
+
+        // Restore existing video metadata
+        if (m.videoNome) {
+          document.getElementById('video-name-atender').textContent = m.videoNome;
+          document.getElementById('video-size-atender').textContent = m.videoSize || 'Vídeo já enviado';
+          document.getElementById('video-player-atender').style.display = 'none';
+          document.getElementById('video-preview-atender').classList.add('visible');
+          document.getElementById('video-zone-atender').classList.add('has-file');
+          videoFiles.atender = 'existing';
+        }
       } else {
         done.style.display = 'none';
         document.getElementById('chamado-box').classList.remove('done');
         document.getElementById('btn-salvar-manut').textContent = 'Registrar atendimento';
+        // Reset video if switching to a different open report
+        if (videoFiles.atender !== 'existing') removeVideo('atender');
       }
     }
 
@@ -839,13 +1030,27 @@
       const m1nome   = document.getElementById('m1-nome').value.trim();
       const err = document.getElementById('error-bar');
       err.style.display = 'none';
-      if (currentRelIdx < 0 || !m1cracha || !m1nome || !selTarefa || !_selArea) {
-        err.textContent = 'Selecione um relatório e preencha: Manutentor 1, Tarefa e Área.';
+
+      const missing = [];
+      if (currentRelIdx < 0) missing.push('Relatório');
+      if (!m1cracha || !m1nome) missing.push('Manutentor 1');
+      if (!selTarefa) missing.push('Tarefa');
+      if (!_selArea) missing.push('Área');
+      if (!videoFiles.atender) missing.push('Vídeo do atendimento');
+
+      if (missing.length > 0) {
+        err.innerHTML = '⚠ Campos obrigatórios: <strong>' + missing.join(', ') + '</strong>';
         err.style.display = 'block';
+        if (!videoFiles.atender) document.getElementById('video-zone-atender').classList.add('error-zone');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
+
       const rels = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
+      const videoMeta = (videoFiles.atender && videoFiles.atender !== 'existing')
+        ? { videoNome: videoFiles.atender.name, videoSize: formatFileSize(videoFiles.atender.size) }
+        : { videoNome: rels[currentRelIdx]?.manutencao?.videoNome || '', videoSize: rels[currentRelIdx]?.manutencao?.videoSize || '' };
+
       rels[currentRelIdx].manutencao = {
         manut1Cracha: m1cracha, manut1Nome: m1nome,
         manut2Cracha: document.getElementById('m2-cracha').value.trim(),
@@ -857,6 +1062,7 @@
         inicioManut: document.getElementById('inicio-manut').value,
         fimManut: document.getElementById('fim-manut').value,
         registradoEm: new Date().toISOString(),
+        ...videoMeta,
       };
       localStorage.setItem('ms_relatorios', JSON.stringify(rels));
       document.getElementById('toast').textContent = '✓ Atendimento registrado!';
@@ -876,13 +1082,21 @@
       const m1nome = document.getElementById('mn-m1-nome').value.trim();
       const err = document.getElementById('error-bar');
       err.style.display = 'none';
-      if (!linha || !codEquip || !equip || !data || !inicio || !desc || !selectedSubCodNovo) {
-        err.textContent = 'Preencha todos os campos obrigatórios e selecione o código de parada.';
-        err.style.display = 'block'; window.scrollTo({ top: 0, behavior: 'smooth' }); return;
-      }
-      if (!m1cracha || !m1nome || !mnSelTarefa || !_mnSelArea) {
-        err.textContent = 'Preencha: Crachá, Nome do manutentor, Tarefa e Área.';
-        err.style.display = 'block'; window.scrollTo({ top: 0, behavior: 'smooth' }); return;
+
+      const missing = [];
+      if (!linha || !codEquip || !equip || !data || !inicio || !desc || !selectedSubCodNovo)
+        missing.push('dados da parada');
+      if (!m1cracha || !m1nome) missing.push('Manutentor 1');
+      if (!mnSelTarefa) missing.push('Tarefa');
+      if (!_mnSelArea) missing.push('Área');
+      if (!videoFiles.novo) missing.push('Vídeo do atendimento');
+
+      if (missing.length > 0) {
+        err.innerHTML = '⚠ Campos obrigatórios: <strong>' + missing.join(', ') + '</strong>';
+        err.style.display = 'block';
+        if (!videoFiles.novo) document.getElementById('video-zone-novo').classList.add('error-zone');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
       }
 
       const duracao = calcDur('mn-inicio', 'mn-fim', 'mn-dur-value');
@@ -910,6 +1124,8 @@
           inicioManut: document.getElementById('mn-inicio-manut').value,
           fimManut: document.getElementById('mn-fim-manut').value,
           registradoEm: new Date().toISOString(),
+          videoNome: videoFiles.novo.name,
+          videoSize: formatFileSize(videoFiles.novo.size),
         }
       };
       const lista = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');

@@ -3,650 +3,656 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MáquinaStop — Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <title>MáquinaStop — Analytics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #F2F0EC;
-      --surface: #FFFFFF;
-      --surface2: #F8F7F4;
-      --border: #E4E0D8;
-      --border2: #D4D0C8;
-      --text: #16150E;
-      --muted: #78766E;
-      --accent: #1A1916;
-      --red: #C93B3A;
-      --red-bg: #FDF0F0;
-      --red-border: #F0CACA;
-      --amber: #BA7517;
-      --amber-bg: #FAF0DC;
-      --amber-border: #FAC875;
-      --green: #3B6D11;
-      --green-bg: #EAF3DE;
-      --green-border: #C0DD97;
-      --blue: #185FA5;
-      --blue-bg: #E6F1FB;
-      --blue-border: #B5D4F4;
-      --radius: 14px;
+      --bg:       #0E0E0F;
+      --bg2:      #141416;
+      --surface:  #1A1A1D;
+      --surface2: #212125;
+      --border:   #2A2A2F;
+      --border2:  #333338;
+      --text:     #F0EFE8;
+      --muted:    #6B6A72;
+      --muted2:   #4A4952;
+
+      --red:      #E8453C;
+      --red-dim:  #3D1A1A;
+      --amber:    #F5A623;
+      --amber-dim:#3A2A0A;
+      --green:    #4DB86A;
+      --green-dim:#0F2E1A;
+      --blue:     #4A9EFF;
+      --blue-dim: #0F1F3A;
+      --purple:   #9B6DFF;
+      --purple-dim:#1E1535;
+
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+
+      --r: 12px;
+      --r-lg: 18px;
     }
 
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font-body);
       background: var(--bg);
-      min-height: 100vh;
       color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
     /* ── TOPBAR ── */
     .topbar {
-      background: var(--surface);
+      background: var(--bg2);
       border-bottom: 1px solid var(--border);
-      padding: 12px 16px;
+      padding: 0 20px;
+      height: 56px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       position: sticky;
       top: 0;
-      z-index: 100;
-      flex-wrap: nowrap;
+      z-index: 200;
     }
 
     .back-btn {
-      display: flex; align-items: center; gap: 5px;
+      display: flex; align-items: center; gap: 6px;
       background: none; border: none; cursor: pointer;
-      font-family: inherit; font-size: 13px;
+      font-family: var(--font-body); font-size: 13px;
       color: var(--muted); text-decoration: none;
-      transition: color .15s;
-      white-space: nowrap;
-      flex-shrink: 0;
+      transition: color .15s; white-space: nowrap; flex-shrink: 0;
     }
     .back-btn:hover { color: var(--text); }
+    .back-btn svg { opacity: .6; }
+
+    .topbar-logo {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--font-head); font-size: 15px; font-weight: 700;
+      letter-spacing: -.3px;
+    }
+    .logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+
+    .topbar-divider { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; }
 
     .topbar-title {
-      font-size: 14px; font-weight: 600; letter-spacing: -.2px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      min-width: 0;
+      font-family: var(--font-head); font-size: 14px; font-weight: 600;
+      color: var(--muted); letter-spacing: .3px;
     }
 
-    .topbar-right {
-      margin-left: auto;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-shrink: 0;
-    }
+    .topbar-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
 
-    .btn-export {
+    .btn-sm {
       display: flex; align-items: center; gap: 6px;
-      padding: 8px 12px;
-      background: var(--green);
-      color: #fff;
-      border: none; border-radius: 8px;
-      font-family: inherit; font-size: 12px; font-weight: 500;
-      cursor: pointer; transition: opacity .15s;
+      padding: 7px 14px; border-radius: 8px; font-family: var(--font-body);
+      font-size: 12px; font-weight: 500; cursor: pointer; transition: all .15s;
+      border: 1px solid var(--border); background: var(--surface); color: var(--muted);
       white-space: nowrap;
     }
-    .btn-export:hover { opacity: .85; }
-    .btn-export .btn-label { display: none; }
+    .btn-sm:hover { border-color: var(--border2); color: var(--text); }
+    .btn-sm.primary { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+    .btn-sm.primary:hover { background: var(--green); color: #000; }
 
-    @media (min-width: 480px) {
-      .btn-export .btn-label { display: inline; }
-      .btn-export { font-size: 13px; padding: 8px 16px; gap: 7px; }
-    }
-
-    /* ── HERO ── */
+    /* ── HERO BAND ── */
     .hero {
-      background: var(--accent);
-      color: #fff;
-      padding: 24px 16px 20px;
+      background: linear-gradient(135deg, var(--bg2) 0%, #161618 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 24px 0;
       position: relative;
       overflow: hidden;
-    }
-
-    @media (min-width: 480px) {
-      .hero { padding: 32px 28px 28px; }
     }
 
     .hero::before {
       content: '';
-      position: absolute;
-      right: -60px; top: -60px;
-      width: 260px; height: 260px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.04);
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 600px 300px at 80% 50%, rgba(232,69,60,.06) 0%, transparent 60%);
+      pointer-events: none;
     }
 
-    .hero::after {
-      content: '';
-      position: absolute;
-      right: 60px; top: 40px;
-      width: 120px; height: 120px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.03);
-    }
+    .hero-inner { max-width: 1200px; margin: 0 auto; }
 
-    .hero-inner { max-width: 780px; margin: 0 auto; }
+    .hero-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap; margin-bottom: 20px;
+    }
 
     .hero-label {
-      font-size: 10px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 1.2px;
-      opacity: .45; margin-bottom: 6px;
+      font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+      color: var(--red); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px;
     }
 
-    .hero-title { font-size: 22px; font-weight: 600; letter-spacing: -.6px; margin-bottom: 4px; }
-    .hero-sub   { font-size: 12px; opacity: .55; margin-bottom: 16px; }
-
-    @media (min-width: 480px) {
-      .hero-title { font-size: 26px; letter-spacing: -.8px; }
-      .hero-sub { font-size: 13px; margin-bottom: 20px; }
+    .hero-title {
+      font-family: var(--font-head); font-size: clamp(22px, 4vw, 32px);
+      font-weight: 800; letter-spacing: -1px; line-height: 1.1;
     }
 
-    /* ── PERIOD CHIPS ── */
-    .period-chips {
-      display: flex; gap: 6px; flex-wrap: wrap;
+    .hero-sub { font-size: 13px; color: var(--muted); margin-top: 5px; }
+
+    /* PERIOD TABS */
+    .period-tabs {
+      display: flex; gap: 2px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 3px;
     }
-
-    .period-chip {
-      padding: 5px 12px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.08);
-      font-family: inherit; font-size: 12px; font-weight: 500;
-      color: rgba(255,255,255,.65);
-      cursor: pointer; transition: all .15s;
+    .period-tab {
+      padding: 7px 14px; border: none; background: none; border-radius: 8px;
+      font-family: var(--font-body); font-size: 12px; font-weight: 500;
+      color: var(--muted); cursor: pointer; transition: all .15s; white-space: nowrap;
     }
+    .period-tab:hover { color: var(--text); }
+    .period-tab.active { background: var(--surface2); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,.4); }
 
-    .period-chip:hover { background: rgba(255,255,255,.15); color: #fff; }
-    .period-chip.active { background: #fff; color: var(--accent); border-color: #fff; }
-
-    /* ── MAIN ── */
-    .main { max-width: 780px; margin: 0 auto; padding: 16px 12px 80px; }
-
-    @media (min-width: 480px) {
-      .main { padding: 24px 20px 80px; }
-    }
-
-    /* ── FILTER BAR ── */
-    .filter-bar {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 12px;
-      margin-bottom: 16px;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .filter-label {
-      font-size: 10px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .8px; color: var(--muted);
-      width: 100%;
-    }
-
-    @media (min-width: 480px) {
-      .filter-label { width: auto; }
-    }
-
-    .filter-select {
-      flex: 1;
-      min-width: 0;
-      padding: 7px 28px 7px 10px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-family: inherit; font-size: 13px;
-      color: var(--text); background: var(--surface2);
-      outline: none; appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2378766E' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 8px center;
-      cursor: pointer;
-      transition: border-color .15s;
-      max-width: 100%;
-    }
-    .filter-select:focus { border-color: #aaa; }
-
-    .filter-clear {
-      flex-shrink: 0;
-      padding: 6px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: none;
-      font-family: inherit; font-size: 12px;
-      color: var(--muted); cursor: pointer;
-      transition: all .15s;
+    /* NAV TABS */
+    .nav-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-top: 4px; }
+    .nav-tab {
+      padding: 12px 18px; border: none; background: none; font-family: var(--font-body);
+      font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer;
+      transition: all .15s; border-bottom: 2px solid transparent; margin-bottom: -1px;
       white-space: nowrap;
     }
-    .filter-clear:hover { border-color: var(--red-border); color: var(--red); }
+    .nav-tab:hover { color: var(--text); }
+    .nav-tab.active { color: var(--text); border-bottom-color: var(--red); }
 
-    /* ── KPIs ── */
-    .kpi-row {
+    /* ── MAIN ── */
+    .main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 80px; }
+
+    /* SECTION */
+    .tab-section { display: none; }
+    .tab-section.active { display: block; }
+
+    /* ── KPI GRID ── */
+    .kpi-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 16px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
     }
+    @media (min-width: 600px) { .kpi-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (min-width: 900px) { .kpi-grid { grid-template-columns: repeat(6, 1fr); gap: 12px; } }
 
-    @media (min-width: 560px) {
-      .kpi-row { grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-    }
-
-    .kpi-card {
+    .kpi {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 12px;
+      border-radius: var(--r);
+      padding: 16px 14px;
       position: relative;
       overflow: hidden;
-      transition: box-shadow .2s;
+      transition: border-color .2s, transform .2s;
+    }
+    .kpi:hover { border-color: var(--border2); transform: translateY(-1px); }
+
+    .kpi-stripe {
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
     }
 
-    @media (min-width: 480px) {
-      .kpi-card { padding: 18px 16px; }
-    }
-
-    .kpi-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.07); }
-
-    .kpi-accent {
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-    }
-
-    .kpi-icon {
-      font-size: 18px;
-      margin-bottom: 8px;
-      display: block;
-    }
+    .kpi-icon { font-size: 16px; margin-bottom: 10px; display: block; }
 
     .kpi-label {
-      font-size: 9px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .8px;
-      color: var(--muted); margin-bottom: 4px;
-    }
-
-    @media (min-width: 480px) {
-      .kpi-label { font-size: 10px; }
+      font-family: var(--font-mono); font-size: 9px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted);
+      margin-bottom: 5px;
     }
 
     .kpi-val {
-      font-size: 28px; font-weight: 700;
-      letter-spacing: -1.5px; line-height: 1;
-      font-family: 'DM Mono', monospace;
+      font-family: var(--font-head); font-size: clamp(24px,3vw,34px);
+      font-weight: 800; line-height: 1; letter-spacing: -1.5px;
     }
 
-    @media (min-width: 480px) {
-      .kpi-val { font-size: 34px; letter-spacing: -2px; }
-    }
-
-    .kpi-sub { font-size: 10px; color: var(--muted); margin-top: 5px; }
-
-    .k-total .kpi-val  { color: var(--text); }
-    .k-alta  .kpi-val  { color: var(--red); }
-    .k-media .kpi-val  { color: var(--amber); }
-    .k-ok    .kpi-val  { color: var(--green); }
-    .k-alta .kpi-accent  { background: var(--red); }
-    .k-media .kpi-accent { background: var(--amber); }
-    .k-ok .kpi-accent    { background: var(--green); }
-    .k-total .kpi-accent { background: var(--accent); }
+    .kpi-sub { font-size: 10px; color: var(--muted); margin-top: 4px; }
 
     /* ── CHARTS GRID ── */
-    .charts-grid {
+    .charts-row {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: 12px;
+      margin-bottom: 12px;
     }
+    @media (min-width: 700px) { .charts-row { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1000px) { .charts-row { grid-template-columns: 3fr 2fr; } }
 
-    @media (min-width: 560px) {
-      .charts-grid { grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .charts-row-3 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
     }
+    @media (min-width: 700px) { .charts-row-3 { grid-template-columns: 1fr 1fr 1fr; } }
 
-    .chart-card {
+    .panel {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
+      border-radius: var(--r-lg);
+      padding: 20px;
     }
 
-    @media (min-width: 480px) {
-      .chart-card { padding: 20px; }
+    .panel.full { grid-column: 1 / -1; }
+
+    .panel-head {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 18px;
     }
 
-    .chart-card.full { grid-column: span 1; }
-
-    @media (min-width: 560px) {
-      .chart-card.full { grid-column: span 2; }
+    .panel-title {
+      font-family: var(--font-head); font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px; color: var(--muted);
     }
 
-    .chart-head {
-      display: flex; justify-content: space-between;
-      align-items: flex-start; margin-bottom: 16px;
-    }
-
-    .chart-title {
-      font-size: 11px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .7px;
+    .panel-badge {
+      font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+      padding: 3px 8px; border-radius: 20px;
+      background: var(--surface2); border: 1px solid var(--border);
       color: var(--muted);
     }
-
-    .chart-badge {
-      font-size: 10px; font-weight: 600;
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 20px; padding: 3px 8px;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-
-    /* ── BAR CHART ── */
-    .bar-list { display: flex; flex-direction: column; gap: 10px; }
-
-    .bar-row { display: flex; align-items: center; gap: 8px; }
-
-    .bar-info { min-width: 90px; flex-shrink: 0; }
-
-    @media (min-width: 400px) {
-      .bar-info { min-width: 108px; }
-    }
-
-    .bar-name { font-size: 12px; font-weight: 500; color: var(--text); }
-    .bar-num-label { font-size: 10px; color: var(--muted); }
-
-    .bar-track {
-      flex: 1; height: 7px;
-      background: var(--bg);
-      border-radius: 4px; overflow: hidden;
-    }
-
-    .bar-fill { height: 100%; border-radius: 4px; transition: width .6s cubic-bezier(.4,0,.2,1); }
-
-    .bar-count {
-      font-size: 13px; font-weight: 700;
-      min-width: 24px; text-align: right;
-      font-family: 'DM Mono', monospace;
-    }
-
-    /* ── DONUT ── */
-    .donut-wrap { display: flex; align-items: center; gap: 16px; }
-    .donut-legend { display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 0; }
-
-    .legend-item { display: flex; align-items: center; gap: 9px; }
-    .legend-swatch {
-      width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0;
-    }
-    .legend-name { font-size: 11px; flex: 1; color: var(--text); min-width: 0; }
-    .legend-right { text-align: right; flex-shrink: 0; }
-    .legend-pct { font-size: 12px; font-weight: 700; font-family: 'DM Mono', monospace; }
-    .legend-cnt { font-size: 10px; color: var(--muted); }
 
     /* ── TIMELINE ── */
-    .timeline-wrap { position: relative; }
+    .timeline-outer {
+      position: relative; height: 80px; margin-bottom: 6px;
+    }
+
+    .tl-gridlines {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: space-between;
+      pointer-events: none;
+    }
+    .tl-gridline { border-top: 1px solid var(--border); }
 
     .timeline-bars {
-      display: flex;
-      align-items: flex-end;
-      gap: 2px;
-      height: 72px;
+      position: absolute; inset: 0;
+      display: flex; align-items: flex-end; gap: 2px;
     }
 
-    @media (min-width: 400px) {
-      .timeline-bars { gap: 3px; }
+    .tl-col {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; gap: 4px; min-width: 0;
     }
-
-    .tl-col { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; min-width: 0; }
 
     .tl-bar {
-      width: 100%; min-height: 4px;
-      border-radius: 3px 3px 0 0;
-      transition: height .4s ease;
-      cursor: pointer;
+      width: 100%; border-radius: 3px 3px 0 0;
+      min-height: 3px; cursor: pointer;
+      transition: opacity .15s;
       position: relative;
     }
-
+    .tl-bar:hover { opacity: .75; }
     .tl-bar:hover::after {
       content: attr(data-tip);
-      position: absolute;
-      bottom: calc(100% + 6px); left: 50%;
+      position: absolute; bottom: calc(100% + 6px); left: 50%;
       transform: translateX(-50%);
-      background: var(--accent); color: #fff;
-      padding: 4px 8px; border-radius: 6px;
-      font-size: 11px; white-space: nowrap;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); padding: 4px 8px; border-radius: 6px;
+      font-family: var(--font-mono); font-size: 10px; white-space: nowrap;
       z-index: 10; pointer-events: none;
     }
 
     .tl-label {
-      font-size: 8px; color: var(--muted);
-      text-align: center; line-height: 1.1;
-      white-space: nowrap; overflow: hidden;
+      font-family: var(--font-mono); font-size: 8px; color: var(--muted);
+      text-align: center; white-space: nowrap; overflow: hidden;
+      width: 100%; text-overflow: ellipsis;
     }
 
-    .timeline-grid {
-      position: absolute; left: 0; right: 0; top: 0;
-      height: 72px; display: flex; flex-direction: column;
-      justify-content: space-between; pointer-events: none;
+    /* ── BARS ── */
+    .bar-list { display: flex; flex-direction: column; gap: 9px; }
+
+    .bar-row { display: flex; align-items: center; gap: 10px; }
+
+    .bar-info { flex-shrink: 0; }
+    .bar-name { font-size: 12px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+    .bar-sub  { font-size: 10px; color: var(--muted); }
+
+    .bar-track {
+      flex: 1; height: 6px; background: var(--bg);
+      border-radius: 3px; overflow: hidden; min-width: 40px;
+    }
+    .bar-fill { height: 100%; border-radius: 3px; transition: width .7s cubic-bezier(.4,0,.2,1); }
+
+    .bar-count {
+      font-family: var(--font-mono); font-size: 13px; font-weight: 500;
+      min-width: 28px; text-align: right; flex-shrink: 0;
     }
 
-    .tl-gridline {
-      border-top: 1px dashed var(--border);
-      width: 100%;
+    /* ── MÁQUINAS QUE MAIS QUEBRAM ── */
+    .machines-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .machine-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; transition: border-color .15s;
+      position: relative; overflow: hidden;
+    }
+    .machine-row:hover { border-color: var(--border2); }
+
+    .machine-heat {
+      position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
     }
 
-    /* ── TOP EQUIPAMENTOS ── */
-    .equip-list { display: flex; flex-direction: column; gap: 7px; }
+    .machine-rank {
+      font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+      color: var(--muted); min-width: 22px; flex-shrink: 0;
+    }
 
-    .equip-item {
+    .machine-name {
+      flex: 1; font-size: 13px; font-weight: 600;
+      min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    .machine-line {
+      font-family: var(--font-mono); font-size: 10px; color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .machine-stats {
+      display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+    }
+
+    .machine-stat { text-align: right; }
+    .machine-stat-val {
+      font-family: var(--font-head); font-size: 16px; font-weight: 700;
+      line-height: 1;
+    }
+    .machine-stat-lbl { font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
+
+    .machine-bar { width: 60px; }
+    .machine-bar-track { height: 4px; background: var(--bg); border-radius: 2px; overflow: hidden; }
+    .machine-bar-fill { height: 100%; border-radius: 2px; transition: width .6s ease; }
+
+    /* ── DONUT ── */
+    .donut-wrap { display: flex; align-items: center; gap: 20px; }
+    .donut-legend { flex: 1; display: flex; flex-direction: column; gap: 9px; }
+    .legend-row { display: flex; align-items: center; gap: 8px; }
+    .legend-swatch { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+    .legend-name { font-size: 12px; flex: 1; color: var(--text); }
+    .legend-pct  { font-family: var(--font-mono); font-size: 12px; font-weight: 500; }
+    .legend-cnt  { font-family: var(--font-mono); font-size: 10px; color: var(--muted); min-width: 24px; text-align: right; }
+
+    /* ── DURAÇÃO MÉDIA ── */
+    .dur-rank-list { display: flex; flex-direction: column; gap: 7px; }
+
+    .dur-row {
       display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: var(--surface2);
-      transition: border-color .15s;
-    }
-    .equip-item:hover { border-color: var(--border2); }
-
-    .equip-rank { font-size: 10px; font-weight: 700; color: var(--muted); min-width: 24px; font-family: 'DM Mono', monospace; }
-    .equip-name { flex: 1; font-size: 12px; font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-    @media (min-width: 400px) {
-      .equip-name { font-size: 13px; }
+      padding: 9px 12px;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 8px;
     }
 
-    .equip-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-
-    .equip-bar-wrap { width: 40px; }
-
-    @media (min-width: 400px) {
-      .equip-bar-wrap { width: 56px; }
+    .dur-cod {
+      font-family: var(--font-mono); font-size: 10px; color: var(--muted);
+      min-width: 20px; flex-shrink: 0;
     }
 
-    .equip-bar { height: 5px; background: var(--bg); border-radius: 3px; overflow: hidden; border: 1px solid var(--border); }
-    .equip-bar-fill { height: 100%; border-radius: 3px; background: var(--accent); transition: width .5s ease; }
+    .dur-name { flex: 1; font-size: 12px; font-weight: 500; }
 
-    .equip-count { font-size: 14px; font-weight: 700; font-family: 'DM Mono', monospace; min-width: 24px; text-align: right; }
+    .dur-bar-wrap { width: 50px; }
+    .dur-bar-track { height: 4px; background: var(--bg); border-radius: 2px; overflow: hidden; }
+    .dur-bar-fill { height: 100%; border-radius: 2px; background: var(--amber); transition: width .5s ease; }
+
+    .dur-val-box { text-align: right; flex-shrink: 0; min-width: 44px; }
+    .dur-val { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--amber); }
+    .dur-unit { font-size: 9px; color: var(--muted); }
+
+    /* ── HEATMAP SEMANAL ── */
+    .heatmap-wrap { overflow-x: auto; }
+    .heatmap-grid { display: flex; gap: 4px; min-width: fit-content; }
+    .heatmap-col { display: flex; flex-direction: column; gap: 4px; }
+    .heatmap-cell {
+      width: 28px; height: 28px; border-radius: 4px;
+      cursor: pointer; transition: transform .15s;
+      position: relative;
+    }
+    .heatmap-cell:hover { transform: scale(1.15); z-index: 2; }
+    .heatmap-cell:hover::after {
+      content: attr(data-tip);
+      position: absolute; bottom: calc(100% + 6px); left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); padding: 4px 8px; border-radius: 6px;
+      font-family: var(--font-mono); font-size: 10px; white-space: nowrap;
+      z-index: 10; pointer-events: none;
+    }
+    .heatmap-labels { display: flex; gap: 4px; margin-bottom: 4px; }
+    .heatmap-month-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); white-space: nowrap; }
+    .heatmap-day-labels { display: flex; flex-direction: column; gap: 4px; margin-right: 4px; padding-top: 0; }
+    .heatmap-day-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); height: 28px; display: flex; align-items: center; }
 
     /* ── TABELA ── */
+    .filter-row {
+      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .search-box {
+      flex: 1; min-width: 160px;
+      padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: var(--font-body); font-size: 13px; color: var(--text);
+      background: var(--surface2); outline: none; transition: border-color .15s;
+    }
+    .search-box:focus { border-color: var(--border2); }
+    .search-box::placeholder { color: var(--muted); }
+
+    .filter-sel {
+      padding: 8px 28px 8px 12px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: var(--font-body); font-size: 12px; color: var(--text);
+      background: var(--surface2); outline: none; appearance: none; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B6A72' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 8px center;
+      transition: border-color .15s;
+    }
+    .filter-sel:focus { border-color: var(--border2); }
+
     .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-    table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 360px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 700px; }
 
     thead th {
-      font-size: 10px; font-weight: 700; color: var(--muted);
-      text-transform: uppercase; letter-spacing: .6px;
-      padding: 8px 10px; text-align: left;
+      font-family: var(--font-mono); font-size: 9px; font-weight: 500;
+      color: var(--muted); text-transform: uppercase; letter-spacing: 1px;
+      padding: 10px 12px; text-align: left;
       border-bottom: 1px solid var(--border);
-      white-space: nowrap; background: var(--surface2);
+      background: var(--bg2); white-space: nowrap; cursor: pointer; user-select: none;
     }
+    thead th:hover { color: var(--text); }
+    thead th.sorted { color: var(--blue); }
 
-    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: var(--surface2); }
-
-    tbody td { padding: 10px 10px; vertical-align: middle; }
+    tbody td { padding: 11px 12px; vertical-align: middle; }
 
     .badge {
-      display: inline-flex; align-items: center;
-      padding: 2px 8px; border-radius: 12px;
-      font-size: 11px; font-weight: 500;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: 10px;
+      font-family: var(--font-mono); font-size: 10px; font-weight: 500;
     }
-    .badge-red    { background: var(--red-bg);   color: #A32D2D; border: 1px solid var(--red-border); }
-    .badge-amber  { background: var(--amber-bg); color: #854F0B; border: 1px solid var(--amber-border); }
-    .badge-green  { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
-    .badge-blue   { background: var(--blue-bg);  color: var(--blue); border: 1px solid var(--blue-border); }
+    .badge-red    { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(232,69,60,.3); }
+    .badge-amber  { background: var(--amber-dim);  color: var(--amber);  border: 1px solid rgba(245,166,35,.3); }
+    .badge-green  { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(77,184,106,.3); }
+    .badge-blue   { background: var(--blue-dim);   color: var(--blue);   border: 1px solid rgba(74,158,255,.3); }
+    .badge-open   { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(232,69,60,.3); }
+    .badge-done   { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(77,184,106,.3); }
 
-    .dur-val {
-      font-family: 'DM Mono', monospace;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-    }
-    .dur-unit {
-      font-size: 10px;
-      color: var(--muted);
-      margin-left: 2px;
+    .dur-cell { font-family: var(--font-mono); font-weight: 500; }
+
+    .table-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 14px; border-top: 1px solid var(--border);
+      font-family: var(--font-mono); font-size: 10px; color: var(--muted);
     }
 
     /* ── TOAST ── */
     .toast {
       position: fixed; bottom: 28px; left: 50%;
       transform: translateX(-50%) translateY(20px);
-      background: var(--green); color: #fff;
+      background: var(--green-dim); border: 1px solid var(--green);
+      color: var(--green);
       padding: 11px 20px; border-radius: 24px;
-      font-size: 13px; font-weight: 500;
-      opacity: 0; pointer-events: none;
-      transition: all .3s; z-index: 999;
+      font-family: var(--font-mono); font-size: 12px;
+      opacity: 0; pointer-events: none; transition: all .3s; z-index: 999;
       white-space: nowrap;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     /* ── EMPTY ── */
-    .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
-    .empty-icon { font-size: 36px; margin-bottom: 10px; }
-    .empty-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .empty { text-align: center; padding: 48px 20px; color: var(--muted); }
+    .empty-icon { font-size: 36px; margin-bottom: 10px; opacity: .4; }
+    .empty-title { font-family: var(--font-head); font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+
+    /* ── STAT MINI CARDS (resumo tabela) ── */
+    .mini-stats {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 8px;
+      margin-bottom: 14px;
+    }
+    @media (min-width: 600px) { .mini-stats { grid-template-columns: repeat(5,1fr); } }
+
+    .mini-stat {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 12px 10px; text-align: center;
+    }
+    .mini-stat-val { font-family: var(--font-head); font-size: 20px; font-weight: 700; line-height: 1; margin-bottom: 3px; }
+    .mini-stat-lbl { font-family: var(--font-mono); font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .7px; }
+
+    /* scrollbar dark */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted2); }
+
+    /* ── RESPONSIVE tweaks ── */
+    @media (max-width: 480px) {
+      .topbar { padding: 0 12px; }
+      .main { padding: 16px 12px 60px; }
+      .hero { padding: 20px 14px 0; }
+      .panel { padding: 14px; }
+      .kpi-val { font-size: 26px; }
+      .machine-stats { gap: 8px; }
+      .machine-bar { display: none; }
+    }
+
+    /* ── WARN STRIP ── */
+    .warn-strip {
+      background: var(--amber-dim); border: 1px solid rgba(245,166,35,.3);
+      border-radius: 8px; padding: 10px 14px; margin-bottom: 14px;
+      font-size: 12px; color: var(--amber); display: none;
+    }
+    .warn-strip a { color: var(--amber); font-weight: 600; }
   </style>
 </head>
 <body>
 
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <a class="back-btn" href="home.html">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-      Voltar
-    </a>
-    <span class="topbar-title">Dashboard de Paradas</span>
-    <div class="topbar-right">
-      <button class="btn-export" onclick="exportarExcel()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-        <span class="btn-label">Exportar .xlsx</span>
-      </button>
-    </div>
+<!-- TOPBAR -->
+<div class="topbar">
+  <a class="back-btn" href="home.html">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Voltar
+  </a>
+  <div class="topbar-divider"></div>
+  <div class="topbar-logo">
+    <div class="logo-dot"></div>
+    MáquinaStop
   </div>
+  <span class="topbar-divider"></span>
+  <span class="topbar-title">Analytics</span>
+  <div class="topbar-right">
+    <button class="btn-sm primary" onclick="exportarExcel()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      <span id="export-label">Exportar .xlsx</span>
+    </button>
+  </div>
+</div>
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-inner">
-      <div class="hero-label">MáquinaStop · Análise de Paradas</div>
-      <div class="hero-title" id="hero-title">Dashboard</div>
-      <div class="hero-sub" id="hero-sub">Carregando...</div>
-      <div class="period-chips">
-        <button class="period-chip active" onclick="setPeriod(7,this)">7 dias</button>
-        <button class="period-chip" onclick="setPeriod(30,this)">30 dias</button>
-        <button class="period-chip" onclick="setPeriod(90,this)">90 dias</button>
-        <button class="period-chip" onclick="setPeriod(0,this)">Tudo</button>
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-top">
+      <div>
+        <div class="hero-label">Análise de Paradas de Máquina</div>
+        <div class="hero-title" id="hero-title">Dashboard</div>
+        <div class="hero-sub" id="hero-sub">Carregando dados...</div>
+      </div>
+      <div class="period-tabs">
+        <button class="period-tab active" onclick="setPeriod(7,this)">7d</button>
+        <button class="period-tab" onclick="setPeriod(30,this)">30d</button>
+        <button class="period-tab" onclick="setPeriod(90,this)">90d</button>
+        <button class="period-tab" onclick="setPeriod(0,this)">Tudo</button>
       </div>
     </div>
-  </div>
 
-  <!-- MAIN -->
-  <div class="main">
-
-    <!-- FILTROS -->
-    <div class="filter-bar">
-      <span class="filter-label">Filtrar por:</span>
-
-      <select class="filter-select" id="f-gravidade" onchange="render()">
-        <option value="">Gravidade: Todas</option>
-        <option value="alta">🔴 Alta (Quebra + Set-up)</option>
-        <option value="media">🟡 Média (Defeito, Troca, Peq.)</option>
-        <option value="operacional">🔵 Operacional</option>
-        <option value="gestao">🟢 Gestão</option>
-      </select>
-
-      <select class="filter-select" id="f-cod" onchange="render()">
-        <option value="">Código: Todos</option>
-      </select>
-
-      <button class="filter-clear" onclick="limparFiltros()">✕ Limpar</button>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="setTab('visao',this)">📊 Visão Geral</button>
+      <button class="nav-tab" onclick="setTab('maquinas',this)">🏭 Máquinas</button>
+      <button class="nav-tab" onclick="setTab('historico',this)">📋 Histórico</button>
     </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ═══ ABA: VISÃO GERAL ═══ -->
+  <div class="tab-section active" id="tab-visao">
 
     <!-- KPIs -->
-    <div class="kpi-row">
-      <div class="kpi-card k-total">
-        <div class="kpi-accent"></div>
+    <div class="kpi-grid" id="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-stripe" style="background:var(--text)"></div>
         <span class="kpi-icon">📊</span>
         <div class="kpi-label">Total Paradas</div>
-        <div class="kpi-val" id="kpi-total">0</div>
-        <div class="kpi-sub">relatórios finalizados</div>
+        <div class="kpi-val" id="kpi-total" style="color:var(--text)">—</div>
+        <div class="kpi-sub">registros</div>
       </div>
-      <div class="kpi-card k-alta">
-        <div class="kpi-accent"></div>
+      <div class="kpi">
+        <div class="kpi-stripe" style="background:var(--red)"></div>
         <span class="kpi-icon">🔴</span>
-        <div class="kpi-label">Alta Gravidade</div>
-        <div class="kpi-val" id="kpi-alta">0</div>
+        <div class="kpi-label">Alta Grav.</div>
+        <div class="kpi-val" id="kpi-alta" style="color:var(--red)">—</div>
         <div class="kpi-sub">Quebra + Set-up</div>
       </div>
-      <div class="kpi-card k-media">
-        <div class="kpi-accent"></div>
+      <div class="kpi">
+        <div class="kpi-stripe" style="background:var(--amber)"></div>
         <span class="kpi-icon">🟡</span>
-        <div class="kpi-label">Média</div>
-        <div class="kpi-val" id="kpi-media">0</div>
-        <div class="kpi-sub">Defeito, Troca, Peq.</div>
+        <div class="kpi-label">Média Grav.</div>
+        <div class="kpi-val" id="kpi-media" style="color:var(--amber)">—</div>
+        <div class="kpi-sub">Defeito, Troca</div>
       </div>
-      <div class="kpi-card k-ok">
-        <div class="kpi-accent"></div>
+      <div class="kpi">
+        <div class="kpi-stripe" style="background:var(--amber)"></div>
         <span class="kpi-icon">⏱</span>
-        <div class="kpi-label">Dur. média</div>
-        <div class="kpi-val" id="kpi-dur">—</div>
-        <div class="kpi-sub" id="kpi-dur-sub">min por parada</div>
+        <div class="kpi-label">Dur. Média</div>
+        <div class="kpi-val" id="kpi-dur" style="color:var(--amber)">—</div>
+        <div class="kpi-sub">min / parada</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-stripe" style="background:var(--red)"></div>
+        <span class="kpi-icon">⚠️</span>
+        <div class="kpi-label">Em Aberto</div>
+        <div class="kpi-val" id="kpi-aberto" style="color:var(--red)">—</div>
+        <div class="kpi-sub">sem manutenção</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-stripe" style="background:var(--green)"></div>
+        <span class="kpi-icon">✅</span>
+        <div class="kpi-label">Atendidos</div>
+        <div class="kpi-val" id="kpi-ok" style="color:var(--green)">—</div>
+        <div class="kpi-sub">finalizados</div>
       </div>
     </div>
 
-    <!-- CHARTS ROW 1 -->
-    <div class="charts-grid">
-
-      <!-- Barras por código -->
-      <div class="chart-card">
-        <div class="chart-head">
-          <div class="chart-title">Por Código</div>
-          <span class="chart-badge" id="badge-cod">0 tipos</span>
+    <!-- TIMELINE + DONUT -->
+    <div class="charts-row" style="margin-bottom:12px">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Paradas por Dia</div>
+          <span class="panel-badge" id="badge-hoje">Hoje: 0</span>
         </div>
-        <div class="bar-list" id="bar-cod"></div>
-      </div>
-
-      <!-- Donut distribuição -->
-      <div class="chart-card">
-        <div class="chart-head">
-          <div class="chart-title">Gravidade</div>
-        </div>
-        <div class="donut-wrap">
-          <svg width="88" height="88" viewBox="0 0 100 100" id="donut-svg" style="flex-shrink:0">
-            <circle cx="50" cy="50" r="36" fill="none" stroke="#E4E0D8" stroke-width="14"/>
-          </svg>
-          <div class="donut-legend" id="donut-legend"></div>
-        </div>
-      </div>
-
-      <!-- Timeline -->
-      <div class="chart-card full">
-        <div class="chart-head">
-          <div class="chart-title">Paradas por Dia</div>
-          <span class="chart-badge" id="badge-tl">—</span>
-        </div>
-        <div class="timeline-wrap">
-          <div class="timeline-grid">
+        <div class="timeline-outer">
+          <div class="tl-gridlines">
+            <div class="tl-gridline"></div>
             <div class="tl-gridline"></div>
             <div class="tl-gridline"></div>
             <div class="tl-gridline"></div>
@@ -655,395 +661,792 @@
         </div>
       </div>
 
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Distribuição Gravidade</div>
+        </div>
+        <div class="donut-wrap">
+          <svg width="90" height="90" viewBox="0 0 100 100" id="donut-svg" style="flex-shrink:0"></svg>
+          <div class="donut-legend" id="donut-legend"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- TOP EQUIPAMENTOS -->
-    <div class="chart-card" style="margin-bottom:10px">
-      <div class="chart-head">
-        <div class="chart-title">Top Equipamentos</div>
-        <span class="chart-badge" id="badge-equip">0</span>
+    <!-- CÓDIGO + DURAÇÃO MÉDIA -->
+    <div class="charts-row-3" style="margin-bottom:12px">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Por Código</div>
+          <span class="panel-badge" id="badge-cod">0 tipos</span>
+        </div>
+        <div class="bar-list" id="bar-cod"></div>
       </div>
-      <div class="equip-list" id="equip-list"></div>
-    </div>
 
-    <!-- TABELA DETALHADA -->
-    <div class="chart-card">
-      <div class="chart-head">
-        <div class="chart-title">Registros Detalhados</div>
-        <span class="chart-badge" id="badge-table">0</span>
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Duração Média por Código</div>
+          <span class="panel-badge">min</span>
+        </div>
+        <div class="dur-rank-list" id="dur-rank"></div>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Data</th>
-              <th>Dur.</th>
-              <th>Operador</th>
-            </tr>
-          </thead>
-          <tbody id="table-body"></tbody>
-        </table>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Top Operadores</div>
+          <span class="panel-badge" id="badge-op">—</span>
+        </div>
+        <div class="bar-list" id="bar-op"></div>
       </div>
     </div>
 
   </div>
 
-  <div class="toast" id="toast">✓ Excel exportado!</div>
+  <!-- ═══ ABA: MÁQUINAS ═══ -->
+  <div class="tab-section" id="tab-maquinas">
 
-  <script>
-    const user = JSON.parse(localStorage.getItem('ms_user') || 'null');
-    if (!user) window.location.href = 'index.html';
+    <div class="kpi-grid" style="margin-bottom:20px">
+      <div class="kpi">
+        <div class="kpi-stripe" style="background:var(--red)"></div>
+        <span class="kpi-icon">🏭</span>
+        <div class="kpi-label">Equipamentos</div>
+        <div class="kpi-val" id="m-kpi-equip" style="color:var(--text)">—</div>
+        <div class="kpi-sub">únicos no período</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-stripe" style="background:var(--red)"></div>
+        <span class="kpi-icon">💥</span>
+        <div class="kpi-label">Mais Crítica</div>
+        <div class="kpi-val" id="m-kpi-worst" style="color:var(--red);font-size:14px;letter-spacing:0">—</div>
+        <div class="kpi-sub" id="m-kpi-worst-sub">—</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-stripe" style="background:var(--amber)"></div>
+        <span class="kpi-icon">⏱</span>
+        <div class="kpi-label">Maior Dur. Média</div>
+        <div class="kpi-val" id="m-kpi-dur" style="color:var(--amber)">—</div>
+        <div class="kpi-sub" id="m-kpi-dur-sub">min / parada</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-stripe" style="background:var(--amber)"></div>
+        <span class="kpi-icon">🔥</span>
+        <div class="kpi-label">Total Tempo Perdido</div>
+        <div class="kpi-val" id="m-kpi-total-min" style="color:var(--amber)">—</div>
+        <div class="kpi-sub">minutos no período</div>
+      </div>
+    </div>
 
-    const CODIGOS = {
-      '1':'Quebra','2':'Set-up','3':'Troca fer.','4':'Produção',
-      '5':'Peq. paradas','6':'Velocidade','7':'Defeito',
-      '8':'Programada','9':'Gestão','10':'Mov. operacionais',
-      '11':'Organização','12':'Logística','13':'Med. e ajuste'
-    };
+    <!-- MÁQUINAS QUE MAIS QUEBRAM -->
+    <div class="panel" style="margin-bottom:12px">
+      <div class="panel-head">
+        <div class="panel-title">Máquinas que Mais Param</div>
+        <span class="panel-badge" id="badge-machines">top 10</span>
+      </div>
+      <div class="machines-list" id="machines-list"></div>
+    </div>
 
-    const COD_COLORS = {
-      '1':'#C93B3A','2':'#C93B3A',
-      '3':'#BA7517','5':'#BA7517','7':'#BA7517',
-      '4':'#185FA5','6':'#185FA5','8':'#185FA5',
-      '9':'#3B6D11','10':'#3B6D11','11':'#3B6D11','12':'#3B6D11','13':'#3B6D11'
-    };
+    <!-- BREAKDOWN POR LINHA -->
+    <div class="charts-row">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Paradas por Linha</div>
+          <span class="panel-badge" id="badge-linha">—</span>
+        </div>
+        <div class="bar-list" id="bar-linha"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Tipo de Parada por Máquina</div>
+          <span class="panel-badge">top 5</span>
+        </div>
+        <div class="bar-list" id="bar-machine-type"></div>
+      </div>
+    </div>
 
-    function getBadgeClass(cod) {
-      if (['1','2'].includes(cod)) return 'badge-red';
-      if (['3','5','7'].includes(cod)) return 'badge-amber';
-      if (['4','6','8'].includes(cod)) return 'badge-blue';
-      return 'badge-green';
+  </div>
+
+  <!-- ═══ ABA: HISTÓRICO ═══ -->
+  <div class="tab-section" id="tab-historico">
+
+    <div class="warn-strip" id="warn-aberto">
+      ⚠ Há registros sem manutenção preenchida. <a href="relatorios.html">Preencher agora →</a>
+    </div>
+
+    <div class="mini-stats">
+      <div class="mini-stat">
+        <div class="mini-stat-val" id="h-total">0</div>
+        <div class="mini-stat-lbl">Total</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-val" style="color:var(--green)" id="h-completo">0</div>
+        <div class="mini-stat-lbl">Completos</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-val" style="color:var(--red)" id="h-incompleto">0</div>
+        <div class="mini-stat-lbl">Em Aberto</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-val" style="color:var(--amber)" id="h-hoje">0</div>
+        <div class="mini-stat-lbl">Hoje</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-val" style="color:var(--blue)" id="h-dur">—</div>
+        <div class="mini-stat-lbl">Dur. Média</div>
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <input class="search-box" id="h-busca" type="text" placeholder="🔍  Equipamento, operador, linha..." oninput="renderHistorico()"/>
+      <input class="search-box" type="date" id="h-data-ini" oninput="renderHistorico()" style="max-width:160px"/>
+      <input class="search-box" type="date" id="h-data-fim" oninput="renderHistorico()" style="max-width:160px"/>
+      <select class="filter-sel" id="h-status" onchange="renderHistorico()">
+        <option value="">Todos status</option>
+        <option value="completo">✅ Completos</option>
+        <option value="incompleto">⚠ Em aberto</option>
+      </select>
+      <select class="filter-sel" id="h-cod" onchange="renderHistorico()">
+        <option value="">Todos cód.</option>
+      </select>
+      <button class="btn-sm" onclick="limparFiltrosH()" style="flex-shrink:0">✕ Limpar</button>
+    </div>
+
+    <div class="panel" style="padding:0">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortH('_idx')"># <span id="sort-idx"></span></th>
+              <th onclick="sortH('dataInicial')">Data <span id="sort-data"></span></th>
+              <th onclick="sortH('linha')">Linha <span id="sort-linha"></span></th>
+              <th onclick="sortH('equipamento')">Equipamento <span id="sort-equip"></span></th>
+              <th onclick="sortH('codMotivo')">Código Parada <span id="sort-cod"></span></th>
+              <th onclick="sortH('inicioOcorrencia')">Início <span id="sort-inicio"></span></th>
+              <th onclick="sortH('fimOcorrencia')">Fim <span id="sort-fim"></span></th>
+              <th onclick="sortH('duracao')">Min <span id="sort-dur"></span></th>
+              <th onclick="sortH('operador')">Operador <span id="sort-op"></span></th>
+              <th>Manut.</th>
+              <th>Área</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="h-tbody"></tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <span id="h-footer-count">—</span>
+        <span id="h-footer-dur">—</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">✓ Excel exportado!</div>
+
+<script>
+  const user = JSON.parse(localStorage.getItem('ms_user') || 'null');
+  if (!user) window.location.href = 'index.html';
+
+  const CODIGOS = {
+    '1':'Quebra','2':'Set-up','3':'Troca fer.','4':'Produção',
+    '5':'Peq. paradas','6':'Velocidade','7':'Defeito',
+    '8':'Programada','9':'Gestão','10':'Mov. operac.',
+    '11':'Organização','12':'Logística','13':'Med. e ajuste'
+  };
+
+  const COD_COLORS = {
+    '1':'#E8453C','2':'#E8453C',
+    '3':'#F5A623','5':'#F5A623','7':'#F5A623',
+    '4':'#4A9EFF','6':'#4A9EFF','8':'#4A9EFF',
+    '9':'#4DB86A','10':'#4DB86A','11':'#4DB86A','12':'#4DB86A','13':'#4DB86A'
+  };
+
+  // Populate filter select
+  const hCod = document.getElementById('h-cod');
+  Object.entries(CODIGOS).forEach(([num, nome]) => {
+    const opt = document.createElement('option');
+    opt.value = num; opt.textContent = `${num} — ${nome}`;
+    hCod.appendChild(opt);
+  });
+
+  let periodDays = 7;
+  let activeTab = 'visao';
+  let sortField = 'dataInicial', sortAsc = false;
+
+  function setPeriod(days, btn) {
+    periodDays = days;
+    document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderAll();
+  }
+
+  function setTab(tab, btn) {
+    activeTab = tab;
+    document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    if (tab === 'historico') renderHistorico();
+  }
+
+  function getAllRels() {
+    return JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
+  }
+
+  function getFiltered() {
+    const all = getAllRels();
+    const now = new Date();
+    return all.filter(r => {
+      if (periodDays > 0) {
+        const d = new Date(r.dataISO || r.criadoEm || '2020-01-01');
+        if ((now - d) / 86400000 > periodDays) return false;
+      }
+      return true;
+    });
+  }
+
+  function calcDurMin(inicio, fim) {
+    if (!inicio || !fim) return null;
+    const [h1, m1] = inicio.split(':').map(Number);
+    const [h2, m2] = fim.split(':').map(Number);
+    let mins = (h2 * 60 + m2) - (h1 * 60 + m1);
+    if (mins < 0) mins += 24 * 60;
+    return mins;
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '—';
+    const [y, m, d] = iso.split('-');
+    return `${d}/${m}/${y}`;
+  }
+
+  function getCodBadgeClass(cod) {
+    if (['1','2'].includes(cod)) return 'badge-red';
+    if (['3','5','7'].includes(cod)) return 'badge-amber';
+    if (['4','6','8'].includes(cod)) return 'badge-blue';
+    return 'badge-green';
+  }
+
+  function renderAll() {
+    const data = getFiltered();
+    const all  = getAllRels();
+    const label = periodDays === 0 ? 'todo o período' : `últimos ${periodDays} dias`;
+
+    document.getElementById('hero-sub').textContent =
+      `${data.length} parada${data.length !== 1 ? 's' : ''} — ${label} · ${all.length} total histórico`;
+
+    renderKPIs(data, all);
+    renderTimeline(data);
+    renderDonut(data);
+    renderBarCod(data);
+    renderDurRank(data);
+    renderBarOp(data);
+    renderMaquinas(data);
+    renderBarLinha(data);
+    renderMachineType(data);
+  }
+
+  // ── KPIs ──
+  function renderKPIs(data, all) {
+    const alta  = data.filter(r => ['1','2'].includes(r.codMotivo)).length;
+    const media = data.filter(r => ['3','5','7'].includes(r.codMotivo)).length;
+    const aberto = data.filter(r => !r.manutencao).length;
+    const ok    = data.filter(r => r.manutencao).length;
+    const durs  = data.map(r => r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia)).filter(d => d !== null && d > 0);
+    const avg   = durs.length ? Math.round(durs.reduce((a,b)=>a+b,0)/durs.length) : null;
+
+    document.getElementById('kpi-total').textContent = data.length;
+    document.getElementById('kpi-alta').textContent  = alta;
+    document.getElementById('kpi-media').textContent = media;
+    document.getElementById('kpi-dur').textContent   = avg ?? '—';
+    document.getElementById('kpi-aberto').textContent = aberto;
+    document.getElementById('kpi-ok').textContent     = ok;
+  }
+
+  // ── TIMELINE ──
+  function renderTimeline(data) {
+    const el = document.getElementById('timeline');
+    el.innerHTML = '';
+    const days = Math.min(periodDays || 30, 60);
+    const counts = {}, labels = [];
+
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const iso = d.toISOString().slice(0, 10);
+      counts[iso] = 0;
+      labels.push({ iso, label: `${d.getDate()}/${d.getMonth()+1}` });
     }
 
-    function formatDate(iso) {
-      if (!iso) return '—';
-      const [y,m,d] = iso.split('-');
-      return `${d}/${m}`;
-    }
+    data.forEach(r => { if (r.dataISO && counts[r.dataISO] !== undefined) counts[r.dataISO]++; });
 
-    function calcDurMin(inicio, fim, armazenado) {
-      if (!inicio || !fim) return null;
-      const [h1, m1] = inicio.split(':').map(Number);
-      const [h2, m2] = fim.split(':').map(Number);
-      let mins = (h2 * 60 + m2) - (h1 * 60 + m1);
-      if (mins < 0) mins += 24 * 60;
-      return mins;
-    }
+    const maxC = Math.max(...Object.values(counts), 1);
+    const todayKey = new Date().toISOString().slice(0,10);
+    document.getElementById('badge-hoje').textContent = `Hoje: ${counts[todayKey] || 0}`;
 
-    const fCod = document.getElementById('f-cod');
-    Object.entries(CODIGOS).forEach(([num, nome]) => {
-      const opt = document.createElement('option');
-      opt.value = num;
-      opt.textContent = `${num} — ${nome}`;
-      fCod.appendChild(opt);
+    labels.forEach(({ iso, label }, idx) => {
+      const cnt = counts[iso] || 0;
+      const h = Math.max((cnt / maxC) * 72, cnt > 0 ? 8 : 3);
+      const color = cnt === 0 ? 'var(--border)'
+        : cnt >= 5 ? 'var(--red)'
+        : cnt >= 3 ? 'var(--amber)'
+        : 'var(--blue)';
+
+      const showLabel = days <= 14 || idx % Math.ceil(days / 8) === 0;
+
+      const col = document.createElement('div');
+      col.className = 'tl-col';
+      col.innerHTML = `
+        <div class="tl-bar" style="height:${h}px;background:${color}" data-tip="${cnt} em ${label}"></div>
+        <div class="tl-label">${showLabel ? label : ''}</div>`;
+      el.appendChild(col);
+    });
+  }
+
+  // ── DONUT ──
+  function renderDonut(data) {
+    const groups = [
+      { name: 'Alta',      color: '#E8453C', count: 0, codes: ['1','2'] },
+      { name: 'Média',     color: '#F5A623', count: 0, codes: ['3','5','7'] },
+      { name: 'Operac.',   color: '#4A9EFF', count: 0, codes: ['4','6','8'] },
+      { name: 'Gestão',    color: '#4DB86A', count: 0, codes: ['9','10','11','12','13'] },
+    ];
+
+    data.forEach(r => {
+      const g = groups.find(g => g.codes.includes(r.codMotivo));
+      if (g) g.count++;
     });
 
-    let periodDays = 7;
+    const total = data.length || 1;
+    const R = 36, cx = 50, cy = 50, circ = 2 * Math.PI * R;
+    const svg = document.getElementById('donut-svg');
+    svg.innerHTML = `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="var(--border)" stroke-width="14"/>
+      <text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="700" fill="var(--text)" font-family="Syne">${data.length}</text>`;
 
-    function setPeriod(days, btn) {
-      periodDays = days;
-      document.querySelectorAll('.period-chip').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      render();
-    }
-
-    function limparFiltros() {
-      document.getElementById('f-gravidade').value = '';
-      document.getElementById('f-cod').value = '';
-      render();
-    }
-
-    function getFiltered() {
-      const all = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
-      const finalizados = all.filter(r => r.manutencao);
-      const now = new Date();
-      const grav = document.getElementById('f-gravidade').value;
-      const cod  = document.getElementById('f-cod').value;
-
-      return finalizados.filter(r => {
-        if (periodDays > 0) {
-          const d = new Date(r.dataISO || r.criadoEm);
-          if ((now - d) / 86400000 > periodDays) return false;
-        }
-        if (cod && r.codMotivo !== cod) return false;
-        if (grav) {
-          const map = {
-            alta: ['1','2'],
-            media: ['3','5','7'],
-            operacional: ['4','6','8'],
-            gestao: ['9','10','11','12','13']
-          };
-          if (!map[grav].includes(r.codMotivo)) return false;
-        }
-        return true;
-      });
-    }
-
-    function render() {
-      const data = getFiltered();
-      const label = periodDays === 0 ? 'todo o período' : `últimos ${periodDays} dias`;
-
-      document.getElementById('hero-title').textContent = 'Análise de Paradas';
-      document.getElementById('hero-sub').textContent =
-        `${data.length} parada${data.length !== 1 ? 's' : ''} finalizada${data.length !== 1 ? 's' : ''} — ${label}`;
-
-      const alta  = data.filter(r => ['1','2'].includes(r.codMotivo)).length;
-      const media = data.filter(r => ['3','5','7'].includes(r.codMotivo)).length;
-      const durs  = data.map(r => calcDurMin(r.inicioOcorrencia, r.fimOcorrencia, r.duracao)).filter(d => d !== null);
-      const avgDur = durs.length ? Math.round(durs.reduce((a,b)=>a+b,0)/durs.length) : null;
-
-      document.getElementById('kpi-total').textContent = data.length;
-      document.getElementById('kpi-alta').textContent  = alta;
-      document.getElementById('kpi-media').textContent = media;
-      document.getElementById('kpi-dur').textContent   = avgDur !== null ? avgDur : '—';
-      document.getElementById('kpi-dur-sub').textContent = avgDur !== null ? 'min por parada' : 'sem dados';
-
-      const byCod = {};
-      data.forEach(r => { byCod[r.codMotivo] = (byCod[r.codMotivo]||0) + 1; });
-      const sorted = Object.entries(byCod).sort((a,b) => b[1]-a[1]);
-      const maxCod = sorted[0]?.[1] || 1;
-      const barEl  = document.getElementById('bar-cod');
-      barEl.innerHTML = '';
-      document.getElementById('badge-cod').textContent = `${sorted.length} tipos`;
-
-      if (sorted.length === 0) {
-        barEl.innerHTML = '<div class="empty-state"><div class="empty-icon">📉</div><div class="empty-title">Nenhum dado</div></div>';
-      } else {
-        sorted.forEach(([cod, cnt]) => {
-          const pct = (cnt/maxCod*100).toFixed(0);
-          const color = COD_COLORS[cod] || '#7A7870';
-          barEl.innerHTML += `
-            <div class="bar-row">
-              <div class="bar-info">
-                <div class="bar-name">${CODIGOS[cod]||'?'}</div>
-                <div class="bar-num-label">Cód. ${cod}</div>
-              </div>
-              <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
-              <div class="bar-count" style="color:${color}">${cnt}</div>
-            </div>`;
-        });
+    let offset = 0;
+    groups.forEach(g => {
+      const pct = g.count / total;
+      if (g.count > 0) {
+        const dash = circ * pct;
+        const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        c.setAttribute('cx', cx); c.setAttribute('cy', cy); c.setAttribute('r', R);
+        c.setAttribute('fill','none'); c.setAttribute('stroke', g.color); c.setAttribute('stroke-width','14');
+        c.setAttribute('stroke-dasharray',`${dash} ${circ-dash}`);
+        c.setAttribute('stroke-dashoffset', -offset * circ);
+        c.setAttribute('transform',`rotate(-90 ${cx} ${cy})`);
+        svg.appendChild(c);
+        offset += pct;
       }
+    });
 
-      drawDonut(data);
-      drawTimeline(data);
+    const legend = document.getElementById('donut-legend');
+    legend.innerHTML = '';
+    groups.forEach(g => {
+      legend.innerHTML += `
+        <div class="legend-row">
+          <div class="legend-swatch" style="background:${g.color}"></div>
+          <div class="legend-name">${g.name}</div>
+          <div class="legend-pct" style="color:${g.color}">${Math.round(g.count/total*100)}%</div>
+          <div class="legend-cnt">${g.count}</div>
+        </div>`;
+    });
+  }
 
-      const byEquip = {};
-      data.forEach(r => { byEquip[r.equipamento||'—'] = (byEquip[r.equipamento]||0) + 1; });
-      const topEquip = Object.entries(byEquip).sort((a,b)=>b[1]-a[1]).slice(0,5);
-      const maxE = topEquip[0]?.[1] || 1;
-      const equipEl = document.getElementById('equip-list');
-      equipEl.innerHTML = '';
-      document.getElementById('badge-equip').textContent = `${Object.keys(byEquip).length} equip.`;
+  // ── BAR COD ──
+  function renderBarCod(data) {
+    const byCod = {};
+    data.forEach(r => { byCod[r.codMotivo] = (byCod[r.codMotivo]||0)+1; });
+    const sorted = Object.entries(byCod).sort((a,b)=>b[1]-a[1]).slice(0, 8);
+    const maxV = sorted[0]?.[1] || 1;
+    const el = document.getElementById('bar-cod');
+    document.getElementById('badge-cod').textContent = `${Object.keys(byCod).length} tipos`;
 
-      if (topEquip.length === 0) {
-        equipEl.innerHTML = '<div class="empty-state"><div class="empty-icon">🏭</div><div class="empty-title">Nenhum dado</div></div>';
-      } else {
-        topEquip.forEach(([name, cnt], i) => {
-          const pct = (cnt/maxE*100).toFixed(0);
-          const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
-          equipEl.innerHTML += `
-            <div class="equip-item">
-              <div class="equip-rank">${medals[i]||`#${i+1}`}</div>
-              <div class="equip-name">${name}</div>
-              <div class="equip-right">
-                <div class="equip-bar-wrap">
-                  <div class="equip-bar"><div class="equip-bar-fill" style="width:${pct}%"></div></div>
-                </div>
-                <div class="equip-count">${cnt}</div>
-              </div>
-            </div>`;
-        });
-      }
+    if (sorted.length === 0) { el.innerHTML = '<div class="empty"><div class="empty-icon">📉</div><div class="empty-title">Sem dados</div></div>'; return; }
 
-      const tbody = document.getElementById('table-body');
-      tbody.innerHTML = '';
-      document.getElementById('badge-table').textContent = `${data.length}`;
+    el.innerHTML = sorted.map(([cod, cnt]) => {
+      const pct = (cnt/maxV*100).toFixed(0);
+      const color = COD_COLORS[cod] || '#6B6A72';
+      return `<div class="bar-row">
+        <div class="bar-info" style="min-width:96px">
+          <div class="bar-name">${CODIGOS[cod]||'?'}</div>
+          <div class="bar-sub">Cód. ${cod}</div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
+        <div class="bar-count" style="color:${color}">${cnt}</div>
+      </div>`;
+    }).join('');
+  }
 
-      if (data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:32px;color:var(--muted)">Nenhum registro no período</td></tr>`;
-      } else {
-        [...data].reverse().slice(0, 40).forEach(r => {
-          const dur = calcDurMin(r.inicioOcorrencia, r.fimOcorrencia, r.duracao);
-          const bc  = getBadgeClass(r.codMotivo);
+  // ── DURAÇÃO MÉDIA POR CÓDIGO ──
+  function renderDurRank(data) {
+    const byCode = {};
+    data.forEach(r => {
+      const dur = r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia);
+      if (dur === null || dur <= 0) return;
+      if (!byCode[r.codMotivo]) byCode[r.codMotivo] = { total: 0, count: 0 };
+      byCode[r.codMotivo].total += dur;
+      byCode[r.codMotivo].count++;
+    });
 
-          tbody.innerHTML += `
-            <tr>
-              <td><span class="badge ${bc}">${r.codMotivo} — ${CODIGOS[r.codMotivo]||'?'}</span></td>
-              <td style="color:var(--muted);font-family:'DM Mono',monospace;font-size:11px">${formatDate(r.dataInicial)}</td>
-              <td style="font-family:'DM Mono',monospace;font-weight:600;color:var(--text)">${dur !== null ? dur : '—'}</td>
-              <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.operador||'—'}</td>
-            </tr>`;
-        });
-      }
+    const sorted = Object.entries(byCode)
+      .map(([cod, v]) => ({ cod, avg: Math.round(v.total/v.count), count: v.count }))
+      .sort((a,b) => b.avg - a.avg).slice(0, 8);
+
+    const maxV = sorted[0]?.avg || 1;
+    const el = document.getElementById('dur-rank');
+    if (sorted.length === 0) { el.innerHTML = '<div class="empty"><div class="empty-icon">⏱</div><div class="empty-title">Sem dados de duração</div></div>'; return; }
+
+    el.innerHTML = sorted.map(({ cod, avg }) => {
+      const pct = (avg/maxV*100).toFixed(0);
+      return `<div class="dur-row">
+        <div class="dur-cod">${cod}</div>
+        <div class="dur-name">${CODIGOS[cod]||'?'}</div>
+        <div class="dur-bar-wrap"><div class="dur-bar-track"><div class="dur-bar-fill" style="width:${pct}%"></div></div></div>
+        <div class="dur-val-box"><span class="dur-val">${avg}</span><span class="dur-unit"> min</span></div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── TOP OPERADORES ──
+  function renderBarOp(data) {
+    const byOp = {};
+    data.forEach(r => { const k = r.operador||'—'; byOp[k] = (byOp[k]||0)+1; });
+    const sorted = Object.entries(byOp).sort((a,b)=>b[1]-a[1]).slice(0,7);
+    const maxV = sorted[0]?.[1] || 1;
+    document.getElementById('badge-op').textContent = `${Object.keys(byOp).length} operadores`;
+    const el = document.getElementById('bar-op');
+    if (sorted.length === 0) { el.innerHTML = '<div class="empty"><div class="empty-icon">👷</div><div class="empty-title">Sem dados</div></div>'; return; }
+    el.innerHTML = sorted.map(([op, cnt]) => {
+      const pct = (cnt/maxV*100).toFixed(0);
+      return `<div class="bar-row">
+        <div class="bar-info" style="min-width:96px"><div class="bar-name" title="${op}">${op.split(' ')[0]}</div></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:var(--purple)"></div></div>
+        <div class="bar-count" style="color:var(--purple)">${cnt}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── MÁQUINAS QUE MAIS PARAM ──
+  function renderMaquinas(data) {
+    const byEquip = {};
+    data.forEach(r => {
+      const k = r.equipamento || '—';
+      if (!byEquip[k]) byEquip[k] = { name: k, linha: r.linha||'—', count: 0, durs: [], altas: 0 };
+      byEquip[k].count++;
+      const dur = r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia);
+      if (dur !== null && dur > 0) byEquip[k].durs.push(dur);
+      if (['1','2'].includes(r.codMotivo)) byEquip[k].altas++;
+    });
+
+    const sorted = Object.values(byEquip).sort((a,b)=>b.count-a.count).slice(0,10);
+    const maxC = sorted[0]?.count || 1;
+
+    // KPIs Máquinas
+    document.getElementById('m-kpi-equip').textContent = Object.keys(byEquip).length;
+    if (sorted[0]) {
+      document.getElementById('m-kpi-worst').textContent = sorted[0].name;
+      document.getElementById('m-kpi-worst-sub').textContent = `${sorted[0].count} paradas`;
     }
 
-    function drawDonut(data) {
-      const groups = [
-        { name: 'Alta', color: '#C93B3A', count: 0 },
-        { name: 'Média', color: '#BA7517', count: 0 },
-        { name: 'Oper.', color: '#185FA5', count: 0 },
-        { name: 'Gestão', color: '#3B6D11', count: 0 },
+    const allDurMachines = Object.values(byEquip)
+      .map(m => ({ name: m.name, avg: m.durs.length ? Math.round(m.durs.reduce((a,b)=>a+b,0)/m.durs.length) : 0 }))
+      .filter(m => m.avg > 0)
+      .sort((a,b)=>b.avg-a.avg);
+
+    if (allDurMachines[0]) {
+      document.getElementById('m-kpi-dur').textContent = allDurMachines[0].avg;
+      document.getElementById('m-kpi-dur-sub').textContent = allDurMachines[0].name;
+    }
+
+    const totalMin = data.map(r => r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia))
+      .filter(d => d !== null && d > 0).reduce((a,b)=>a+b,0);
+    document.getElementById('m-kpi-total-min').textContent = totalMin;
+
+    const el = document.getElementById('machines-list');
+    document.getElementById('badge-machines').textContent = `top ${sorted.length}`;
+
+    if (sorted.length === 0) {
+      el.innerHTML = '<div class="empty"><div class="empty-icon">🏭</div><div class="empty-title">Nenhum equipamento</div></div>';
+      return;
+    }
+
+    const heat = ['var(--red)','var(--red)','var(--amber)','var(--amber)','var(--amber)'];
+
+    el.innerHTML = sorted.map((m, i) => {
+      const pct = (m.count/maxC*100).toFixed(0);
+      const avgDur = m.durs.length ? Math.round(m.durs.reduce((a,b)=>a+b,0)/m.durs.length) : 0;
+      const heatColor = heat[i] || 'var(--border2)';
+      const medals = ['🥇','🥈','🥉'];
+      const rankLabel = medals[i] || `#${i+1}`;
+      return `<div class="machine-row">
+        <div class="machine-heat" style="background:${heatColor}"></div>
+        <div class="machine-rank">${rankLabel}</div>
+        <div style="flex:1;min-width:0">
+          <div class="machine-name">${m.name}</div>
+          <div class="machine-line">Linha ${m.linha}</div>
+        </div>
+        <div class="machine-bar">
+          <div class="machine-bar-track"><div class="machine-bar-fill" style="width:${pct}%;background:${heatColor}"></div></div>
+        </div>
+        <div class="machine-stats">
+          <div class="machine-stat">
+            <div class="machine-stat-val" style="color:${heatColor}">${m.count}</div>
+            <div class="machine-stat-lbl">paradas</div>
+          </div>
+          <div class="machine-stat">
+            <div class="machine-stat-val" style="color:var(--amber)">${avgDur||'—'}</div>
+            <div class="machine-stat-lbl">min/med</div>
+          </div>
+          <div class="machine-stat">
+            <div class="machine-stat-val" style="color:var(--red)">${m.altas}</div>
+            <div class="machine-stat-lbl">quebras</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── PARADAS POR LINHA ──
+  function renderBarLinha(data) {
+    const byLinha = {};
+    data.forEach(r => { const k = r.linha||'—'; byLinha[k] = (byLinha[k]||0)+1; });
+    const sorted = Object.entries(byLinha).sort((a,b)=>b[1]-a[1]);
+    const maxV = sorted[0]?.[1] || 1;
+    document.getElementById('badge-linha').textContent = `${sorted.length} linhas`;
+    const el = document.getElementById('bar-linha');
+    if (sorted.length === 0) { el.innerHTML = '<div class="empty"><div class="empty-icon">🏭</div><div class="empty-title">Sem dados</div></div>'; return; }
+    el.innerHTML = sorted.map(([linha, cnt]) => {
+      const pct = (cnt/maxV*100).toFixed(0);
+      return `<div class="bar-row">
+        <div class="bar-info" style="min-width:80px"><div class="bar-name">${linha}</div></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:var(--blue)"></div></div>
+        <div class="bar-count" style="color:var(--blue)">${cnt}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── TIPO DE PARADA POR MÁQUINA ──
+  function renderMachineType(data) {
+    // Top 5 machines, breakdown by gravidade
+    const byEquip = {};
+    data.forEach(r => {
+      const k = r.equipamento || '—';
+      if (!byEquip[k]) byEquip[k] = { count:0, alta:0, media:0, op:0, gestao:0 };
+      byEquip[k].count++;
+      if (['1','2'].includes(r.codMotivo)) byEquip[k].alta++;
+      else if (['3','5','7'].includes(r.codMotivo)) byEquip[k].media++;
+      else if (['4','6','8'].includes(r.codMotivo)) byEquip[k].op++;
+      else byEquip[k].gestao++;
+    });
+
+    const top5 = Object.entries(byEquip).sort((a,b)=>b[1].count-a[1].count).slice(0,5);
+    const maxV = top5[0]?.[1].count || 1;
+    const el = document.getElementById('bar-machine-type');
+
+    if (top5.length === 0) { el.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">Sem dados</div></div>'; return; }
+
+    el.innerHTML = top5.map(([name, v]) => {
+      const altaPct = (v.alta/maxV*100).toFixed(0);
+      const mediaPct = (v.media/maxV*100).toFixed(0);
+      const pct = (v.count/maxV*100).toFixed(0);
+      return `<div class="bar-row" style="align-items:flex-start;flex-direction:column;gap:4px;padding:6px 0">
+        <div style="display:flex;justify-content:space-between;width:100%;align-items:center">
+          <span style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px">${name}</span>
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--muted)">${v.count}</span>
+        </div>
+        <div style="width:100%;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;display:flex;gap:1px">
+          <div style="width:${(v.alta/v.count*100).toFixed(0)}%;background:var(--red);height:100%"></div>
+          <div style="width:${(v.media/v.count*100).toFixed(0)}%;background:var(--amber);height:100%"></div>
+          <div style="width:${(v.op/v.count*100).toFixed(0)}%;background:var(--blue);height:100%"></div>
+          <div style="width:${(v.gestao/v.count*100).toFixed(0)}%;background:var(--green);height:100%"></div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <span style="font-size:9px;color:var(--red)">● Alta ${v.alta}</span>
+          <span style="font-size:9px;color:var(--amber)">● Média ${v.media}</span>
+          <span style="font-size:9px;color:var(--blue)">● Oper. ${v.op}</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── HISTÓRICO TABLE ──
+  function sortH(field) {
+    if (sortField === field) sortAsc = !sortAsc;
+    else { sortField = field; sortAsc = false; }
+    // update arrows
+    ['idx','data','linha','equip','cod','inicio','fim','dur','op'].forEach(k => {
+      const el = document.getElementById('sort-'+k);
+      if (el) el.textContent = '';
+    });
+    const map = { '_idx':'idx','dataInicial':'data','linha':'linha','equipamento':'equip','codMotivo':'cod','inicioOcorrencia':'inicio','fimOcorrencia':'fim','duracao':'dur','operador':'op' };
+    const el = document.getElementById('sort-' + (map[field]||field));
+    if (el) el.textContent = sortAsc ? ' ↑' : ' ↓';
+    renderHistorico();
+  }
+
+  function limparFiltrosH() {
+    document.getElementById('h-busca').value = '';
+    document.getElementById('h-data-ini').value = '';
+    document.getElementById('h-data-fim').value = '';
+    document.getElementById('h-status').value = '';
+    document.getElementById('h-cod').value = '';
+    renderHistorico();
+  }
+
+  function renderHistorico() {
+    const all = getAllRels();
+    const hoje = new Date().toISOString().slice(0,10);
+    const busca = document.getElementById('h-busca').value.toLowerCase();
+    const dataIni = document.getElementById('h-data-ini').value;
+    const dataFim = document.getElementById('h-data-fim').value;
+    const status  = document.getElementById('h-status').value;
+    const codF    = document.getElementById('h-cod').value;
+
+    const completos = all.filter(r => r.manutencao);
+    const incompletos = all.filter(r => !r.manutencao);
+
+    document.getElementById('h-total').textContent    = all.length;
+    document.getElementById('h-completo').textContent = completos.length;
+    document.getElementById('h-incompleto').textContent = incompletos.length;
+    document.getElementById('h-hoje').textContent     = all.filter(r => r.dataISO === hoje).length;
+
+    const durs = all.map(r => r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia)).filter(d => d !== null && d > 0);
+    const avg = durs.length ? Math.round(durs.reduce((a,b)=>a+b,0)/durs.length) : null;
+    document.getElementById('h-dur').textContent = avg ?? '—';
+
+    document.getElementById('warn-aberto').style.display = incompletos.length > 0 ? 'block' : 'none';
+
+    let lista = all.map((r,i) => ({ ...r, _idx: i+1 }));
+
+    if (busca) lista = lista.filter(r =>
+      (r.equipamento||'').toLowerCase().includes(busca) ||
+      (r.operador||'').toLowerCase().includes(busca) ||
+      (r.linha||'').toLowerCase().includes(busca) ||
+      (r.codEquipamento||'').toLowerCase().includes(busca)
+    );
+    if (dataIni) lista = lista.filter(r => r.dataInicial >= dataIni);
+    if (dataFim) lista = lista.filter(r => r.dataInicial <= dataFim);
+    if (status === 'completo') lista = lista.filter(r => r.manutencao);
+    if (status === 'incompleto') lista = lista.filter(r => !r.manutencao);
+    if (codF) lista = lista.filter(r => r.codMotivo === codF);
+
+    lista.sort((a,b) => {
+      let va = a[sortField] ?? '', vb = b[sortField] ?? '';
+      if (sortField === '_idx') { va = a._idx; vb = b._idx; }
+      if (typeof va === 'string') return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+      return sortAsc ? va - vb : vb - va;
+    });
+
+    const tbody = document.getElementById('h-tbody');
+    const filtDurs = lista.map(r => r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia)).filter(d => d !== null && d > 0);
+    const filtAvg = filtDurs.length ? Math.round(filtDurs.reduce((a,b)=>a+b,0)/filtDurs.length) : null;
+
+    document.getElementById('h-footer-count').textContent = `${lista.length} registro${lista.length !== 1 ? 's' : ''}`;
+    document.getElementById('h-footer-dur').textContent = filtAvg !== null ? `Duração média: ${filtAvg} min` : '';
+
+    if (lista.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="12"><div class="empty"><div class="empty-icon">📋</div><div class="empty-title">Nenhum registro</div></div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = lista.map(r => {
+      const dur = r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia);
+      const m = r.manutencao;
+      const bc = getCodBadgeClass(r.codMotivo);
+      return `<tr style="${!m ? 'background:rgba(232,69,60,.03)' : ''}">
+        <td style="color:var(--muted);font-family:var(--font-mono);font-size:10px">${r._idx}</td>
+        <td style="white-space:nowrap;font-family:var(--font-mono);font-size:11px;color:var(--muted)">${formatDate(r.dataInicial)}</td>
+        <td style="font-family:var(--font-mono);font-size:11px;color:var(--muted)">${r.linha||'—'}</td>
+        <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500">${r.equipamento||'—'}</td>
+        <td><span class="badge ${bc}">${r.codMotivo} — ${CODIGOS[r.codMotivo]||'?'}</span></td>
+        <td style="font-family:var(--font-mono);font-size:11px">${r.inicioOcorrencia||'—'}</td>
+        <td style="font-family:var(--font-mono);font-size:11px">${r.fimOcorrencia||'—'}</td>
+        <td class="dur-cell" style="color:${dur && dur > 30 ? 'var(--amber)' : 'var(--text)'}">${dur ?? '—'}</td>
+        <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.operador||'—'}</td>
+        <td style="font-size:11px;color:var(--muted)">${m?.manut1Nome||'—'}</td>
+        <td style="font-size:11px;color:var(--muted)">${m?.area||'—'}</td>
+        <td>${m ? '<span class="badge badge-done">✓ OK</span>' : '<span class="badge badge-open">Aberto</span>'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ── EXPORT ──
+  function exportarExcel() {
+    const all = getAllRels();
+    if (all.length === 0) { alert('Nenhum dado para exportar.'); return; }
+
+    const wb = XLSX.utils.book_new();
+
+    // Aba 1 — Detalhado
+    const headers = [
+      'Data','Linha','Cód. Equip.','Equipamento','Cód. Parada','Motivo',
+      'Início','Fim','Dur.(min)','Operador','Crachá','Turno',
+      'Manut.1','Manut.2','Manut.3','Tarefa','Motivo Manut.','Causa','Área','Obs.','Lote','Status'
+    ];
+    const rows = all.map(r => {
+      const m = r.manutencao;
+      const dur = r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia);
+      return [
+        r.dataInicial||'', r.linha||'', r.codEquipamento||'', r.equipamento||'',
+        r.codMotivo||'', CODIGOS[r.codMotivo]||'',
+        r.inicioOcorrencia||'', r.fimOcorrencia||'', dur ?? '',
+        r.operador||'', r.cracha||'', r.turno||'',
+        m?.manut1Nome||'', m?.manut2Nome||'', m?.manut3Nome||'',
+        m?.tarefa||'', m?.motivo||'', m?.causa||'', m?.area||'', m?.observacoes||'',
+        r.lote||'', m ? 'Completo' : 'Em aberto'
       ];
+    });
+    const ws1 = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    XLSX.utils.book_append_sheet(wb, ws1, 'Histórico Detalhado');
 
-      data.forEach(r => {
-        if (['1','2'].includes(r.codMotivo))          groups[0].count++;
-        else if (['3','5','7'].includes(r.codMotivo)) groups[1].count++;
-        else if (['4','6','8'].includes(r.codMotivo)) groups[2].count++;
-        else                                          groups[3].count++;
-      });
-
-      const total = data.length || 1;
-      const R = 36, cx = 50, cy = 50;
-      const circ = 2 * Math.PI * R;
-
-      const svg = document.getElementById('donut-svg');
-      svg.innerHTML = `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#E4E0D8" stroke-width="14"/>`;
-      svg.innerHTML += `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="700" fill="#16150E" font-family="DM Mono">${data.length}</text>`;
-
-      let offset = 0;
-      const legend = document.getElementById('donut-legend');
-      legend.innerHTML = '';
-
-      groups.forEach(g => {
-        const pct = g.count / total;
-        if (g.count > 0) {
-          const dash = circ * pct;
-          const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
-          circle.setAttribute('cx', cx);
-          circle.setAttribute('cy', cy);
-          circle.setAttribute('r', R);
-          circle.setAttribute('fill','none');
-          circle.setAttribute('stroke', g.color);
-          circle.setAttribute('stroke-width','14');
-          circle.setAttribute('stroke-dasharray',`${dash} ${circ - dash}`);
-          circle.setAttribute('stroke-dashoffset', -offset * circ);
-          circle.setAttribute('transform',`rotate(-90 ${cx} ${cy})`);
-          svg.appendChild(circle);
-          offset += pct;
-        }
-
-        legend.innerHTML += `
-          <div class="legend-item">
-            <div class="legend-swatch" style="background:${g.color}"></div>
-            <div class="legend-name">${g.name}</div>
-            <div class="legend-right">
-              <div class="legend-pct" style="color:${g.color}">${Math.round(pct*100)}%</div>
-              <div class="legend-cnt">${g.count}</div>
-            </div>
-          </div>`;
-      });
-    }
-
-    function drawTimeline(data) {
-      const el = document.getElementById('timeline');
-      el.innerHTML = '';
-      const days = Math.min(periodDays || 30, 30);
-      const counts = {};
-      const labels = [];
-
-      for (let i = days-1; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        const iso = d.toISOString().slice(0,10);
-        counts[iso] = 0;
-        labels.push({ iso, label: `${d.getDate()}/${d.getMonth()+1}` });
-      }
-
-      data.forEach(r => {
-        if (r.dataISO && counts[r.dataISO] !== undefined) counts[r.dataISO]++;
-      });
-
-      const maxCount = Math.max(...Object.values(counts), 1);
-      const totalHoje = counts[new Date().toISOString().slice(0,10)] || 0;
-      document.getElementById('badge-tl').textContent = `Hoje: ${totalHoje}`;
-
-      labels.forEach(({ iso, label }, idx) => {
-        const cnt = counts[iso] || 0;
-        const h = Math.max((cnt/maxCount)*64, cnt>0 ? 8 : 4);
-        const color = cnt === 0 ? '#E4E0D8'
-          : cnt >= 4 ? '#C93B3A'
-          : cnt >= 2 ? '#BA7517'
-          : '#1A1916';
-
-        const showLabel = days <= 14 || idx % Math.ceil(days/10) === 0;
-
-        const col = document.createElement('div');
-        col.className = 'tl-col';
-        col.innerHTML = `
-          <div class="tl-bar" style="height:${h}px;background:${color}" data-tip="${cnt} em ${label}"></div>
-          <div class="tl-label">${showLabel ? label : ''}</div>
-        `;
-        el.appendChild(col);
-      });
-    }
-
-    function exportarExcel() {
-      const data = getFiltered();
-      if (data.length === 0) {
-        alert('Nenhum dado para exportar no período/filtro selecionado.');
-        return;
-      }
-
-      const wb = XLSX.utils.book_new();
-      const headers = [
-        'Data','Equipamento','Cód. Equip.','Linha','Cód. Parada','Motivo Parada',
-        'Início','Fim','Duração (min)',
-        'Operador','Crachá','Turno',
-        'Manutentor 1','Manutentor 2','Manutentor 3',
-        'Tarefa','Motivo Manut.','Causa','Área','Observações','Lote'
-      ];
-
-      const rows = data.map(r => {
-        const m = r.manutencao;
-        const dur = calcDurMin(r.inicioOcorrencia, r.fimOcorrencia, r.duracao);
-        return [
-          r.dataInicial||'', r.equipamento||'', r.codEquipamento||'', r.linha||'',
-          r.codMotivo||'', CODIGOS[r.codMotivo]||'',
-          r.inicioOcorrencia||'', r.fimOcorrencia||'', dur !== null ? dur : '',
-          r.operador||'', r.cracha||'', r.turno||'',
-          m?.manut1Nome||'', m?.manut2Nome||'', m?.manut3Nome||'',
-          m?.tarefa||'', m?.motivo||'', m?.causa||'', m?.area||'', m?.observacoes||'', r.lote||''
-        ];
-      });
-
-      const ws1 = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-      XLSX.utils.book_append_sheet(wb, ws1, 'Paradas Detalhadas');
-
-      const byCod = {};
-      data.forEach(r => {
-        byCod[r.codMotivo] = byCod[r.codMotivo] || { cod: r.codMotivo, nome: CODIGOS[r.codMotivo]||'?', count: 0, durTotal: 0, durCount: 0 };
-        byCod[r.codMotivo].count++;
-        const dur = calcDurMin(r.inicioOcorrencia, r.fimOcorrencia, r.duracao);
-        if (dur !== null) { byCod[r.codMotivo].durTotal += dur; byCod[r.codMotivo].durCount++; }
-      });
-
-      const resumoRows = Object.values(byCod).sort((a,b)=>b.count-a.count).map(v => [
+    // Aba 2 — Resumo por código
+    const byCod = {};
+    all.forEach(r => {
+      byCod[r.codMotivo] = byCod[r.codMotivo] || { cod: r.codMotivo, nome: CODIGOS[r.codMotivo]||'?', count: 0, durTotal: 0, durCount: 0 };
+      byCod[r.codMotivo].count++;
+      const dur = r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia);
+      if (dur !== null && dur > 0) { byCod[r.codMotivo].durTotal += dur; byCod[r.codMotivo].durCount++; }
+    });
+    const ws2 = XLSX.utils.aoa_to_sheet([
+      ['Cód.','Motivo','Qtd. Paradas','% Total','Dur. Média (min)'],
+      ...Object.values(byCod).sort((a,b)=>b.count-a.count).map(v => [
         v.cod, v.nome, v.count,
-        data.length > 0 ? ((v.count/data.length)*100).toFixed(1)+'%' : '0%',
+        all.length ? ((v.count/all.length)*100).toFixed(1)+'%' : '0%',
         v.durCount > 0 ? Math.round(v.durTotal/v.durCount) : ''
-      ]);
+      ])
+    ]);
+    XLSX.utils.book_append_sheet(wb, ws2, 'Resumo por Código');
 
-      const ws2 = XLSX.utils.aoa_to_sheet([
-        ['Cód.','Motivo','Qtd. Paradas','% do Total','Duração Média (min)'],
-        ...resumoRows
-      ]);
-      XLSX.utils.book_append_sheet(wb, ws2, 'Resumo por Código');
+    // Aba 3 — Máquinas
+    const byEquip = {};
+    all.forEach(r => {
+      const k = r.equipamento||'—';
+      byEquip[k] = byEquip[k] || { equip: k, linha: r.linha||'—', count: 0, altas: 0, durs: [] };
+      byEquip[k].count++;
+      if (['1','2'].includes(r.codMotivo)) byEquip[k].altas++;
+      const dur = r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia);
+      if (dur !== null && dur > 0) byEquip[k].durs.push(dur);
+    });
+    const ws3 = XLSX.utils.aoa_to_sheet([
+      ['Equipamento','Linha','Total Paradas','Quebras (Cód.1-2)','Dur. Média (min)'],
+      ...Object.values(byEquip).sort((a,b)=>b.count-a.count).map(v => [
+        v.equip, v.linha, v.count, v.altas,
+        v.durs.length ? Math.round(v.durs.reduce((a,b)=>a+b,0)/v.durs.length) : ''
+      ])
+    ]);
+    XLSX.utils.book_append_sheet(wb, ws3, 'Ranking Máquinas');
 
-      const hoje = new Date();
-      const dd = String(hoje.getDate()).padStart(2,'0');
-      const mm = String(hoje.getMonth()+1).padStart(2,'0');
-      const yyyy = hoje.getFullYear();
-      const periodo = periodDays === 0 ? 'TodoPeriodo' : `${periodDays}dias`;
+    const d = new Date();
+    const stamp = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+    XLSX.writeFile(wb, `MaquinaStop_Analytics_${stamp}.xlsx`);
 
-      XLSX.writeFile(wb, `MaquinaStop_Dashboard_${yyyy}${mm}${dd}_${periodo}.xlsx`);
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
 
-      const toast = document.getElementById('toast');
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2500);
-    }
-
-    render();
-  </script>
+  // ── INIT ──
+  renderAll();
+  renderHistorico();
+</script>
 </body>
 </html>
