@@ -26,14 +26,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
+      padding: 16px;
     }
 
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 40px 36px;
+      padding: 32px 24px;
       width: 100%;
       max-width: 400px;
       box-shadow: 0 2px 24px rgba(0,0,0,0.06);
@@ -43,7 +43,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
     }
 
     .logo-icon {
@@ -61,35 +61,25 @@
       flex-shrink: 0;
     }
 
-    .logo-text {
-      font-size: 17px;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: -0.3px;
-    }
-
-    .logo-sub {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 1px;
-    }
+    .logo-text { font-size: 17px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
+    .logo-sub  { font-size: 11px; color: var(--muted); margin-top: 1px; }
 
     .tabs {
       display: flex;
       background: var(--bg);
       border-radius: 10px;
       padding: 4px;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     .tab-btn {
       flex: 1;
-      padding: 9px;
+      padding: 10px;
       border: none;
       background: none;
       border-radius: 7px;
       font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 500;
       color: var(--muted);
       cursor: pointer;
@@ -105,7 +95,7 @@
     .form-section { display: none; }
     .form-section.active { display: block; }
 
-    .field { margin-bottom: 16px; }
+    .field { margin-bottom: 14px; }
 
     .field label {
       display: block;
@@ -119,11 +109,11 @@
 
     .field input, .field select {
       width: 100%;
-      padding: 11px 14px;
+      padding: 12px 14px;
       border: 1px solid var(--border);
       border-radius: 9px;
       font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
+      font-size: 16px; /* 16px evita zoom no iOS */
       color: var(--text);
       background: var(--surface);
       outline: none;
@@ -131,25 +121,23 @@
       appearance: none;
     }
 
-    .field input:focus, .field select:focus {
-      border-color: #aaa;
-    }
+    .field input:focus, .field select:focus { border-color: #aaa; }
 
     .field-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
     }
 
     .btn {
       width: 100%;
-      padding: 13px;
+      padding: 14px;
       background: var(--accent);
       color: #fff;
       border: none;
       border-radius: 10px;
       font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       margin-top: 4px;
@@ -167,7 +155,7 @@
       border-radius: 8px;
       padding: 10px 14px;
       font-size: 13px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       display: none;
     }
 
@@ -178,7 +166,7 @@
       border-radius: 8px;
       padding: 10px 14px;
       font-size: 13px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       display: none;
     }
 
@@ -186,7 +174,12 @@
       text-align: center;
       font-size: 11px;
       color: var(--muted);
-      margin-top: 24px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 360px) {
+      .field-row { grid-template-columns: 1fr; }
+      .card { padding: 24px 16px; }
     }
   </style>
 </head>
@@ -210,7 +203,7 @@
       <div class="error-msg" id="login-error">Usuário ou senha incorretos.</div>
       <div class="field">
         <label>Crachá / Usuário</label>
-        <input type="text" id="login-cracha" placeholder="Ex: 00123" autocomplete="username"/>
+        <input type="text" id="login-cracha" placeholder="Ex: 00123" autocomplete="username" inputmode="numeric"/>
       </div>
       <div class="field">
         <label>Senha</label>
@@ -226,16 +219,16 @@
       <div class="field-row">
         <div class="field">
           <label>Nome</label>
-          <input type="text" id="cad-nome" placeholder="João"/>
+          <input type="text" id="cad-nome" placeholder="João" autocomplete="given-name"/>
         </div>
         <div class="field">
           <label>Sobrenome</label>
-          <input type="text" id="cad-sobrenome" placeholder="Silva"/>
+          <input type="text" id="cad-sobrenome" placeholder="Silva" autocomplete="family-name"/>
         </div>
       </div>
       <div class="field">
         <label>Crachá (matrícula)</label>
-        <input type="text" id="cad-cracha" placeholder="Ex: 00123"/>
+        <input type="text" id="cad-cracha" placeholder="Ex: 00123" inputmode="numeric"/>
       </div>
       <div class="field">
         <label>Turno</label>
@@ -248,7 +241,7 @@
       </div>
       <div class="field">
         <label>Senha</label>
-        <input type="password" id="cad-senha" placeholder="Crie uma senha"/>
+        <input type="password" id="cad-senha" placeholder="Crie uma senha" autocomplete="new-password"/>
       </div>
       <button class="btn" onclick="doCadastro()">Criar conta</button>
     </div>
@@ -270,15 +263,10 @@
       const senha  = document.getElementById('login-senha').value.trim();
       const err    = document.getElementById('login-error');
       err.style.display = 'none';
-
       if (!cracha || !senha) { err.style.display = 'block'; return; }
-
       const users = JSON.parse(localStorage.getItem('ms_users') || '[]');
       const user  = users.find(u => u.cracha === cracha && u.senha === senha);
-
-      // fallback admin padrão
       const isAdmin = cracha === 'admin' && senha === 'admin123';
-
       if (user || isAdmin) {
         const loggedUser = user || { nome: 'Administrador', cracha: 'admin', turno: 'Turno A' };
         localStorage.setItem('ms_user', JSON.stringify(loggedUser));
@@ -298,23 +286,15 @@
       const ok        = document.getElementById('cad-success');
       err.style.display = 'none';
       ok.style.display  = 'none';
-
-      if (!nome || !sobrenome || !cracha || !turno || !senha) {
-        err.style.display = 'block'; return;
-      }
-
+      if (!nome || !sobrenome || !cracha || !turno || !senha) { err.style.display = 'block'; return; }
       const users = JSON.parse(localStorage.getItem('ms_users') || '[]');
       users.push({ nome: nome + ' ' + sobrenome, cracha, turno, senha });
       localStorage.setItem('ms_users', JSON.stringify(users));
-
       ok.style.display = 'block';
       setTimeout(() => switchTab('login'), 1800);
     }
 
-    // Enter para login
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Enter') doLogin();
-    });
+    document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
   </script>
 </body>
 </html>
