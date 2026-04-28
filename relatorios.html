@@ -235,6 +235,17 @@
       .detail-grid { grid-template-columns: 1fr; }
       .topbar { padding: 12px 16px; }
       .main { padding: 16px 12px 60px; }
+      .filter-row { gap: 6px; }
+      .search-input { min-width: 120px; font-size: 14px; }
+      .filter-btn { font-size: 11px; padding: 6px 12px; }
+      .rel-card-header { flex-wrap: wrap; }
+      .rel-header-content { padding: 10px 12px; gap: 8px; }
+      .rel-equip { font-size: 13px; }
+      .rel-meta { font-size: 11px; }
+      .btn-manut { font-size: 11px; padding: 8px 12px; }
+      .badge { font-size: 10px; padding: 2px 6px; }
+      .detail-val { font-size: 12px; }
+      .desc-box { font-size: 12px; padding: 10px; }
     }
   </style>
 </head>
@@ -384,6 +395,7 @@
               <div class="detail-item"><div class="detail-key">Data final</div><div class="detail-val">${formatDate(r.dataFinal) || '—'}</div></div>
               <div class="detail-item"><div class="detail-key">Início</div><div class="detail-val">${r.inicioOcorrencia || '—'}</div></div>
               <div class="detail-item"><div class="detail-key">Fim</div><div class="detail-val">${r.fimOcorrencia || '—'}</div></div>
+              <div class="detail-item"><div class="detail-key">Duração</div><div class="detail-val">${r.duracao !== null && r.duracao !== undefined ? r.duracao + ' min' : '—'}</div></div>
               <div class="detail-item"><div class="detail-key">Turno</div><div class="detail-val">${r.turno || '—'}</div></div>
               <div class="detail-item"><div class="detail-key">Crachá op.</div><div class="detail-val">${r.cracha || '—'}</div></div>
             </div>

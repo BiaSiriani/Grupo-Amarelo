@@ -648,12 +648,17 @@
       return `${d}/${m}`;
     }
 
-    function calcDurMin(inicio, fim) {
+    function calcDurMin(inicio, fim, armazenado) {
+      // Prioriza a duração já armazenada no relatório
+      if (armazenado !== null && armazenado !== undefined && armazenado !== '') {
+        return armazenado;
+      }
+      
       if (!inicio || !fim) return null;
-      const [h1,m1] = inicio.split(':').map(Number);
-      const [h2,m2] = fim.split(':').map(Number);
-      let mins = (h2*60+m2) - (h1*60+m1);
-      if (mins < 0) mins += 24*60;
+      const [h1, m1] = inicio.split(':').map(Number);
+      const [h2, m2] = fim.split(':').map(Number);
+      let mins = (h2 * 60 + m2) - (h1 * 60 + m1);
+      if (mins < 0) mins += 24 * 60;
       return mins;
     }
 
@@ -718,14 +723,17 @@
       // KPIs
       const alta  = data.filter(r => ['1','2'].includes(r.codMotivo)).length;
       const media = data.filter(r => ['3','5','7'].includes(r.codMotivo)).length;
-      const durs  = data.map(r => calcDurMin(r.inicioOcorrencia, r.fimOcorrencia)).filter(d => d !== null);
+      const durs  = data.map(r => {
+        const dur = calcDurMin(r.inicioOcorrencia, r.fimOcorrencia, r.duracao);
+        return dur;
+      }).filter(d => d !== null && d !== undefined);
       const avgDur = durs.length ? Math.round(durs.reduce((a,b)=>a+b,0)/durs.length) : null;
 
       document.getElementById('kpi-total').textContent = data.length;
       document.getElementById('kpi-alta').textContent  = alta;
       document.getElementById('kpi-media').textContent = media;
       document.getElementById('kpi-dur').textContent   = avgDur !== null ? avgDur : '—';
-      document.getElementById('kpi-dur-sub').textContent = avgDur !== null ? 'minutos por parada' : 'sem dados de tempo';
+      document.getElementById('kpi-dur-sub').textContent = avgDur !== null ? 'minutos por parada' : 'sem dados';
 
       // Barras por código
       const byCod = {};
@@ -798,16 +806,16 @@
         tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted)">Nenhum registro no período</td></tr>`;
       } else {
         [...data].reverse().slice(0,40).forEach(r => {
-          const dur = calcDurMin(r.inicioOcorrencia, r.fimOcorrencia);
+          const dur = calcDurMin(r.inicioOcorrencia, r.fimOcorrencia, r.duracao);
           const bc  = getBadgeClass(r.codMotivo);
           tbody.innerHTML += `
             <tr>
               <td style="font-weight:500">${r.equipamento||'—'}</td>
               <td><span class="badge ${bc}">${r.codMotivo} — ${CODIGOS[r.codMotivo]||'?'}</span></td>
-              <td style="color:var(--muted);font-family:'DM Mono',monospace">${formatDate(r.dataInicial)}</td>
-              <td style="font-family:'DM Mono',monospace">${dur !== null ? dur + ' min' : '—'}</td>
+              <td style="color:var(--muted);font-family:'DM Mono',monospace;font-size:11px">${formatDate(r.dataInicial)}</td>
+              <td style="font-family:'DM Mono',monospace;font-size:13px;font-weight:500">${dur !== null ? dur : '—'}</td>
               <td>${r.operador||'—'}</td>
-              <td>${r.manutencao?.manut1Nome||'—'}</td>
+              <td style="color:var(--green);font-weight:500">${r.manutencao?.manut1Nome||'—'}</td>
               <td>${r.manutencao?.area||'—'}</td>
             </tr>`;
         });
@@ -926,7 +934,6 @@
 
       const wb = XLSX.utils.book_new();
 
-      // ── ABA 1: Dados Detalhados ──
       const headers = [
         'Data','Equipamento','Cód. Equip.','Linha','Cód. Parada','Motivo Parada',
         'Início','Fim','Duração (min)',
@@ -937,7 +944,8 @@
 
       const rows = data.map(r => {
         const m = r.manutencao;
-        const dur = calcDurMin(r.inicioOcorrencia, r.fimOcorrencia);
+        const dur = calcDurMin(r.inicioOcorrencia, r.fimOcorrencia, r.duracao);
+        const durHrs = dur !== null ? dur / 60 : null;
         return [
           r.dataInicial||'',
           r.equipamento||'',
@@ -981,7 +989,7 @@
       data.forEach(r => {
         byCod[r.codMotivo] = byCod[r.codMotivo] || { cod: r.codMotivo, nome: CODIGOS[r.codMotivo]||'?', count: 0, durTotal: 0, durCount: 0 };
         byCod[r.codMotivo].count++;
-        const dur = calcDurMin(r.inicioOcorrencia, r.fimOcorrencia);
+        const dur = calcDurMin(r.inicioOcorrencia, r.fimOcorrencia, r.duracao);
         if (dur !== null) { byCod[r.codMotivo].durTotal += dur; byCod[r.codMotivo].durCount++; }
       });
 
@@ -991,13 +999,14 @@
         v.durCount > 0 ? Math.round(v.durTotal/v.durCount) : ''
       ]);
 
+      const totalDur = data.map(r=>calcDurMin(r.inicioOcorrencia,r.fimOcorrencia,r.duracao)).filter(d=>d!==null);
+      const avgTotal = totalDur.length > 0 ? Math.round(totalDur.reduce((a,b)=>a+b,0) / totalDur.length) : '';
+
       const ws2 = XLSX.utils.aoa_to_sheet([
         ['Cód.','Motivo','Qtd. Paradas','% do Total','Duração Média (min)'],
         ...resumoRows,
         [],
-        ['TOTAL','',data.length,'100%',
-          data.length > 0 ? Math.round(data.map(r=>calcDurMin(r.inicioOcorrencia,r.fimOcorrencia)).filter(d=>d!==null).reduce((a,b)=>a+b,0) / data.filter(r=>calcDurMin(r.inicioOcorrencia,r.fimOcorrencia)!==null).length || 0) : ''
-        ]
+        ['TOTAL','',data.length,'100%', avgTotal]
       ]);
       ws2['!cols'] = [{wch:6},{wch:22},{wch:14},{wch:12},{wch:20}];
       XLSX.utils.book_append_sheet(wb, ws2, 'Resumo por Código');
@@ -1022,7 +1031,6 @@
       ws3['!cols'] = [{wch:6},{wch:28},{wch:14},{wch:12}];
       XLSX.utils.book_append_sheet(wb, ws3, 'Top Equipamentos');
 
-      // Nome do arquivo
       const hoje = new Date();
       const dd = String(hoje.getDate()).padStart(2,'0');
       const mm = String(hoje.getMonth()+1).padStart(2,'0');

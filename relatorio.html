@@ -267,6 +267,13 @@
           <div class="field"><label>Data final</label><input type="date" id="data-final"/></div>
           <div class="field"><label>Início ocorrência *</label><input type="time" id="inicio-ocorrencia"/></div>
           <div class="field"><label>Fim ocorrência</label><input type="time" id="fim-ocorrencia"/></div>
+          <div class="field" style="grid-column: span 2;">
+            <label>Duração da parada</label>
+            <div id="duracao-display" style="padding:11px 12px;background:var(--bg);border:1px solid var(--border);border-radius:9px;font-size:16px;font-weight:600;color:var(--accent);display:flex;align-items:center;justify-content:space-between;min-height:44px">
+              <span id="dur-value">—</span>
+              <span id="dur-unit" style="font-size:12px;color:var(--muted);font-weight:500">minutos</span>
+            </div>
+          </div>
           <div class="field span-2">
             <label>Cód. selecionado</label>
             <input type="text" id="cod-motivo" readonly placeholder="Selecione o código abaixo"/>
@@ -411,6 +418,13 @@
             <div class="field"><label>Operador (ref.)</label><input type="text" id="mn-operador-ref" placeholder="Nome do operador"/></div>
             <div class="field"><label>Início ocorrência *</label><input type="time" id="mn-inicio"/></div>
             <div class="field"><label>Fim ocorrência</label><input type="time" id="mn-fim"/></div>
+            <div class="field" style="grid-column: span 2;">
+              <label>Duração da parada</label>
+              <div id="mn-duracao-display" style="padding:11px 12px;background:var(--bg);border:1px solid var(--border);border-radius:9px;font-size:16px;font-weight:600;color:var(--accent);display:flex;align-items:center;justify-content:space-between;min-height:44px">
+                <span id="mn-dur-value">—</span>
+                <span id="mn-dur-unit" style="font-size:12px;color:var(--muted);font-weight:500">minutos</span>
+              </div>
+            </div>
             <div class="field span-2">
               <label>Cód. selecionado</label>
               <input type="text" id="mn-cod-motivo" readonly placeholder="Selecione o código abaixo"/>
@@ -708,12 +722,67 @@
       }
     }
 
+    function calcularDuracao(inicioId, fimId) {
+      const inicio = document.getElementById(inicioId).value;
+      const fim = document.getElementById(fimId).value;
+      
+      if (!inicio || !fim) {
+        document.getElementById('dur-value').textContent = '—';
+        return null;
+      }
+      
+      const [h1, m1] = inicio.split(':').map(Number);
+      const [h2, m2] = fim.split(':').map(Number);
+      let minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
+      
+      if (minutos < 0) minutos += 24 * 60;
+      
+      document.getElementById('dur-value').textContent = minutos;
+      return minutos;
+    }
+
+    document.getElementById('inicio-ocorrencia').addEventListener('change', () => {
+      calcularDuracao('inicio-ocorrencia', 'fim-ocorrencia');
+    });
+    document.getElementById('fim-ocorrencia').addEventListener('change', () => {
+      calcularDuracao('inicio-ocorrencia', 'fim-ocorrencia');
+    });
+    document.getElementById('mn-inicio').addEventListener('change', () => {
+      const inicio = document.getElementById('mn-inicio').value;
+      const fim = document.getElementById('mn-fim').value;
+      if (!inicio || !fim) {
+        document.getElementById('mn-dur-value').textContent = '—';
+        return null;
+      }
+      const [h1, m1] = inicio.split(':').map(Number);
+      const [h2, m2] = fim.split(':').map(Number);
+      let minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
+      if (minutos < 0) minutos += 24 * 60;
+      document.getElementById('mn-dur-value').textContent = minutos;
+      return minutos;
+    });
+    document.getElementById('mn-fim').addEventListener('change', () => {
+      const inicio = document.getElementById('mn-inicio').value;
+      const fim = document.getElementById('mn-fim').value;
+      if (!inicio || !fim) {
+        document.getElementById('mn-dur-value').textContent = '—';
+        return null;
+      }
+      const [h1, m1] = inicio.split(':').map(Number);
+      const [h2, m2] = fim.split(':').map(Number);
+      let minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
+      if (minutos < 0) minutos += 24 * 60;
+      document.getElementById('mn-dur-value').textContent = minutos;
+      return minutos;
+    });
+
     function salvarOperador() {
       const linha = document.getElementById('linha').value.trim();
       const codEquip = document.getElementById('cod-equip').value.trim();
       const equip = document.getElementById('equipamento').value.trim();
       const dataIni = document.getElementById('data-inicial').value;
       const inicio = document.getElementById('inicio-ocorrencia').value;
+      const fim = document.getElementById('fim-ocorrencia').value;
       const desc = document.getElementById('descricao').value.trim();
       const err = document.getElementById('error-bar');
       err.style.display = 'none';
@@ -723,13 +792,17 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
+      
+      const duracao = calcularDuracao('inicio-ocorrencia', 'fim-ocorrencia');
+      
       const relatorio = {
         id: Date.now(), linha,
         lote: document.getElementById('lote').value.trim(),
         cracha: user.cracha, operador: user.nome,
         codEquipamento: codEquip, equipamento: equip,
         dataInicial: dataIni, dataFinal: document.getElementById('data-final').value,
-        inicioOcorrencia: inicio, fimOcorrencia: document.getElementById('fim-ocorrencia').value,
+        inicioOcorrencia: inicio, fimOcorrencia: fim,
+        duracao: duracao,
         codMotivo: selectedSubCod.cod, subCodigo: selectedSubCod.sub, subNome: selectedSubCod.nome,
         descricao: desc, dataISO: hoje, turno: user.turno, criadoEm: new Date().toISOString(),
       };
@@ -791,6 +864,16 @@
         err.style.display = 'block'; window.scrollTo({ top: 0, behavior: 'smooth' }); return;
       }
       const operadorRef = document.getElementById('mn-operador-ref').value.trim();
+      
+      const duracao = (() => {
+        if (!inicio || !fim) return null;
+        const [h1, m1] = inicio.split(':').map(Number);
+        const [h2, m2] = fim.split(':').map(Number);
+        let mins = (h2 * 60 + m2) - (h1 * 60 + m1);
+        if (mins < 0) mins += 24 * 60;
+        return mins;
+      })();
+      
       const relatorio = {
         id: Date.now(), linha,
         lote: document.getElementById('mn-lote').value.trim(),
@@ -798,7 +881,8 @@
         operador: operadorRef || `Reg. por manutentor: ${user.nome}`,
         codEquipamento: codEquip, equipamento: equip,
         dataInicial: data, dataFinal: '',
-        inicioOcorrencia: inicio, fimOcorrencia: document.getElementById('mn-fim').value,
+        inicioOcorrencia: inicio, fimOcorrencia: fim,
+        duracao: duracao,
         codMotivo: selectedSubCodNovo.cod, subCodigo: selectedSubCodNovo.sub, subNome: selectedSubCodNovo.nome,
         descricao: desc, dataISO: data, turno: user.turno, criadoEm: new Date().toISOString(),
         manutencao: {

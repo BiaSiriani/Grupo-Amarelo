@@ -384,7 +384,7 @@
             <th>Descrição</th>
             <th onclick="sortBy('inicioOcorrencia')">Início<span class="sort-arrow">↕</span></th>
             <th onclick="sortBy('fimOcorrencia')">Fim<span class="sort-arrow">↕</span></th>
-            <th>Dur. (min)</th>
+            <th onclick="sortBy('duracao')">Duração (min)<span class="sort-arrow">↕</span></th>
             <th onclick="sortBy('operador')">Operador<span class="sort-arrow">↕</span></th>
             <th>Manutentor 1</th>
             <th>Manutentor 2</th>
@@ -436,7 +436,10 @@
     renderTabela();
   }
 
-  function calcDurMin(inicio, fim) {
+  function calcDurMin(inicio, fim, armazenado) {
+    if (armazenado !== null && armazenado !== undefined && armazenado !== '') {
+      return armazenado;
+    }
     if (!inicio || !fim) return null;
     const [h1, m1] = inicio.split(':').map(Number);
     const [h2, m2] = fim.split(':').map(Number);
@@ -475,7 +478,7 @@
     document.getElementById('s-hoje').textContent = rels.filter(r => r.dataISO === hoje).length;
 
     // Duração média
-    const durs = rels.map(r => calcDurMin(r.inicioOcorrencia, r.fimOcorrencia)).filter(d => d !== null);
+    const durs = rels.map(r => calcDurMin(r.inicioOcorrencia, r.fimOcorrencia, r.duracao)).filter(d => d !== null && d !== undefined);
     const avgDur = durs.length > 0 ? Math.round(durs.reduce((a,b) => a+b, 0) / durs.length) : null;
     document.getElementById('s-dur').textContent = avgDur !== null ? avgDur : '—';
 
@@ -532,7 +535,7 @@
       : '';
 
     lista.forEach((r, idx) => {
-      const dur = calcDurMin(r.inicioOcorrencia, r.fimOcorrencia);
+      const dur = r.duracao !== null && r.duracao !== undefined ? r.duracao : calcDurMin(r.inicioOcorrencia, r.fimOcorrencia, r.duracao);
       const nomeMotivo = codigos[r.codMotivo] || `Cód. ${r.codMotivo}`;
       const m = r.manutencao;
       const isCompleto = !!m;
@@ -577,46 +580,44 @@
       return;
     }
 
-    // Monta os dados no formato da planilha original
     const headers = [
       'Data', 'Linha', 'CÓD.', 'Nome Equipamento', 'DESCRIÇÃO',
       'Inicio da ocorrência', 'Fim da ocorrência',
       'Manutentor 1', 'Manutentor 2', 'Manutentor 3',
       'NºRELATÓRIO', 'hora', 'D. OCORRENCI (horas)', 'D. OCORRENCI (min)',
       'OFICINA',
-      // Colunas extras do sistema
       'Operador', 'Crachá', 'Turno', 'Lote', 'Cód. Motivo Parada', 'Tarefa Manut.', 'Causa Manut.', 'Obs. Manutenção'
     ];
 
     const rows = rels.map((r, i) => {
       const m = r.manutencao;
-      const durMin = calcDurMin(r.inicioOcorrencia, r.fimOcorrencia);
+      const durMin = r.duracao !== null && r.duracao !== undefined ? r.duracao : null;
       const durHrs = durMin !== null ? durMin / 60 : null;
 
       return [
-        r.dataInicial || '',                // Data
-        r.linha || '',                       // Linha
-        r.codEquipamento || '',              // CÓD.
-        r.equipamento || '',                 // Nome Equipamento
-        r.descricao || '',                   // DESCRIÇÃO
-        r.inicioOcorrencia || '',            // Inicio da ocorrência
-        r.fimOcorrencia || '',               // Fim da ocorrência
-        m?.manut1Nome || '',                 // Manutentor 1
-        m?.manut2Nome || '',                 // Manutentor 2
-        m?.manut3Nome || '',                 // Manutentor 3
-        i + 1,                               // NºRELATÓRIO
-        r.inicioOcorrencia || '',            // hora
-        durHrs !== null ? Math.round(durHrs * 100) / 100 : '',  // D. OCORRENCI (horas)
-        durMin !== null ? durMin : '',       // D. OCORRENCI (min)
-        m?.area || '',                       // OFICINA
-        r.operador || '',                    // Operador
-        r.cracha || '',                      // Crachá
-        r.turno || '',                       // Turno
-        r.lote || '',                        // Lote
-        `${r.codMotivo} — ${codigos[r.codMotivo] || '?'}`,  // Cód. Motivo
-        m?.tarefa || '',                     // Tarefa Manut.
-        m?.causa || '',                      // Causa Manut.
-        m?.observacoes || '',               // Obs. Manutenção
+        r.dataInicial || '',
+        r.linha || '',
+        r.codEquipamento || '',
+        r.equipamento || '',
+        r.descricao || '',
+        r.inicioOcorrencia || '',
+        r.fimOcorrencia || '',
+        m?.manut1Nome || '',
+        m?.manut2Nome || '',
+        m?.manut3Nome || '',
+        i + 1,
+        r.inicioOcorrencia || '',
+        durHrs !== null ? Math.round(durHrs * 100) / 100 : '',
+        durMin !== null ? durMin : '',
+        m?.area || '',
+        r.operador || '',
+        r.cracha || '',
+        r.turno || '',
+        r.lote || '',
+        `${r.codMotivo} — ${codigos[r.codMotivo] || '?'}`,
+        m?.tarefa || '',
+        m?.causa || '',
+        m?.observacoes || '',
       ];
     });
 
@@ -624,7 +625,6 @@
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet(wsData);
 
-    // Larguras de coluna
     ws['!cols'] = [
       {wch:12},{wch:8},{wch:10},{wch:24},{wch:40},
       {wch:10},{wch:10},{wch:20},{wch:20},{wch:20},
@@ -635,7 +635,6 @@
 
     XLSX.utils.book_append_sheet(wb, ws, 'Histórico Paradas');
 
-    // Nome do arquivo com data atual
     const hoje = new Date();
     const dd = String(hoje.getDate()).padStart(2,'0');
     const mm = String(hoje.getMonth()+1).padStart(2,'0');
