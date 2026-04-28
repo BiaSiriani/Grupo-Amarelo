@@ -137,7 +137,7 @@
       margin-bottom: 14px;
     }
     @media (min-width: 480px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; } }
-    @media (min-width: 680px) { .kpi-grid { grid-template-columns: repeat(6, 1fr); } }
+    @media (min-width: 680px) { .kpi-grid { grid-template-columns: repeat(4, 1fr); } }
 
     .kpi {
       background: var(--surface);
@@ -435,6 +435,7 @@
   <div class="period-row">
     <span class="period-label" id="hero-sub">Carregando...</span>
     <div class="period-tabs">
+      <button class="period-tab" onclick="setPeriod(1,this)">Ontem</button>
       <button class="period-tab active" onclick="setPeriod(7,this)">7d</button>
       <button class="period-tab" onclick="setPeriod(30,this)">30d</button>
       <button class="period-tab" onclick="setPeriod(90,this)">90d</button>
@@ -461,20 +462,6 @@
         <div class="kpi-label">Total</div>
         <div class="kpi-val" id="kpi-total">—</div>
         <div class="kpi-sub">paradas</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-stripe" style="background:var(--red)"></div>
-        <span class="kpi-icon">🔴</span>
-        <div class="kpi-label">Alta Grav.</div>
-        <div class="kpi-val" id="kpi-alta" style="color:var(--red)">—</div>
-        <div class="kpi-sub">Quebra + Set-up</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-stripe" style="background:var(--amber)"></div>
-        <span class="kpi-icon">🟡</span>
-        <div class="kpi-label">Média Grav.</div>
-        <div class="kpi-val" id="kpi-media" style="color:var(--amber)">—</div>
-        <div class="kpi-sub">Defeito, Troca</div>
       </div>
       <div class="kpi">
         <div class="kpi-stripe" style="background:var(--amber)"></div>
@@ -748,6 +735,18 @@
   function getFiltered() {
     const all = getAllRels();
     const now = new Date();
+
+    // "Ontem": mostrar apenas o dia de ontem
+    if (periodDays === 1) {
+      const ontem = new Date();
+      ontem.setDate(ontem.getDate() - 1);
+      const ontemISO = ontem.toISOString().slice(0, 10);
+      return all.filter(r => {
+        const d = (r.dataISO || r.dataInicial || '');
+        return d === ontemISO;
+      });
+    }
+
     return all.filter(r => {
       if (periodDays > 0) {
         const d = new Date(r.dataISO || r.criadoEm || '2020-01-01');
@@ -782,7 +781,14 @@
   function renderAll() {
     const data = getFiltered();
     const all  = getAllRels();
-    const label = periodDays === 0 ? 'todo o período' : `últimos ${periodDays}d`;
+    let label;
+    if (periodDays === 1) {
+      const ontem = new Date();
+      ontem.setDate(ontem.getDate() - 1);
+      label = `ontem (${ontem.toLocaleDateString('pt-BR')})`;
+    } else {
+      label = periodDays === 0 ? 'todo o período' : `últimos ${periodDays}d`;
+    }
     document.getElementById('hero-sub').textContent =
       `${data.length} parada${data.length !== 1 ? 's' : ''} — ${label} · ${all.length} total`;
 
@@ -798,16 +804,12 @@
   }
 
   function renderKPIs(data) {
-    const alta  = data.filter(r => ['1','2'].includes(r.codMotivo)).length;
-    const media = data.filter(r => ['3','5','7'].includes(r.codMotivo)).length;
     const aberto = data.filter(r => !r.manutencao).length;
     const ok    = data.filter(r => r.manutencao).length;
     const durs  = data.map(r => r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia)).filter(d => d !== null && d > 0);
     const avg   = durs.length ? Math.round(durs.reduce((a,b)=>a+b,0)/durs.length) : null;
 
     document.getElementById('kpi-total').textContent  = data.length;
-    document.getElementById('kpi-alta').textContent   = alta;
-    document.getElementById('kpi-media').textContent  = media;
     document.getElementById('kpi-dur').textContent    = avg ?? '—';
     document.getElementById('kpi-aberto').textContent = aberto;
     document.getElementById('kpi-ok').textContent     = ok;
@@ -816,6 +818,25 @@
   function renderTimeline(data) {
     const el = document.getElementById('timeline');
     el.innerHTML = '';
+
+    // Para "Ontem", mostrar apenas o dia de ontem
+    if (periodDays === 1) {
+      const ontem = new Date();
+      ontem.setDate(ontem.getDate() - 1);
+      const ontemISO = ontem.toISOString().slice(0, 10);
+      const cnt = data.length;
+      document.getElementById('badge-hoje').textContent = `Ontem: ${cnt}`;
+
+      const col = document.createElement('div');
+      col.className = 'tl-col';
+      const h = Math.max(cnt > 0 ? (cnt / Math.max(cnt, 1)) * 64 : 3, cnt > 0 ? 10 : 3);
+      const color = cnt === 0 ? 'var(--border)' : cnt >= 5 ? 'var(--red)' : cnt >= 3 ? 'var(--amber)' : 'var(--blue-border)';
+      const label = `${ontem.getDate()}/${ontem.getMonth()+1}`;
+      col.innerHTML = `<div class="tl-bar" style="height:${h}px;background:${color}" data-tip="${cnt} em ${label}"></div><div class="tl-label">${label}</div>`;
+      el.appendChild(col);
+      return;
+    }
+
     const days = Math.min(periodDays || 30, 60);
     const counts = {}, labels = [];
 
