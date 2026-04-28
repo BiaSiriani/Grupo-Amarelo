@@ -33,7 +33,6 @@
       color: var(--text);
     }
 
-    /* TOPBAR */
     .topbar {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
@@ -46,87 +45,43 @@
       z-index: 50;
     }
 
-    .top-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .top-logo { display: flex; align-items: center; gap: 10px; }
 
     .logo-icon {
-      width: 34px;
-      height: 34px;
+      width: 34px; height: 34px;
       background: var(--accent);
       border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-weight: 700;
-      font-size: 13px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 13px;
     }
 
-    .logo-name {
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-    }
+    .logo-name { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
 
-    .top-user {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .top-user { display: flex; align-items: center; gap: 10px; }
 
-    .user-info {
-      text-align: right;
-    }
-
-    .user-name {
-      font-size: 13px;
-      font-weight: 500;
-    }
-
-    .user-turno {
-      font-size: 11px;
-      color: var(--muted);
-    }
+    .user-info { text-align: right; }
+    .user-name { font-size: 13px; font-weight: 500; }
+    .user-turno { font-size: 11px; color: var(--muted); }
 
     .avatar {
-      width: 34px;
-      height: 34px;
+      width: 34px; height: 34px;
       border-radius: 50%;
       background: var(--accent);
       color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600;
+      cursor: pointer; flex-shrink: 0;
     }
 
-    /* MAIN */
     .main {
       max-width: 720px;
       margin: 0 auto;
       padding: 28px 20px 60px;
     }
 
-    .page-title {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.5px;
-      margin-bottom: 4px;
-    }
+    .page-title { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .page-sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
 
-    .page-sub {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 28px;
-    }
-
-    /* BIG ACTION BUTTON */
     .action-btn {
       display: flex;
       align-items: center;
@@ -139,7 +94,7 @@
       width: 100%;
       cursor: pointer;
       text-align: left;
-      margin-bottom: 24px;
+      margin-bottom: 12px;
       transition: opacity 0.15s, transform 0.12s;
       text-decoration: none;
     }
@@ -148,45 +103,27 @@
     .action-btn:active { transform: scale(0.99); }
 
     .action-icon {
-      width: 44px;
-      height: 44px;
+      width: 44px; height: 44px;
       background: rgba(255,255,255,0.15);
       border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
     }
 
-    .action-label {
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-    }
+    .action-label { font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
+    .action-sub { font-size: 12px; opacity: 0.65; margin-top: 2px; }
 
-    .action-sub {
-      font-size: 12px;
-      opacity: 0.65;
-      margin-top: 2px;
-    }
-
-    /* SECTION */
     .section-title {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 12px;
+      font-size: 11px; font-weight: 600;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.8px; margin-bottom: 12px;
+      margin-top: 28px;
     }
 
-    /* STATS ROW */
     .stats-row {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
       gap: 10px;
-      margin-bottom: 28px;
     }
 
     .stat-card {
@@ -198,76 +135,13 @@
     }
 
     .stat-val {
-      font-size: 28px;
-      font-weight: 600;
-      letter-spacing: -1px;
-      line-height: 1;
+      font-size: 28px; font-weight: 600;
+      letter-spacing: -1px; line-height: 1;
       margin-bottom: 4px;
     }
 
-    .stat-label {
-      font-size: 10px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+    .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
-    /* RECENT LIST */
-    .recent-list {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      overflow: hidden;
-    }
-
-    .recent-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      transition: background 0.12s;
-    }
-
-    .recent-item:last-child { border-bottom: none; }
-    .recent-item:hover { background: var(--bg); }
-
-    .ri-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .ri-info { flex: 1; }
-
-    .ri-title {
-      font-size: 13px;
-      font-weight: 500;
-    }
-
-    .ri-meta {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 3px 9px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 500;
-      flex-shrink: 0;
-    }
-
-    .badge-red    { background: var(--red-bg);   color: #A32D2D; border: 1px solid var(--red-border); }
-    .badge-amber  { background: var(--amber-bg);  color: #854F0B; border: 1px solid var(--amber-border); }
-    .badge-green  { background: var(--green-bg);  color: var(--green); border: 1px solid var(--green-border); }
-
-    /* LOGOUT */
     .logout-btn {
       background: none;
       border: 1px solid var(--border);
@@ -281,13 +155,6 @@
     }
 
     .logout-btn:hover { border-color: var(--red); color: var(--red); }
-
-    .empty-state {
-      text-align: center;
-      padding: 32px 20px;
-      color: var(--muted);
-      font-size: 13px;
-    }
 
     @media (max-width: 480px) {
       .topbar { padding: 12px 16px; }
@@ -336,6 +203,15 @@
       <span style="margin-left:auto; font-size:20px; opacity:0.3;">›</span>
     </a>
 
+    <a class="action-btn" href="dashboard.html" style="background:var(--surface);color:var(--text);border:1px solid var(--border);">
+      <div class="action-icon" style="background:var(--bg);">📊</div>
+      <div>
+        <div class="action-label">Dashboard de paradas</div>
+        <div class="action-sub">Análise geral dos relatórios finalizados</div>
+      </div>
+      <span style="margin-left:auto; font-size:20px; opacity:0.3;">›</span>
+    </a>
+
     <!-- STATS -->
     <div class="section-title">Resumo — hoje</div>
     <div class="stats-row">
@@ -352,75 +228,33 @@
         <div class="stat-label">Média/Baixa</div>
       </div>
     </div>
-
-    <!-- ÚLTIMOS REGISTROS -->
-    <div class="section-title">Últimos registros</div>
-    <div class="recent-list" id="recent-list">
-      <div class="empty-state" id="empty-msg">Nenhuma parada registrada ainda.<br>Use o botão acima para registrar.</div>
-    </div>
   </div>
 
   <script>
-    // Guard: se não está logado, volta pro login
     const user = JSON.parse(localStorage.getItem('ms_user') || 'null');
     if (!user) window.location.href = 'index.html';
 
-    // Preenche info do usuário
     document.getElementById('user-name').textContent = user.nome;
     document.getElementById('user-turno').textContent = user.turno;
     document.getElementById('first-name').textContent = user.nome.split(' ')[0];
     document.getElementById('user-avatar').textContent = user.nome.charAt(0).toUpperCase();
 
-    // Saudação por horário
     const h = new Date().getHours();
     const greeting = h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite';
-    document.querySelector('.page-title').innerHTML = `${greeting}, <span id="first-name">${user.nome.split(' ')[0]}</span> 👋`;
+    document.querySelector('.page-title').innerHTML = `${greeting}, <span>${user.nome.split(' ')[0]}</span> 👋`;
 
-    // Data
     const now = new Date();
     document.getElementById('today-date').textContent = now.toLocaleDateString('pt-BR', {
       weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
     });
 
-    // Carrega relatórios
     const relatorios = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
     const hoje = now.toISOString().slice(0, 10);
     const deHoje = relatorios.filter(r => r.dataISO === hoje);
 
-    document.getElementById('stat-total').textContent = relatorios.length;
-    document.getElementById('stat-alta').textContent  = relatorios.filter(r => r.codMotivo && ['1','2'].includes(r.codMotivo)).length;
-    document.getElementById('stat-media').textContent  = relatorios.filter(r => r.codMotivo && !['1','2'].includes(r.codMotivo)).length;
-
-    const list = document.getElementById('recent-list');
-    const empty = document.getElementById('empty-msg');
-
-    if (relatorios.length > 0) {
-      empty.style.display = 'none';
-      const sorted = [...relatorios].reverse().slice(0, 8);
-      sorted.forEach(r => {
-        const item = document.createElement('div');
-        item.className = 'recent-item';
-
-        const codigos = {
-          '1':'Quebra','2':'Set-up','3':'Troca fer.','4':'Produção',
-          '5':'Pequenas paradas','6':'Velocidade','7':'Defeito',
-          '8':'Programada','9':'Gestão','10':'Mov. operacionais',
-          '11':'Organização','12':'Logística','13':'Medições e ajuste'
-        };
-        const nomeMotivo = codigos[r.codMotivo] || `Cód. ${r.codMotivo}`;
-        const grave = ['1','2'].includes(r.codMotivo) ? 'alta' : r.codMotivo === '3' ? 'amber' : 'green';
-
-        item.innerHTML = `
-          <div class="ri-dot" style="background: ${grave === 'alta' ? 'var(--red)' : grave === 'amber' ? 'var(--amber)' : 'var(--green)'}"></div>
-          <div class="ri-info">
-            <div class="ri-title">${r.equipamento || '—'}</div>
-            <div class="ri-meta">${r.dataInicial || '—'} · Cód. ${r.codMotivo} — ${nomeMotivo} · ${r.operador || '—'}</div>
-          </div>
-          <span class="badge badge-${grave === 'alta' ? 'red' : grave === 'amber' ? 'amber' : 'green'}">${grave === 'alta' ? 'Alta' : grave === 'amber' ? 'Média' : 'Baixa'}</span>
-        `;
-        list.appendChild(item);
-      });
-    }
+    document.getElementById('stat-total').textContent = deHoje.length;
+    document.getElementById('stat-alta').textContent  = deHoje.filter(r => r.codMotivo && ['1','2'].includes(r.codMotivo)).length;
+    document.getElementById('stat-media').textContent = deHoje.filter(r => r.codMotivo && !['1','2'].includes(r.codMotivo)).length;
 
     function logout() {
       localStorage.removeItem('ms_user');

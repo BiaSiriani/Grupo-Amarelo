@@ -33,7 +33,6 @@
       color: var(--text);
     }
 
-    /* TOPBAR */
     .topbar {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
@@ -47,31 +46,20 @@
     }
 
     .back-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      color: var(--muted);
-      text-decoration: none;
+      display: flex; align-items: center; gap: 6px;
+      background: none; border: none; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      color: var(--muted); text-decoration: none;
       transition: color 0.15s;
     }
     .back-btn:hover { color: var(--text); }
-
     .topbar-title { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
 
-    /* MAIN */
     .main { max-width: 720px; margin: 0 auto; padding: 24px 20px 60px; }
 
-    /* FILTROS */
     .filter-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
+      display: flex; gap: 8px;
+      margin-bottom: 20px; flex-wrap: wrap;
     }
 
     .filter-btn {
@@ -80,66 +68,45 @@
       border-radius: 20px;
       background: var(--surface);
       font-family: 'DM Sans', sans-serif;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--muted);
-      cursor: pointer;
+      font-size: 12px; font-weight: 500;
+      color: var(--muted); cursor: pointer;
       transition: all 0.15s;
     }
-
-    .filter-btn.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
+    .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
     .search-input {
-      flex: 1;
-      min-width: 180px;
+      flex: 1; min-width: 180px;
       padding: 8px 14px;
       border: 1px solid var(--border);
       border-radius: 20px;
       font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      color: var(--text);
-      background: var(--surface);
-      outline: none;
+      font-size: 13px; color: var(--text);
+      background: var(--surface); outline: none;
       transition: border-color 0.15s;
     }
     .search-input:focus { border-color: #aaa; }
 
-    /* STATS */
     .stats-row {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 24px;
+      gap: 10px; margin-bottom: 24px;
     }
 
     .stat-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 14px 16px;
-      text-align: center;
+      padding: 14px 16px; text-align: center;
     }
 
     .stat-val {
-      font-size: 24px;
-      font-weight: 600;
-      letter-spacing: -1px;
-      line-height: 1;
-      margin-bottom: 3px;
+      font-size: 24px; font-weight: 600;
+      letter-spacing: -1px; line-height: 1; margin-bottom: 3px;
     }
 
-    .stat-label {
-      font-size: 10px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+    .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
-    /* CARDS DE RELATÓRIO */
+    /* CARD */
     .rel-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -147,52 +114,43 @@
       margin-bottom: 10px;
       overflow: hidden;
       transition: border-color 0.15s, box-shadow 0.15s;
-      cursor: pointer;
-    }
-
-    .rel-card:hover {
-      border-color: #bbb;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     }
 
     .rel-card-header {
       display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 16px;
+      align-items: stretch;
+      gap: 0;
+      cursor: pointer;
     }
 
     .status-bar {
       width: 4px;
-      border-radius: 4px;
-      align-self: stretch;
       flex-shrink: 0;
-      min-height: 48px;
     }
 
-    .rel-main { flex: 1; }
-
-    .rel-top {
+    .rel-header-content {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 4px;
+      gap: 12px;
+      padding: 14px 16px;
+      flex: 1;
     }
 
-    .rel-equip {
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: -0.2px;
+    .rel-main { flex: 1; min-width: 0; }
+
+    .rel-top {
+      display: flex; align-items: center;
+      gap: 8px; margin-bottom: 4px;
+      flex-wrap: wrap;
     }
+
+    .rel-equip { font-size: 14px; font-weight: 600; letter-spacing: -0.2px; }
 
     .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 9px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 500;
+      display: inline-flex; align-items: center;
+      padding: 3px 9px; border-radius: 20px;
+      font-size: 11px; font-weight: 500;
+      white-space: nowrap;
     }
 
     .badge-red    { background: var(--red-bg);   color: #A32D2D; border: 1px solid var(--red-border); }
@@ -200,24 +158,24 @@
     .badge-green  { background: var(--green-bg);  color: var(--green); border: 1px solid var(--green-border); }
     .badge-blue   { background: #E6F1FB; color: #185FA5; border: 1px solid #b5d4f4; }
 
-    .rel-meta {
-      font-size: 12px;
-      color: var(--muted);
+    .rel-meta { font-size: 12px; color: var(--muted); }
+
+    /* Botão manutenção — sempre visível */
+    .btn-manut-wrap {
+      padding: 12px 14px 12px 0;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
     }
 
-    .rel-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-
-    .rel-date { font-size: 11px; color: var(--muted); }
-
     .btn-manut {
-      padding: 7px 14px;
+      padding: 9px 16px;
       background: var(--accent);
       color: #fff;
       border: none;
       border-radius: 8px;
       font-family: 'DM Sans', sans-serif;
-      font-size: 12px;
-      font-weight: 500;
+      font-size: 12px; font-weight: 500;
       cursor: pointer;
       white-space: nowrap;
       transition: opacity 0.15s;
@@ -236,7 +194,7 @@
     /* EXPAND */
     .rel-body {
       display: none;
-      padding: 0 16px 16px 32px;
+      padding: 0 16px 16px 20px;
       border-top: 1px solid var(--border);
     }
 
@@ -249,39 +207,25 @@
       margin-top: 12px;
     }
 
-    .detail-item { }
     .detail-key { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
     .detail-val { font-size: 13px; margin-top: 2px; }
 
     .desc-box {
-      margin-top: 12px;
-      padding: 12px;
-      background: var(--bg);
-      border-radius: 8px;
-      font-size: 13px;
-      color: var(--text);
-      line-height: 1.5;
+      margin-top: 12px; padding: 12px;
+      background: var(--bg); border-radius: 8px;
+      font-size: 13px; color: var(--text); line-height: 1.5;
     }
 
     .manut-preview {
-      margin-top: 10px;
-      padding: 10px 12px;
+      margin-top: 10px; padding: 10px 12px;
       background: var(--green-bg);
       border: 1px solid var(--green-border);
-      border-radius: 8px;
-      font-size: 12px;
-      color: var(--green);
+      border-radius: 8px; font-size: 12px; color: var(--green);
     }
 
     .manut-preview strong { display: block; margin-bottom: 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-    /* EMPTY */
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--muted);
-    }
-
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
     .empty-icon { font-size: 40px; margin-bottom: 12px; }
     .empty-title { font-size: 16px; font-weight: 500; margin-bottom: 6px; color: var(--text); }
     .empty-sub { font-size: 13px; }
@@ -289,7 +233,8 @@
     @media (max-width: 480px) {
       .stats-row { grid-template-columns: 1fr 1fr; }
       .detail-grid { grid-template-columns: 1fr; }
-      .rel-right { display: none; }
+      .topbar { padding: 12px 16px; }
+      .main { padding: 16px 12px 60px; }
     }
   </style>
 </head>
@@ -302,7 +247,6 @@
 
   <div class="main">
 
-    <!-- FILTROS -->
     <div class="filter-row">
       <input class="search-input" id="search" type="text" placeholder="Buscar por equipamento, operador..." oninput="renderList()"/>
       <button class="filter-btn active" onclick="setFiltro('todos', this)">Todos</button>
@@ -310,7 +254,6 @@
       <button class="filter-btn" onclick="setFiltro('atendido', this)">Atendidos</button>
     </div>
 
-    <!-- STATS -->
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-val" id="s-total">0</div>
@@ -330,7 +273,6 @@
       </div>
     </div>
 
-    <!-- LISTA -->
     <div id="list-container"></div>
   </div>
 
@@ -354,20 +296,14 @@
       renderList();
     }
 
-    function getRelatorios() {
-      return JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
-    }
-
     function getStatusBadge(r) {
       if (r.manutencao) return { cls: 'badge-green', label: 'Atendido' };
       return { cls: 'badge-red', label: 'Em aberto' };
     }
 
     function getCodBadge(cod) {
-      const altos = ['1', '2'];
-      const medios = ['3', '7', '5'];
-      if (altos.includes(cod)) return 'badge-red';
-      if (medios.includes(cod)) return 'badge-amber';
+      if (['1','2'].includes(cod)) return 'badge-red';
+      if (['3','7','5'].includes(cod)) return 'badge-amber';
       return 'badge-blue';
     }
 
@@ -378,21 +314,18 @@
     }
 
     function renderList() {
-      const rels = getRelatorios();
+      const rels = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
       const hoje = new Date().toISOString().slice(0, 10);
       const search = document.getElementById('search').value.toLowerCase();
 
-      // stats
       document.getElementById('s-total').textContent    = rels.length;
       document.getElementById('s-aberto').textContent   = rels.filter(r => !r.manutencao).length;
       document.getElementById('s-atendido').textContent = rels.filter(r => r.manutencao).length;
       document.getElementById('s-hoje').textContent     = rels.filter(r => r.dataISO === hoje).length;
 
       let lista = [...rels].reverse();
-
-      if (filtro === 'aberto')    lista = lista.filter(r => !r.manutencao);
-      if (filtro === 'atendido')  lista = lista.filter(r => r.manutencao);
-
+      if (filtro === 'aberto')   lista = lista.filter(r => !r.manutencao);
+      if (filtro === 'atendido') lista = lista.filter(r => r.manutencao);
       if (search) {
         lista = lista.filter(r =>
           (r.equipamento || '').toLowerCase().includes(search) ||
@@ -415,33 +348,32 @@
       }
 
       lista.forEach(r => {
-        const status  = getStatusBadge(r);
+        const status   = getStatusBadge(r);
         const codBadge = getCodBadge(r.codMotivo);
         const barColor = r.manutencao ? 'var(--green)' : (['1','2'].includes(r.codMotivo) ? 'var(--red)' : 'var(--amber)');
         const nomeMotivo = codigos[r.codMotivo] || `Cód. ${r.codMotivo}`;
-        const btnLabel = r.manutencao ? 'Ver atendimento' : 'Preencher manutenção';
+        const btnLabel = r.manutencao ? 'Ver atend.' : 'Manutenção';
         const btnCls   = r.manutencao ? 'btn-manut done' : 'btn-manut';
 
         const card = document.createElement('div');
         card.className = 'rel-card';
         card.innerHTML = `
-          <div class="rel-card-header" onclick="toggleCard(this)">
+          <div class="rel-card-header">
             <div class="status-bar" style="background:${barColor}"></div>
-            <div class="rel-main">
-              <div class="rel-top">
-                <span class="rel-equip">${r.equipamento || '—'}</span>
-                <span class="badge ${status.cls}">${status.label}</span>
-                <span class="badge ${codBadge}">${r.codMotivo} — ${nomeMotivo}</span>
-              </div>
-              <div class="rel-meta">
-                Linha ${r.linha || '—'} · Op: ${r.operador || '—'} · ${formatDate(r.dataInicial)} ${r.inicioOcorrencia || ''}
+            <div class="rel-header-content" onclick="toggleCard('body-${r.id}')">
+              <div class="rel-main">
+                <div class="rel-top">
+                  <span class="rel-equip">${r.equipamento || '—'}</span>
+                  <span class="badge ${status.cls}">${status.label}</span>
+                  <span class="badge ${codBadge}">${r.codMotivo} — ${nomeMotivo}</span>
+                </div>
+                <div class="rel-meta">
+                  Linha ${r.linha || '—'} · Op: ${r.operador || '—'} · ${formatDate(r.dataInicial)} ${r.inicioOcorrencia || ''}
+                </div>
               </div>
             </div>
-            <div class="rel-right">
-              <span class="rel-date">${formatDate(r.dataInicial)}</span>
-              <a class="${btnCls}" href="manutencao.html?id=${r.id}" onclick="event.stopPropagation()">
-                ${btnLabel}
-              </a>
+            <div class="btn-manut-wrap">
+              <a class="${btnCls}" href="manutencao.html?id=${r.id}">${btnLabel}</a>
             </div>
           </div>
           <div class="rel-body" id="body-${r.id}">
@@ -467,9 +399,9 @@
       });
     }
 
-    function toggleCard(header) {
-      const body = header.nextElementSibling;
-      body.classList.toggle('open');
+    function toggleCard(id) {
+      const body = document.getElementById(id);
+      if (body) body.classList.toggle('open');
     }
 
     renderList();

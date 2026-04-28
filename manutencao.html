@@ -463,25 +463,18 @@
     <div class="card">
       <div class="card-title">Tarefa · Motivo · Causa *</div>
       <div class="three-col">
-
-        <!-- TAREFA -->
         <div class="check-col">
           <div class="check-col-title">Tarefa</div>
           <div id="tarefa-list"></div>
         </div>
-
-        <!-- MOTIVO -->
         <div class="check-col">
           <div class="check-col-title">Motivo</div>
           <div id="motivo-list"></div>
         </div>
-
-        <!-- CAUSA -->
         <div class="check-col">
           <div class="check-col-title">Causa</div>
           <div id="causa-list"></div>
         </div>
-
       </div>
     </div>
 
@@ -527,11 +520,9 @@
     const user = JSON.parse(localStorage.getItem('ms_user') || 'null');
     if (!user) window.location.href = 'index.html';
 
-    // Pega ID da URL
     const params = new URLSearchParams(window.location.search);
     const relId  = parseInt(params.get('id'));
 
-    // Carrega relatório
     const rels  = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
     const idx   = rels.findIndex(r => r.id === relId);
     const rel   = rels[idx];
@@ -551,14 +542,12 @@
         `Cód. Parada: <strong>${rel.codMotivo} — ${codigos[rel.codMotivo] || '?'}</strong>`;
       document.getElementById('c-desc').textContent = rel.descricao || '—';
 
-      // Se já tem manutenção
       if (rel.manutencao) {
         const m = rel.manutencao;
         const banner = document.getElementById('done-banner');
         banner.style.display = 'block';
         document.getElementById('done-banner-sub').textContent =
           `Registrado por ${m.manut1Nome || '—'} · Tarefa: ${m.tarefa || '—'} · Área: ${m.area || '—'}`;
-        // preenche leitura
         document.getElementById('m1-cracha').value = m.manut1Cracha || '';
         document.getElementById('m1-nome').value   = m.manut1Nome   || '';
         document.getElementById('m2-cracha').value = m.manut2Cracha || '';
@@ -572,8 +561,6 @@
         document.getElementById('chamado-box').style.borderLeftColor = 'var(--green)';
       }
     }
-
-    // ──── DADOS DAS LISTAS ────
 
     const tarefas = [
       'Ajustar','Consertar','Destravar','Limpar','Reapertar','Regular','Trocar','Acompanhar'
@@ -609,13 +596,11 @@
       { num: '90', nome: 'Ruído' },
     ];
 
-    // Estado selecionados
     let selTarefa = null;
     let selMotivo = null;
     let selCausa  = null;
-    let selArea   = null;
+    let _selArea  = null;
 
-    // Renderiza tarefas (sem número)
     const tarefaList = document.getElementById('tarefa-list');
     tarefas.forEach(t => {
       const el = document.createElement('div');
@@ -633,7 +618,6 @@
       tarefaList.appendChild(el);
     });
 
-    // Renderiza motivos
     const motivoList = document.getElementById('motivo-list');
     motivos.forEach(m => {
       const el = document.createElement('div');
@@ -651,7 +635,6 @@
       motivoList.appendChild(el);
     });
 
-    // Renderiza causas
     const causaList = document.getElementById('causa-list');
     causas.forEach(c => {
       const el = document.createElement('div');
@@ -672,7 +655,7 @@
     function selArea(btn) {
       document.querySelectorAll('.area-btn').forEach(b => b.classList.remove('sel'));
       btn.classList.add('sel');
-      selArea = btn.textContent;
+      _selArea = btn.textContent;
     }
 
     function salvar() {
@@ -682,7 +665,7 @@
       const err      = document.getElementById('error-bar');
       err.style.display = 'none';
 
-      if (!m1cracha || !m1nome || !selTarefa || !selArea) {
+      if (!m1cracha || !m1nome || !selTarefa || !_selArea) {
         err.style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
