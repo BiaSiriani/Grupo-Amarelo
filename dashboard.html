@@ -44,13 +44,14 @@
     .topbar {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
-      padding: 13px 24px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       position: sticky;
       top: 0;
       z-index: 100;
+      flex-wrap: nowrap;
     }
 
     .back-btn {
@@ -59,39 +60,54 @@
       font-family: inherit; font-size: 13px;
       color: var(--muted); text-decoration: none;
       transition: color .15s;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .back-btn:hover { color: var(--text); }
 
-    .topbar-title { font-size: 14px; font-weight: 600; letter-spacing: -.2px; }
+    .topbar-title {
+      font-size: 14px; font-weight: 600; letter-spacing: -.2px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      min-width: 0;
+    }
 
     .topbar-right {
       margin-left: auto;
       display: flex;
       gap: 8px;
       align-items: center;
+      flex-shrink: 0;
     }
 
     .btn-export {
-      display: flex; align-items: center; gap: 7px;
-      padding: 8px 16px;
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 12px;
       background: var(--green);
       color: #fff;
       border: none; border-radius: 8px;
-      font-family: inherit; font-size: 13px; font-weight: 500;
+      font-family: inherit; font-size: 12px; font-weight: 500;
       cursor: pointer; transition: opacity .15s;
       white-space: nowrap;
     }
     .btn-export:hover { opacity: .85; }
+    .btn-export .btn-label { display: none; }
 
-    .btn-export svg { flex-shrink: 0; }
+    @media (min-width: 480px) {
+      .btn-export .btn-label { display: inline; }
+      .btn-export { font-size: 13px; padding: 8px 16px; gap: 7px; }
+    }
 
     /* ── HERO ── */
     .hero {
       background: var(--accent);
       color: #fff;
-      padding: 32px 28px 28px;
+      padding: 24px 16px 20px;
       position: relative;
       overflow: hidden;
+    }
+
+    @media (min-width: 480px) {
+      .hero { padding: 32px 28px 28px; }
     }
 
     .hero::before {
@@ -120,16 +136,21 @@
       opacity: .45; margin-bottom: 6px;
     }
 
-    .hero-title { font-size: 26px; font-weight: 600; letter-spacing: -.8px; margin-bottom: 4px; }
-    .hero-sub   { font-size: 13px; opacity: .55; margin-bottom: 20px; }
+    .hero-title { font-size: 22px; font-weight: 600; letter-spacing: -.6px; margin-bottom: 4px; }
+    .hero-sub   { font-size: 12px; opacity: .55; margin-bottom: 16px; }
 
-    /* ── PERIOD CHIPS no hero ── */
+    @media (min-width: 480px) {
+      .hero-title { font-size: 26px; letter-spacing: -.8px; }
+      .hero-sub { font-size: 13px; margin-bottom: 20px; }
+    }
+
+    /* ── PERIOD CHIPS ── */
     .period-chips {
       display: flex; gap: 6px; flex-wrap: wrap;
     }
 
     .period-chip {
-      padding: 6px 14px;
+      padding: 5px 12px;
       border-radius: 20px;
       border: 1px solid rgba(255,255,255,.18);
       background: rgba(255,255,255,.08);
@@ -142,15 +163,19 @@
     .period-chip.active { background: #fff; color: var(--accent); border-color: #fff; }
 
     /* ── MAIN ── */
-    .main { max-width: 780px; margin: 0 auto; padding: 24px 20px 80px; }
+    .main { max-width: 780px; margin: 0 auto; padding: 16px 12px 80px; }
 
-    /* ── FILTER BAR simplificada ── */
+    @media (min-width: 480px) {
+      .main { padding: 24px 20px 80px; }
+    }
+
+    /* ── FILTER BAR ── */
     .filter-bar {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 14px 16px;
-      margin-bottom: 20px;
+      padding: 12px;
+      margin-bottom: 16px;
       display: flex;
       gap: 8px;
       align-items: center;
@@ -160,10 +185,17 @@
     .filter-label {
       font-size: 10px; font-weight: 700; text-transform: uppercase;
       letter-spacing: .8px; color: var(--muted);
+      width: 100%;
+    }
+
+    @media (min-width: 480px) {
+      .filter-label { width: auto; }
     }
 
     .filter-select {
-      padding: 7px 28px 7px 12px;
+      flex: 1;
+      min-width: 0;
+      padding: 7px 28px 7px 10px;
       border: 1px solid var(--border);
       border-radius: 8px;
       font-family: inherit; font-size: 13px;
@@ -174,11 +206,12 @@
       background-position: right 8px center;
       cursor: pointer;
       transition: border-color .15s;
+      max-width: 100%;
     }
     .filter-select:focus { border-color: #aaa; }
 
     .filter-clear {
-      margin-left: auto;
+      flex-shrink: 0;
       padding: 6px 12px;
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -186,25 +219,34 @@
       font-family: inherit; font-size: 12px;
       color: var(--muted); cursor: pointer;
       transition: all .15s;
+      white-space: nowrap;
     }
     .filter-clear:hover { border-color: var(--red-border); color: var(--red); }
 
     /* ── KPIs ── */
     .kpi-row {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 560px) {
+      .kpi-row { grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
     }
 
     .kpi-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 18px 16px;
+      padding: 14px 12px;
       position: relative;
       overflow: hidden;
       transition: box-shadow .2s;
+    }
+
+    @media (min-width: 480px) {
+      .kpi-card { padding: 18px 16px; }
     }
 
     .kpi-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.07); }
@@ -216,29 +258,32 @@
     }
 
     .kpi-icon {
-      font-size: 20px;
-      margin-bottom: 10px;
+      font-size: 18px;
+      margin-bottom: 8px;
       display: block;
     }
 
     .kpi-label {
-      font-size: 10px; font-weight: 700;
+      font-size: 9px; font-weight: 700;
       text-transform: uppercase; letter-spacing: .8px;
       color: var(--muted); margin-bottom: 4px;
     }
 
+    @media (min-width: 480px) {
+      .kpi-label { font-size: 10px; }
+    }
+
     .kpi-val {
-      font-size: 34px; font-weight: 700;
-      letter-spacing: -2px; line-height: 1;
+      font-size: 28px; font-weight: 700;
+      letter-spacing: -1.5px; line-height: 1;
       font-family: 'DM Mono', monospace;
     }
 
-    .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 5px; }
-
-    .kpi-trend {
-      font-size: 11px; font-weight: 600;
-      margin-top: 2px;
+    @media (min-width: 480px) {
+      .kpi-val { font-size: 34px; letter-spacing: -2px; }
     }
+
+    .kpi-sub { font-size: 10px; color: var(--muted); margin-top: 5px; }
 
     .k-total .kpi-val  { color: var(--text); }
     .k-alta  .kpi-val  { color: var(--red); }
@@ -252,23 +297,35 @@
     /* ── CHARTS GRID ── */
     .charts-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 12px;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    @media (min-width: 560px) {
+      .charts-grid { grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
     }
 
     .chart-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 20px;
+      padding: 16px;
     }
 
-    .chart-card.full { grid-column: span 2; }
+    @media (min-width: 480px) {
+      .chart-card { padding: 20px; }
+    }
+
+    .chart-card.full { grid-column: span 1; }
+
+    @media (min-width: 560px) {
+      .chart-card.full { grid-column: span 2; }
+    }
 
     .chart-head {
       display: flex; justify-content: space-between;
-      align-items: flex-start; margin-bottom: 18px;
+      align-items: flex-start; margin-bottom: 16px;
     }
 
     .chart-title {
@@ -282,14 +339,20 @@
       background: var(--bg); border: 1px solid var(--border);
       border-radius: 20px; padding: 3px 8px;
       color: var(--muted);
+      white-space: nowrap;
     }
 
     /* ── BAR CHART ── */
     .bar-list { display: flex; flex-direction: column; gap: 10px; }
 
-    .bar-row { display: flex; align-items: center; gap: 10px; }
+    .bar-row { display: flex; align-items: center; gap: 8px; }
 
-    .bar-info { min-width: 108px; flex-shrink: 0; }
+    .bar-info { min-width: 90px; flex-shrink: 0; }
+
+    @media (min-width: 400px) {
+      .bar-info { min-width: 108px; }
+    }
+
     .bar-name { font-size: 12px; font-weight: 500; color: var(--text); }
     .bar-num-label { font-size: 10px; color: var(--muted); }
 
@@ -308,16 +371,16 @@
     }
 
     /* ── DONUT ── */
-    .donut-wrap { display: flex; align-items: center; gap: 18px; }
-    .donut-legend { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .donut-wrap { display: flex; align-items: center; gap: 16px; }
+    .donut-legend { display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 0; }
 
     .legend-item { display: flex; align-items: center; gap: 9px; }
     .legend-swatch {
       width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0;
     }
-    .legend-name { font-size: 12px; flex: 1; color: var(--text); }
-    .legend-right { text-align: right; }
-    .legend-pct { font-size: 13px; font-weight: 700; font-family: 'DM Mono', monospace; }
+    .legend-name { font-size: 11px; flex: 1; color: var(--text); min-width: 0; }
+    .legend-right { text-align: right; flex-shrink: 0; }
+    .legend-pct { font-size: 12px; font-weight: 700; font-family: 'DM Mono', monospace; }
     .legend-cnt { font-size: 10px; color: var(--muted); }
 
     /* ── TIMELINE ── */
@@ -326,9 +389,12 @@
     .timeline-bars {
       display: flex;
       align-items: flex-end;
-      gap: 3px;
+      gap: 2px;
       height: 72px;
-      padding-bottom: 0;
+    }
+
+    @media (min-width: 400px) {
+      .timeline-bars { gap: 3px; }
     }
 
     .tl-col { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; min-width: 0; }
@@ -353,7 +419,7 @@
     }
 
     .tl-label {
-      font-size: 9px; color: var(--muted);
+      font-size: 8px; color: var(--muted);
       text-align: center; line-height: 1.1;
       white-space: nowrap; overflow: hidden;
     }
@@ -373,7 +439,7 @@
     .equip-list { display: flex; flex-direction: column; gap: 7px; }
 
     .equip-item {
-      display: flex; align-items: center; gap: 12px;
+      display: flex; align-items: center; gap: 10px;
       padding: 10px 12px;
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -383,20 +449,29 @@
     .equip-item:hover { border-color: var(--border2); }
 
     .equip-rank { font-size: 10px; font-weight: 700; color: var(--muted); min-width: 24px; font-family: 'DM Mono', monospace; }
-    .equip-name { flex: 1; font-size: 13px; font-weight: 500; }
+    .equip-name { flex: 1; font-size: 12px; font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-    .equip-right { display: flex; align-items: center; gap: 10px; }
+    @media (min-width: 400px) {
+      .equip-name { font-size: 13px; }
+    }
 
-    .equip-bar-wrap { width: 56px; }
+    .equip-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    .equip-bar-wrap { width: 40px; }
+
+    @media (min-width: 400px) {
+      .equip-bar-wrap { width: 56px; }
+    }
+
     .equip-bar { height: 5px; background: var(--bg); border-radius: 3px; overflow: hidden; border: 1px solid var(--border); }
     .equip-bar-fill { height: 100%; border-radius: 3px; background: var(--accent); transition: width .5s ease; }
 
-    .equip-count { font-size: 14px; font-weight: 700; font-family: 'DM Mono', monospace; min-width: 28px; text-align: right; }
+    .equip-count { font-size: 14px; font-weight: 700; font-family: 'DM Mono', monospace; min-width: 24px; text-align: right; }
 
     /* ── TABELA ── */
-    .table-wrap { overflow-x: auto; }
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 360px; }
 
     thead th {
       font-size: 10px; font-weight: 700; color: var(--muted);
@@ -422,7 +497,6 @@
     .badge-green  { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
     .badge-blue   { background: var(--blue-bg);  color: var(--blue); border: 1px solid var(--blue-border); }
 
-    /* duração em destaque */
     .dur-val {
       font-family: 'DM Mono', monospace;
       font-size: 13px;
@@ -452,16 +526,6 @@
     .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
     .empty-icon { font-size: 36px; margin-bottom: 10px; }
     .empty-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 600px) {
-      .kpi-row { grid-template-columns: 1fr 1fr; }
-      .charts-grid { grid-template-columns: 1fr; }
-      .chart-card.full { grid-column: span 1; }
-      .donut-wrap { flex-direction: column; }
-      .hero { padding: 24px 16px 20px; }
-      .main { padding: 16px 12px 80px; }
-    }
   </style>
 </head>
 <body>
@@ -476,12 +540,12 @@
     <div class="topbar-right">
       <button class="btn-export" onclick="exportarExcel()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-        Exportar .xlsx
+        <span class="btn-label">Exportar .xlsx</span>
       </button>
     </div>
   </div>
 
-  <!-- HERO com período -->
+  <!-- HERO -->
   <div class="hero">
     <div class="hero-inner">
       <div class="hero-label">MáquinaStop · Análise de Paradas</div>
@@ -499,7 +563,7 @@
   <!-- MAIN -->
   <div class="main">
 
-    <!-- FILTROS SIMPLIFICADOS -->
+    <!-- FILTROS -->
     <div class="filter-bar">
       <span class="filter-label">Filtrar por:</span>
 
@@ -546,7 +610,7 @@
         <span class="kpi-icon">⏱</span>
         <div class="kpi-label">Dur. média</div>
         <div class="kpi-val" id="kpi-dur">—</div>
-        <div class="kpi-sub" id="kpi-dur-sub">minutos por parada</div>
+        <div class="kpi-sub" id="kpi-dur-sub">min por parada</div>
       </div>
     </div>
 
@@ -556,7 +620,7 @@
       <!-- Barras por código -->
       <div class="chart-card">
         <div class="chart-head">
-          <div class="chart-title">Paradas por Código</div>
+          <div class="chart-title">Por Código</div>
           <span class="chart-badge" id="badge-cod">0 tipos</span>
         </div>
         <div class="bar-list" id="bar-cod"></div>
@@ -565,10 +629,10 @@
       <!-- Donut distribuição -->
       <div class="chart-card">
         <div class="chart-head">
-          <div class="chart-title">Distribuição Gravidade</div>
+          <div class="chart-title">Gravidade</div>
         </div>
         <div class="donut-wrap">
-          <svg width="96" height="96" viewBox="0 0 100 100" id="donut-svg" style="flex-shrink:0">
+          <svg width="88" height="88" viewBox="0 0 100 100" id="donut-svg" style="flex-shrink:0">
             <circle cx="50" cy="50" r="36" fill="none" stroke="#E4E0D8" stroke-width="14"/>
           </svg>
           <div class="donut-legend" id="donut-legend"></div>
@@ -594,7 +658,7 @@
     </div>
 
     <!-- TOP EQUIPAMENTOS -->
-    <div class="chart-card" style="margin-bottom:12px">
+    <div class="chart-card" style="margin-bottom:10px">
       <div class="chart-head">
         <div class="chart-title">Top Equipamentos</div>
         <span class="chart-badge" id="badge-equip">0</span>
@@ -606,7 +670,7 @@
     <div class="chart-card">
       <div class="chart-head">
         <div class="chart-title">Registros Detalhados</div>
-        <span class="chart-badge" id="badge-table">0 registros</span>
+        <span class="chart-badge" id="badge-table">0</span>
       </div>
       <div class="table-wrap">
         <table>
@@ -614,7 +678,7 @@
             <tr>
               <th>Código</th>
               <th>Data</th>
-              <th>Duração</th>
+              <th>Dur.</th>
               <th>Operador</th>
             </tr>
           </thead>
@@ -658,10 +722,6 @@
       return `${d}/${m}`;
     }
 
-    /**
-     * Retorna a duração em minutos.
-     * Prioridade: campo "duracao" salvo → cálculo por início/fim → null
-     */
     function calcDurMin(inicio, fim, armazenado) {
       if (!inicio || !fim) return null;
       const [h1, m1] = inicio.split(':').map(Number);
@@ -671,7 +731,6 @@
       return mins;
     }
 
-    // Preenche select de códigos
     const fCod = document.getElementById('f-cod');
     Object.entries(CODIGOS).forEach(([num, nome]) => {
       const opt = document.createElement('option');
@@ -729,7 +788,6 @@
       document.getElementById('hero-sub').textContent =
         `${data.length} parada${data.length !== 1 ? 's' : ''} finalizada${data.length !== 1 ? 's' : ''} — ${label}`;
 
-      // KPIs
       const alta  = data.filter(r => ['1','2'].includes(r.codMotivo)).length;
       const media = data.filter(r => ['3','5','7'].includes(r.codMotivo)).length;
       const durs  = data.map(r => calcDurMin(r.inicioOcorrencia, r.fimOcorrencia, r.duracao)).filter(d => d !== null);
@@ -739,9 +797,8 @@
       document.getElementById('kpi-alta').textContent  = alta;
       document.getElementById('kpi-media').textContent = media;
       document.getElementById('kpi-dur').textContent   = avgDur !== null ? avgDur : '—';
-      document.getElementById('kpi-dur-sub').textContent = avgDur !== null ? 'minutos por parada' : 'sem dados';
+      document.getElementById('kpi-dur-sub').textContent = avgDur !== null ? 'min por parada' : 'sem dados';
 
-      // Barras por código
       const byCod = {};
       data.forEach(r => { byCod[r.codMotivo] = (byCod[r.codMotivo]||0) + 1; });
       const sorted = Object.entries(byCod).sort((a,b) => b[1]-a[1]);
@@ -768,20 +825,16 @@
         });
       }
 
-      // Donut
       drawDonut(data);
-
-      // Timeline
       drawTimeline(data);
 
-      // Top equipamentos
       const byEquip = {};
       data.forEach(r => { byEquip[r.equipamento||'—'] = (byEquip[r.equipamento]||0) + 1; });
       const topEquip = Object.entries(byEquip).sort((a,b)=>b[1]-a[1]).slice(0,5);
       const maxE = topEquip[0]?.[1] || 1;
       const equipEl = document.getElementById('equip-list');
       equipEl.innerHTML = '';
-      document.getElementById('badge-equip').textContent = `${Object.keys(byEquip).length} equipamentos`;
+      document.getElementById('badge-equip').textContent = `${Object.keys(byEquip).length} equip.`;
 
       if (topEquip.length === 0) {
         equipEl.innerHTML = '<div class="empty-state"><div class="empty-icon">🏭</div><div class="empty-title">Nenhum dado</div></div>';
@@ -803,10 +856,9 @@
         });
       }
 
-      // Tabela
       const tbody = document.getElementById('table-body');
       tbody.innerHTML = '';
-      document.getElementById('badge-table').textContent = `${data.length} registros`;
+      document.getElementById('badge-table').textContent = `${data.length}`;
 
       if (data.length === 0) {
         tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:32px;color:var(--muted)">Nenhum registro no período</td></tr>`;
@@ -820,7 +872,7 @@
               <td><span class="badge ${bc}">${r.codMotivo} — ${CODIGOS[r.codMotivo]||'?'}</span></td>
               <td style="color:var(--muted);font-family:'DM Mono',monospace;font-size:11px">${formatDate(r.dataInicial)}</td>
               <td style="font-family:'DM Mono',monospace;font-weight:600;color:var(--text)">${dur !== null ? dur : '—'}</td>
-              <td>${r.operador||'—'}</td>
+              <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.operador||'—'}</td>
             </tr>`;
         });
       }
@@ -828,10 +880,10 @@
 
     function drawDonut(data) {
       const groups = [
-        { name: 'Alta grav.', color: '#C93B3A', count: 0 },
-        { name: 'Média',      color: '#BA7517', count: 0 },
-        { name: 'Operacional',color: '#185FA5', count: 0 },
-        { name: 'Gestão',     color: '#3B6D11', count: 0 },
+        { name: 'Alta', color: '#C93B3A', count: 0 },
+        { name: 'Média', color: '#BA7517', count: 0 },
+        { name: 'Oper.', color: '#185FA5', count: 0 },
+        { name: 'Gestão', color: '#3B6D11', count: 0 },
       ];
 
       data.forEach(r => {
@@ -847,7 +899,6 @@
 
       const svg = document.getElementById('donut-svg');
       svg.innerHTML = `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#E4E0D8" stroke-width="14"/>`;
-
       svg.innerHTML += `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="700" fill="#16150E" font-family="DM Mono">${data.length}</text>`;
 
       let offset = 0;
@@ -878,7 +929,7 @@
             <div class="legend-name">${g.name}</div>
             <div class="legend-right">
               <div class="legend-pct" style="color:${g.color}">${Math.round(pct*100)}%</div>
-              <div class="legend-cnt">${g.count} paradas</div>
+              <div class="legend-cnt">${g.count}</div>
             </div>
           </div>`;
       });
@@ -905,9 +956,9 @@
 
       const maxCount = Math.max(...Object.values(counts), 1);
       const totalHoje = counts[new Date().toISOString().slice(0,10)] || 0;
-      document.getElementById('badge-tl').textContent = `Hoje: ${totalHoje} parada${totalHoje!==1?'s':''}`;
+      document.getElementById('badge-tl').textContent = `Hoje: ${totalHoje}`;
 
-      labels.forEach(({ iso, label }) => {
+      labels.forEach(({ iso, label }, idx) => {
         const cnt = counts[iso] || 0;
         const h = Math.max((cnt/maxCount)*64, cnt>0 ? 8 : 4);
         const color = cnt === 0 ? '#E4E0D8'
@@ -915,19 +966,18 @@
           : cnt >= 2 ? '#BA7517'
           : '#1A1916';
 
-        const showLabel = days <= 14 || labels.indexOf(labels.find(l=>l.iso===iso)) % Math.ceil(days/10) === 0;
+        const showLabel = days <= 14 || idx % Math.ceil(days/10) === 0;
 
         const col = document.createElement('div');
         col.className = 'tl-col';
         col.innerHTML = `
-          <div class="tl-bar" style="height:${h}px;background:${color}" data-tip="${cnt} parada(s) em ${label}"></div>
+          <div class="tl-bar" style="height:${h}px;background:${color}" data-tip="${cnt} em ${label}"></div>
           <div class="tl-label">${showLabel ? label : ''}</div>
         `;
         el.appendChild(col);
       });
     }
 
-    // ── EXPORTAR EXCEL ──
     function exportarExcel() {
       const data = getFiltered();
       if (data.length === 0) {
@@ -936,7 +986,6 @@
       }
 
       const wb = XLSX.utils.book_new();
-
       const headers = [
         'Data','Equipamento','Cód. Equip.','Linha','Cód. Parada','Motivo Parada',
         'Início','Fim','Duração (min)',
@@ -949,43 +998,18 @@
         const m = r.manutencao;
         const dur = calcDurMin(r.inicioOcorrencia, r.fimOcorrencia, r.duracao);
         return [
-          r.dataInicial||'',
-          r.equipamento||'',
-          r.codEquipamento||'',
-          r.linha||'',
-          r.codMotivo||'',
-          CODIGOS[r.codMotivo]||'',
-          r.inicioOcorrencia||'',
-          r.fimOcorrencia||'',
-          dur !== null ? dur : '',
-          r.operador||'',
-          r.cracha||'',
-          r.turno||'',
-          m?.manut1Nome||'',
-          m?.manut2Nome||'',
-          m?.manut3Nome||'',
-          m?.tarefa||'',
-          m?.motivo||'',
-          m?.causa||'',
-          m?.area||'',
-          m?.observacoes||'',
-          r.lote||''
+          r.dataInicial||'', r.equipamento||'', r.codEquipamento||'', r.linha||'',
+          r.codMotivo||'', CODIGOS[r.codMotivo]||'',
+          r.inicioOcorrencia||'', r.fimOcorrencia||'', dur !== null ? dur : '',
+          r.operador||'', r.cracha||'', r.turno||'',
+          m?.manut1Nome||'', m?.manut2Nome||'', m?.manut3Nome||'',
+          m?.tarefa||'', m?.motivo||'', m?.causa||'', m?.area||'', m?.observacoes||'', r.lote||''
         ];
       });
 
       const ws1 = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-
-      ws1['!cols'] = [
-        {wch:12},{wch:24},{wch:12},{wch:10},{wch:10},{wch:20},
-        {wch:8},{wch:8},{wch:14},
-        {wch:20},{wch:10},{wch:14},
-        {wch:20},{wch:20},{wch:20},
-        {wch:14},{wch:20},{wch:20},{wch:12},{wch:36},{wch:14}
-      ];
-
       XLSX.utils.book_append_sheet(wb, ws1, 'Paradas Detalhadas');
 
-      // ── ABA 2: Resumo por Código ──
       const byCod = {};
       data.forEach(r => {
         byCod[r.codMotivo] = byCod[r.codMotivo] || { cod: r.codMotivo, nome: CODIGOS[r.codMotivo]||'?', count: 0, durTotal: 0, durCount: 0 };
@@ -1000,37 +1024,11 @@
         v.durCount > 0 ? Math.round(v.durTotal/v.durCount) : ''
       ]);
 
-      const totalDur = data.map(r=>calcDurMin(r.inicioOcorrencia,r.fimOcorrencia,r.duracao)).filter(d=>d!==null);
-      const avgTotal = totalDur.length > 0 ? Math.round(totalDur.reduce((a,b)=>a+b,0) / totalDur.length) : '';
-
       const ws2 = XLSX.utils.aoa_to_sheet([
         ['Cód.','Motivo','Qtd. Paradas','% do Total','Duração Média (min)'],
-        ...resumoRows,
-        [],
-        ['TOTAL','',data.length,'100%', avgTotal]
+        ...resumoRows
       ]);
-      ws2['!cols'] = [{wch:6},{wch:22},{wch:14},{wch:12},{wch:20}];
       XLSX.utils.book_append_sheet(wb, ws2, 'Resumo por Código');
-
-      // ── ABA 3: Resumo por Equipamento ──
-      const byEquip = {};
-      data.forEach(r => {
-        const k = r.equipamento||'—';
-        byEquip[k] = byEquip[k] || { nome: k, count: 0 };
-        byEquip[k].count++;
-      });
-
-      const equipRows = Object.values(byEquip).sort((a,b)=>b.count-a.count).map((v,i) => [
-        i+1, v.nome, v.count,
-        data.length > 0 ? ((v.count/data.length)*100).toFixed(1)+'%' : '0%'
-      ]);
-
-      const ws3 = XLSX.utils.aoa_to_sheet([
-        ['Rank','Equipamento','Qtd. Paradas','% do Total'],
-        ...equipRows
-      ]);
-      ws3['!cols'] = [{wch:6},{wch:28},{wch:14},{wch:12}];
-      XLSX.utils.book_append_sheet(wb, ws3, 'Top Equipamentos');
 
       const hoje = new Date();
       const dd = String(hoje.getDate()).padStart(2,'0');

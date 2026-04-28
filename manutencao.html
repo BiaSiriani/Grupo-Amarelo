@@ -138,15 +138,45 @@
       border-bottom: 1px solid var(--border);
     }
 
-    /* MANUTENTORES */
+    /* ── MANUTENTORES: CORRIGIDO PARA MOBILE ──
+       Mobile: empilha 1 por linha, com separador
+       Tablet/Desktop (>=560px): 3 colunas lado a lado */
     .manut-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
     }
 
-    .manut-group { display: flex; flex-direction: column; gap: 6px; }
+    @media (min-width: 560px) {
+      .manut-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 16px;
+      }
+    }
+
+    .manut-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .manut-group:first-child { padding-top: 0; }
+
+    .manut-group:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    @media (min-width: 560px) {
+      .manut-group {
+        padding: 0;
+        border-bottom: none;
+      }
+    }
+
     .manut-num {
       font-size: 10px;
       font-weight: 700;
@@ -156,7 +186,7 @@
     }
 
     /* FIELD */
-    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
     .field:last-child { margin-bottom: 0; }
 
     .field label {
@@ -172,13 +202,14 @@
       border: 1px solid var(--border);
       border-radius: 9px;
       font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
+      font-size: 16px; /* 16px evita zoom no iOS */
       color: var(--text);
       background: var(--surface);
       outline: none;
       transition: border-color 0.15s;
       appearance: none;
       resize: none;
+      width: 100%;
     }
 
     .field input:focus, .field select:focus, .field textarea:focus { border-color: #aaa; }
@@ -186,11 +217,17 @@
     /* CHECK GRID — Tarefa / Motivo / Causa */
     .three-col {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 14px;
+      grid-template-columns: 1fr; /* mobile: 1 coluna */
+      gap: 20px;
     }
 
-    
+    @media (min-width: 560px) {
+      .three-col {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 14px;
+      }
+    }
+
     .check-col-title {
       font-size: 12px;
       font-weight: 600;
@@ -204,12 +241,13 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 10px;
+      padding: 10px 12px;
       border: 1px solid var(--border);
       border-radius: 8px;
       margin-bottom: 6px;
       cursor: pointer;
       transition: all 0.12s;
+      min-height: 44px;
     }
 
     .check-item:hover {
@@ -223,8 +261,8 @@
     }
 
     .check-item input[type="checkbox"] {
-      width: 15px;
-      height: 15px;
+      width: 18px;
+      height: 18px;
       border: 1.5px solid var(--border);
       border-radius: 4px;
       appearance: none;
@@ -243,16 +281,16 @@
       content: '';
       display: block;
       width: 4px;
-      height: 7px;
+      height: 8px;
       border: 2px solid white;
       border-top: none;
       border-left: none;
-      transform: rotate(45deg) translate(1px, -1px);
+      transform: rotate(45deg) translate(2px, -1px);
       margin: 2px auto 0;
     }
 
     .check-label {
-      font-size: 12px;
+      font-size: 13px;
       flex: 1;
       line-height: 1.3;
     }
@@ -273,22 +311,187 @@
     }
 
     .area-btn {
-      padding: 9px 16px;
+      flex: 1;
+      min-width: 90px;
+      padding: 12px 16px;
       border: 1px solid var(--border);
       border-radius: 8px;
       background: var(--surface);
       font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
+      font-size: 14px;
       cursor: pointer;
       transition: all 0.12s;
       color: var(--muted);
       font-weight: 500;
+      min-height: 44px;
+      text-align: center;
     }
 
     .area-btn:hover { border-color: #bbb; color: var(--text); }
     .area-btn.sel { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-    /* ALREADY DONE */
+    /* ── UPLOAD DE VÍDEO ── */
+    .video-upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      background: var(--bg);
+    }
+
+    .video-upload-zone:hover,
+    .video-upload-zone.dragover {
+      border-color: var(--accent);
+      background: #f0efe9;
+    }
+
+    .video-upload-zone.has-file {
+      border-style: solid;
+      border-color: var(--green);
+      background: var(--green-bg);
+    }
+
+    .video-upload-zone.error-zone {
+      border-color: var(--red);
+      background: var(--red-bg);
+    }
+
+    .video-upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .upload-icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+      display: block;
+      line-height: 1;
+    }
+
+    .upload-required-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      background: var(--red-bg);
+      border: 1px solid var(--red-border);
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--red);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .upload-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .upload-sub {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* Preview do vídeo */
+    .video-preview-wrap {
+      display: none;
+      margin-top: 14px;
+    }
+
+    .video-preview-wrap.visible {
+      display: block;
+    }
+
+    .video-preview-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--green-bg);
+      border: 1px solid var(--green-border);
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .video-preview-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .video-preview-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .video-preview-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--green);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .video-preview-size {
+      font-size: 11px;
+      color: var(--green);
+      opacity: 0.75;
+      margin-top: 2px;
+    }
+
+    .video-remove-btn {
+      padding: 6px 12px;
+      background: none;
+      border: 1px solid var(--green-border);
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: var(--green);
+      cursor: pointer;
+      transition: all 0.15s;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .video-remove-btn:hover {
+      background: var(--red-bg);
+      border-color: var(--red-border);
+      color: var(--red);
+    }
+
+    video.preview-player {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--green-border);
+      max-height: 280px;
+      background: #000;
+      display: block;
+    }
+
+    .video-hint {
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      background: #E6F1FB;
+      border: 1px solid #B5D4F4;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #185FA5;
+      line-height: 1.5;
+    }
+
+    /* DONE BANNER */
     .done-banner {
       background: var(--green-bg);
       border: 1px solid var(--green-border);
@@ -301,51 +504,29 @@
     .done-banner-title { font-size: 14px; font-weight: 600; color: var(--green); margin-bottom: 4px; }
     .done-banner-sub { font-size: 12px; color: var(--green); }
 
-    /* DETAIL GRID — usado no resumo expandido */
-    .detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px 20px;
-      margin-top: 12px;
-    }
-
-    /* FIX: era regra vazia — agora tem estilos corretos */
-    .detail-item { display: flex; flex-direction: column; gap: 3px; }
-    .detail-key { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
-    .detail-val { font-size: 13px; margin-top: 2px; }
-
-    .desc-box {
-      margin-top: 12px;
-      padding: 12px;
-      background: var(--bg);
-      border-radius: 8px;
-      font-size: 13px;
-      color: var(--text);
-      line-height: 1.5;
-    }
-
     /* SUBMIT */
     .submit-row { display: flex; gap: 10px; }
 
     .btn-primary {
       flex: 1;
-      padding: 14px;
+      padding: 15px;
       background: var(--accent);
       color: #fff;
       border: none;
       border-radius: 10px;
       font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       transition: opacity 0.15s, transform 0.1s;
+      min-height: 50px;
     }
 
     .btn-primary:hover { opacity: 0.88; }
     .btn-primary:active { transform: scale(0.98); }
 
     .btn-secondary {
-      padding: 14px 20px;
+      padding: 15px 20px;
       background: var(--surface);
       color: var(--text);
       border: 1px solid var(--border);
@@ -356,6 +537,7 @@
       text-decoration: none;
       display: flex;
       align-items: center;
+      white-space: nowrap;
     }
 
     .btn-secondary:hover { border-color: #aaa; }
@@ -365,10 +547,11 @@
       color: var(--red);
       border: 1px solid var(--red-border);
       border-radius: 9px;
-      padding: 11px 16px;
+      padding: 12px 16px;
       font-size: 13px;
       margin-bottom: 16px;
       display: none;
+      line-height: 1.5;
     }
 
     .toast {
@@ -390,10 +573,14 @@
 
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    @media (max-width: 560px) {
-      .three-col { grid-template-columns: 1fr; }
-      .manut-grid { grid-template-columns: 1fr; }
+    /* Horários em duas colunas */
+    .two-col-time {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
     }
+    .two-col-time .field { margin-bottom: 0; }
   </style>
 </head>
 <body>
@@ -404,7 +591,8 @@
   </div>
 
   <div class="main">
-    <div class="error-bar" id="error-bar">Preencha os campos obrigatórios: Manutentor 1, Tarefa, Área e Motivo.</div>
+    <div class="error-bar" id="error-bar"></div>
+
     <div class="done-banner" id="done-banner">
       <div class="done-banner-title">✓ Manutenção já registrada</div>
       <div class="done-banner-sub" id="done-banner-sub">—</div>
@@ -418,43 +606,47 @@
       <div class="desc-preview" id="c-desc">—</div>
     </div>
 
-    <!-- MANUTENTORES -->
+    <!-- ── MANUTENTORES: layout empilhado no mobile, 3 colunas no desktop ── -->
     <div class="card">
       <div class="card-title">Manutentores</div>
       <div class="manut-grid">
+
         <div class="manut-group">
           <span class="manut-num">1 — Principal *</span>
-          <div class="field" style="margin-bottom:6px">
+          <div class="field">
             <label>Crachá</label>
-            <input type="text" id="m1-cracha" placeholder="00000"/>
+            <input type="text" id="m1-cracha" placeholder="00000" inputmode="numeric"/>
           </div>
-          <div class="field" style="margin-bottom:0">
+          <div class="field">
             <label>Nome</label>
             <input type="text" id="m1-nome" placeholder="Nome completo"/>
           </div>
         </div>
+
         <div class="manut-group">
           <span class="manut-num">2 — Auxiliar</span>
-          <div class="field" style="margin-bottom:6px">
+          <div class="field">
             <label>Crachá</label>
-            <input type="text" id="m2-cracha" placeholder="00000"/>
+            <input type="text" id="m2-cracha" placeholder="00000" inputmode="numeric"/>
           </div>
-          <div class="field" style="margin-bottom:0">
+          <div class="field">
             <label>Nome</label>
             <input type="text" id="m2-nome" placeholder="Nome completo"/>
           </div>
         </div>
+
         <div class="manut-group">
           <span class="manut-num">3 — Auxiliar</span>
-          <div class="field" style="margin-bottom:6px">
+          <div class="field">
             <label>Crachá</label>
-            <input type="text" id="m3-cracha" placeholder="00000"/>
+            <input type="text" id="m3-cracha" placeholder="00000" inputmode="numeric"/>
           </div>
-          <div class="field" style="margin-bottom:0">
+          <div class="field">
             <label>Nome</label>
             <input type="text" id="m3-nome" placeholder="Nome completo"/>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -462,15 +654,15 @@
     <div class="card">
       <div class="card-title">Tarefa · Motivo · Causa *</div>
       <div class="three-col">
-        <div class="check-col">
+        <div>
           <div class="check-col-title">Tarefa</div>
           <div id="tarefa-list"></div>
         </div>
-        <div class="check-col">
+        <div>
           <div class="check-col-title">Motivo</div>
           <div id="motivo-list"></div>
         </div>
-        <div class="check-col">
+        <div>
           <div class="check-col-title">Causa</div>
           <div id="causa-list"></div>
         </div>
@@ -487,6 +679,40 @@
       </div>
     </div>
 
+    <!-- ── UPLOAD DE VÍDEO (OBRIGATÓRIO) ── -->
+    <div class="card">
+      <div class="card-title">Vídeo do Atendimento *</div>
+
+      <div class="video-hint">
+        📹 Grave um vídeo mostrando o <strong>problema na máquina</strong> e o <strong>passo a passo do conserto</strong>. Este registro é <strong>obrigatório</strong> para finalizar o atendimento.
+      </div>
+
+      <div class="video-upload-zone" id="video-zone"
+           ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+        <input type="file" id="video-input" accept="video/*" capture="environment" onchange="onVideoSelect(event)"/>
+        <span class="upload-icon">🎥</span>
+        <div class="upload-required-badge">⚠ Obrigatório</div>
+        <div class="upload-title">Toque para gravar ou selecionar vídeo</div>
+        <div class="upload-sub">
+          Formatos: MP4, MOV, AVI, WebM<br>
+          Tamanho máximo: 500 MB
+        </div>
+      </div>
+
+      <!-- Preview do vídeo selecionado -->
+      <div class="video-preview-wrap" id="video-preview-wrap">
+        <div class="video-preview-info">
+          <span class="video-preview-icon">✅</span>
+          <div class="video-preview-details">
+            <div class="video-preview-name" id="video-file-name">—</div>
+            <div class="video-preview-size" id="video-file-size">—</div>
+          </div>
+          <button class="video-remove-btn" onclick="removeVideo()">Remover</button>
+        </div>
+        <video class="preview-player" id="video-player" controls playsinline></video>
+      </div>
+    </div>
+
     <!-- OBSERVAÇÕES -->
     <div class="card">
       <div class="card-title">Observações</div>
@@ -494,12 +720,12 @@
         <label>Descreva o que foi feito</label>
         <textarea id="observacoes" rows="4" placeholder="Informe o que foi executado, peças trocadas, ajustes realizados..."></textarea>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;">
-        <div class="field" style="margin-bottom:0">
+      <div class="two-col-time">
+        <div class="field">
           <label>Início da manutenção</label>
           <input type="time" id="inicio-manut"/>
         </div>
-        <div class="field" style="margin-bottom:0">
+        <div class="field">
           <label>Fim da manutenção</label>
           <input type="time" id="fim-manut"/>
         </div>
@@ -527,13 +753,15 @@
     const rel   = rels[idx];
 
     if (!rel) {
-      document.getElementById('chamado-box').innerHTML = '<div style="color:var(--red);font-size:14px">Relatório não encontrado.</div>';
+      document.getElementById('chamado-box').innerHTML =
+        '<div style="color:var(--red);font-size:14px">Relatório não encontrado.</div>';
     } else {
       const codigos = {
         '1':'Quebra','2':'Set-up','3':'Troca fer.','4':'Produção','5':'Pequenas paradas',
         '6':'Velocidade','7':'Defeito','8':'Programada','9':'Gestão','10':'Mov. operacionais',
         '11':'Organização','12':'Logística','13':'Medições e ajuste'
       };
+
       document.getElementById('c-equip').textContent = rel.equipamento || '—';
       document.getElementById('c-meta').innerHTML =
         `Linha ${rel.linha || '—'} · Cód. ${rel.codEquipamento || '—'} · Operador: ${rel.operador || '—'}<br>` +
@@ -543,134 +771,183 @@
 
       if (rel.manutencao) {
         const m = rel.manutencao;
-        const banner = document.getElementById('done-banner');
-        banner.style.display = 'block';
+        document.getElementById('done-banner').style.display = 'block';
         document.getElementById('done-banner-sub').textContent =
           `Registrado por ${m.manut1Nome || '—'} · Tarefa: ${m.tarefa || '—'} · Área: ${m.area || '—'}`;
-        document.getElementById('m1-cracha').value = m.manut1Cracha || '';
-        document.getElementById('m1-nome').value   = m.manut1Nome   || '';
-        document.getElementById('m2-cracha').value = m.manut2Cracha || '';
-        document.getElementById('m2-nome').value   = m.manut2Nome   || '';
-        document.getElementById('m3-cracha').value = m.manut3Cracha || '';
-        document.getElementById('m3-nome').value   = m.manut3Nome   || '';
-        document.getElementById('observacoes').value = m.observacoes || '';
-        document.getElementById('inicio-manut').value = m.inicioManut || '';
-        document.getElementById('fim-manut').value   = m.fimManut    || '';
+        document.getElementById('m1-cracha').value    = m.manut1Cracha || '';
+        document.getElementById('m1-nome').value      = m.manut1Nome   || '';
+        document.getElementById('m2-cracha').value    = m.manut2Cracha || '';
+        document.getElementById('m2-nome').value      = m.manut2Nome   || '';
+        document.getElementById('m3-cracha').value    = m.manut3Cracha || '';
+        document.getElementById('m3-nome').value      = m.manut3Nome   || '';
+        document.getElementById('observacoes').value  = m.observacoes  || '';
+        document.getElementById('inicio-manut').value = m.inicioManut  || '';
+        document.getElementById('fim-manut').value    = m.fimManut     || '';
         document.getElementById('btn-salvar').textContent = 'Atualizar atendimento';
         document.getElementById('chamado-box').style.borderLeftColor = 'var(--green)';
+
+        // Mostra metadados do vídeo já salvo
+        if (m.videoNome) {
+          document.getElementById('video-file-name').textContent = m.videoNome;
+          document.getElementById('video-file-size').textContent = m.videoSize || 'Vídeo já enviado';
+          document.getElementById('video-player').style.display = 'none';
+          document.getElementById('video-preview-wrap').classList.add('visible');
+          document.getElementById('video-zone').classList.add('has-file');
+          videoFile = 'existing';
+        }
       }
     }
 
+    // ── Listas ──
     const tarefas = [
       'Ajustar','Consertar','Destravar','Limpar','Reapertar','Regular','Trocar','Acompanhar'
     ];
-
     const motivos = [
-      { num: '16',  nome: 'Entupimento' },
-      { num: '99',  nome: 'Desgaste' },
-      { num: '100', nome: 'Quebra' },
-      { num: '101', nome: 'Folga' },
-      { num: '105', nome: 'Sujidade' },
-      { num: '106', nome: 'Desalinhamento' },
-      { num: '107', nome: 'Vazamento' },
-      { num: '114', nome: 'Curto circuito' },
-      { num: '118', nome: 'Mal contato' },
-      { num: '129', nome: 'Ruído' },
-      { num: '130', nome: 'Vibração' },
-      { num: '133', nome: 'Sobrecarga' },
+      {num:'16', nome:'Entupimento'}, {num:'99', nome:'Desgaste'},
+      {num:'100',nome:'Quebra'},      {num:'101',nome:'Folga'},
+      {num:'105',nome:'Sujidade'},    {num:'106',nome:'Desalinhamento'},
+      {num:'107',nome:'Vazamento'},   {num:'114',nome:'Curto circuito'},
+      {num:'118',nome:'Mal contato'}, {num:'129',nome:'Ruído'},
+      {num:'130',nome:'Vibração'},    {num:'133',nome:'Sobrecarga'},
     ];
-
     const causas = [
-      { num: '07', nome: 'Falha sensor' },
-      { num: '16', nome: 'Vibração' },
-      { num: '25', nome: 'Folga' },
-      { num: '27', nome: 'Rolamento travado' },
-      { num: '36', nome: 'Sobrecarga' },
-      { num: '37', nome: 'Cabo rompido' },
-      { num: '50', nome: 'Desarme disjuntor' },
-      { num: '70', nome: 'Emergência acionada' },
-      { num: '72', nome: 'Mal contato' },
-      { num: '73', nome: 'Fio solto' },
-      { num: '87', nome: 'Parafuso quebrado' },
-      { num: '90', nome: 'Ruído' },
+      {num:'07',nome:'Falha sensor'},       {num:'16',nome:'Vibração'},
+      {num:'25',nome:'Folga'},              {num:'27',nome:'Rolamento travado'},
+      {num:'36',nome:'Sobrecarga'},         {num:'37',nome:'Cabo rompido'},
+      {num:'50',nome:'Desarme disjuntor'}, {num:'70',nome:'Emergência acionada'},
+      {num:'72',nome:'Mal contato'},        {num:'73',nome:'Fio solto'},
+      {num:'87',nome:'Parafuso quebrado'}, {num:'90',nome:'Ruído'},
     ];
 
-    let selTarefa = null;
-    let selMotivo = null;
-    let selCausa  = null;
-    let _selArea  = null;
+    let selTarefa = null, selMotivo = null, selCausa = null, _selArea = null;
+    let videoFile = null;
 
-    const tarefaList = document.getElementById('tarefa-list');
-    tarefas.forEach(t => {
-      const el = document.createElement('div');
-      el.className = 'check-item';
-      el.innerHTML = `<input type="checkbox"/><span class="check-label">${t}</span>`;
-      el.addEventListener('click', () => {
-        document.querySelectorAll('#tarefa-list .check-item').forEach(i => {
-          i.classList.remove('sel');
-          i.querySelector('input').checked = false;
+    function buildCheckList(containerId, items, withNum) {
+      const el = document.getElementById(containerId);
+      items.forEach(item => {
+        const d = document.createElement('div');
+        d.className = 'check-item';
+        const label = typeof item === 'string' ? item : item.nome;
+        const num   = typeof item === 'string' ? '' : item.num;
+        d.innerHTML = withNum
+          ? `<input type="checkbox"/><span class="check-num">${num}</span><span class="check-label">${label}</span>`
+          : `<input type="checkbox"/><span class="check-label">${label}</span>`;
+        d.addEventListener('click', () => {
+          el.querySelectorAll('.check-item').forEach(i => {
+            i.classList.remove('sel'); i.querySelector('input').checked = false;
+          });
+          d.classList.add('sel'); d.querySelector('input').checked = true;
+          const val = typeof item === 'string' ? item : item.num + ' - ' + item.nome;
+          if (containerId === 'tarefa-list') selTarefa = val;
+          if (containerId === 'motivo-list') selMotivo = val;
+          if (containerId === 'causa-list')  selCausa  = val;
         });
-        el.classList.add('sel');
-        el.querySelector('input').checked = true;
-        selTarefa = t;
+        el.appendChild(d);
       });
-      tarefaList.appendChild(el);
-    });
+    }
 
-    const motivoList = document.getElementById('motivo-list');
-    motivos.forEach(m => {
-      const el = document.createElement('div');
-      el.className = 'check-item';
-      el.innerHTML = `<input type="checkbox"/><span class="check-num">${m.num}</span><span class="check-label">${m.nome}</span>`;
-      el.addEventListener('click', () => {
-        document.querySelectorAll('#motivo-list .check-item').forEach(i => {
-          i.classList.remove('sel');
-          i.querySelector('input').checked = false;
-        });
-        el.classList.add('sel');
-        el.querySelector('input').checked = true;
-        selMotivo = m.num + ' - ' + m.nome;
-      });
-      motivoList.appendChild(el);
-    });
-
-    const causaList = document.getElementById('causa-list');
-    causas.forEach(c => {
-      const el = document.createElement('div');
-      el.className = 'check-item';
-      el.innerHTML = `<input type="checkbox"/><span class="check-num">${c.num}</span><span class="check-label">${c.nome}</span>`;
-      el.addEventListener('click', () => {
-        document.querySelectorAll('#causa-list .check-item').forEach(i => {
-          i.classList.remove('sel');
-          i.querySelector('input').checked = false;
-        });
-        el.classList.add('sel');
-        el.querySelector('input').checked = true;
-        selCausa = c.num + ' - ' + c.nome;
-      });
-      causaList.appendChild(el);
-    });
+    buildCheckList('tarefa-list', tarefas, false);
+    buildCheckList('motivo-list', motivos, true);
+    buildCheckList('causa-list',  causas,  true);
 
     function selArea(btn) {
       document.querySelectorAll('.area-btn').forEach(b => b.classList.remove('sel'));
       btn.classList.add('sel');
-      _selArea = btn.textContent;
+      _selArea = btn.textContent.trim();
     }
 
+    // ── Upload de Vídeo ──
+
+    function onVideoSelect(event) {
+      const file = event.target.files[0];
+      if (file) handleVideoFile(file);
+    }
+
+    function onDragOver(event) {
+      event.preventDefault();
+      document.getElementById('video-zone').classList.add('dragover');
+    }
+
+    function onDragLeave() {
+      document.getElementById('video-zone').classList.remove('dragover');
+    }
+
+    function onDrop(event) {
+      event.preventDefault();
+      document.getElementById('video-zone').classList.remove('dragover');
+      const file = event.dataTransfer.files[0];
+      if (file && file.type.startsWith('video/')) handleVideoFile(file);
+    }
+
+    function handleVideoFile(file) {
+      const maxSize = 500 * 1024 * 1024;
+      if (file.size > maxSize) {
+        alert('Vídeo muito grande. Tamanho máximo: 500 MB.');
+        return;
+      }
+      videoFile = file;
+      const zone = document.getElementById('video-zone');
+      zone.classList.remove('error-zone');
+      zone.classList.add('has-file');
+
+      document.getElementById('video-file-name').textContent = file.name;
+      document.getElementById('video-file-size').textContent = formatFileSize(file.size);
+
+      const player = document.getElementById('video-player');
+      player.style.display = '';
+      player.src = URL.createObjectURL(file);
+
+      document.getElementById('video-preview-wrap').classList.add('visible');
+    }
+
+    function removeVideo() {
+      videoFile = null;
+      const zone = document.getElementById('video-zone');
+      zone.classList.remove('has-file', 'error-zone');
+
+      const player = document.getElementById('video-player');
+      if (player.src) URL.revokeObjectURL(player.src);
+      player.src = '';
+      player.style.display = '';
+
+      document.getElementById('video-preview-wrap').classList.remove('visible');
+      document.getElementById('video-input').value = '';
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+      return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+    }
+
+    // ── Salvar ──
     function salvar() {
       const m1cracha = document.getElementById('m1-cracha').value.trim();
       const m1nome   = document.getElementById('m1-nome').value.trim();
-      const obs      = document.getElementById('observacoes').value.trim();
       const err      = document.getElementById('error-bar');
       err.style.display = 'none';
 
-      if (!m1cracha || !m1nome || !selTarefa || !_selArea) {
+      const missing = [];
+      if (!m1cracha || !m1nome) missing.push('Manutentor 1 (crachá e nome)');
+      if (!selTarefa)           missing.push('Tarefa');
+      if (!_selArea)            missing.push('Área');
+      if (!selMotivo)           missing.push('Motivo');
+      if (!videoFile)           missing.push('Vídeo do atendimento');
+
+      if (missing.length > 0) {
+        err.innerHTML = '⚠ Campos obrigatórios: <strong>' + missing.join(', ') + '</strong>';
         err.style.display = 'block';
+        if (!videoFile) document.getElementById('video-zone').classList.add('error-zone');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
 
-      const manutData = {
+      // Metadados do vídeo (o binário não é armazenado no localStorage)
+      const videoMeta = (videoFile && videoFile !== 'existing')
+        ? { videoNome: videoFile.name, videoSize: formatFileSize(videoFile.size) }
+        : { videoNome: rels[idx]?.manutencao?.videoNome || '', videoSize: rels[idx]?.manutencao?.videoSize || '' };
+
+      rels[idx].manutencao = {
         manut1Cracha: m1cracha,
         manut1Nome:   m1nome,
         manut2Cracha: document.getElementById('m2-cracha').value.trim(),
@@ -681,13 +958,13 @@
         motivo:       selMotivo,
         causa:        selCausa,
         area:         _selArea,
-        observacoes:  obs,
+        observacoes:  document.getElementById('observacoes').value.trim(),
         inicioManut:  document.getElementById('inicio-manut').value,
         fimManut:     document.getElementById('fim-manut').value,
         registradoEm: new Date().toISOString(),
+        ...videoMeta,
       };
 
-      rels[idx].manutencao = manutData;
       localStorage.setItem('ms_relatorios', JSON.stringify(rels));
 
       const toast = document.getElementById('toast');

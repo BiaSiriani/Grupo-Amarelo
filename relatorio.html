@@ -19,25 +19,33 @@
     /* TOPBAR */
     .topbar {
       background: var(--surface); border-bottom: 1px solid var(--border);
-      padding: 12px 14px; display: flex; align-items: center;
-      position: sticky; top: 0; z-index: 50; gap: 8px;
+      padding: 10px 12px; display: flex; align-items: center;
+      position: sticky; top: 0; z-index: 50; gap: 6px;
     }
+
     .back-btn {
-      display: flex; align-items: center; gap: 5px;
+      display: flex; align-items: center; gap: 4px;
       background: none; border: none; cursor: pointer;
       font-family: 'DM Sans', sans-serif; font-size: 13px;
-      color: var(--muted); padding: 6px 4px;
+      color: var(--muted); padding: 5px 2px;
       transition: color 0.15s; text-decoration: none; flex-shrink: 0;
     }
     .back-btn:hover { color: var(--text); }
+
     .topbar-title {
-      font-size: 14px; font-weight: 600; letter-spacing: -0.3px;
+      font-size: 13px; font-weight: 600; letter-spacing: -0.3px;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      flex: 1; min-width: 0;
     }
 
-    /* TAB SWITCHER — mobile friendly */
+    @media (min-width: 400px) {
+      .topbar-title { font-size: 14px; }
+      .topbar { padding: 12px 14px; }
+    }
+
+    /* TAB SWITCHER */
     .tab-switcher {
-      display: flex; margin-left: auto; gap: 0;
+      display: flex; gap: 0;
       background: var(--bg); border-radius: 8px;
       padding: 3px; border: 1px solid var(--border);
       flex-shrink: 0;
@@ -50,35 +58,72 @@
     }
     .tab-sw-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
 
-    .main { max-width: 720px; margin: 0 auto; padding: 16px 14px 80px; }
+    .main { max-width: 720px; margin: 0 auto; padding: 14px 12px 80px; }
+
+    @media (min-width: 480px) {
+      .main { padding: 16px 14px 80px; }
+    }
 
     .section { display: none; }
     .section.active { display: block; }
 
     /* CARD */
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 16px; margin-bottom: 12px; }
-    .card-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px 14px; margin-bottom: 10px;
+    }
+
+    @media (min-width: 480px) {
+      .card { padding: 18px 16px; }
+    }
+
+    .card-title {
+      font-size: 11px; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.8px;
+      margin-bottom: 14px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
 
     /* FIELDS */
-    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .field { display: flex; flex-direction: column; gap: 5px; }
     .field.span-2 { grid-column: span 2; }
-    .field label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.7px; }
+
+    .field label {
+      font-size: 11px; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.7px;
+    }
+
     .field input, .field select, .field textarea {
       padding: 11px 12px; border: 1px solid var(--border); border-radius: 9px;
       font-family: 'DM Sans', sans-serif; font-size: 16px; color: var(--text);
-      background: var(--surface); outline: none; transition: border-color 0.15s; appearance: none; resize: none;
+      background: var(--surface); outline: none; transition: border-color 0.15s;
+      appearance: none; resize: none; width: 100%;
     }
     .field input:focus, .field select:focus, .field textarea:focus { border-color: #aaa; }
     .field input[readonly] { background: var(--bg); color: var(--muted); cursor: not-allowed; }
+
+    @media (max-width: 479px) {
+      .field-grid { grid-template-columns: 1fr; }
+      .field.span-2 { grid-column: span 1; }
+    }
+
+    /* DURACAO DISPLAY */
+    .dur-display {
+      padding: 11px 12px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 9px; font-size: 16px; font-weight: 600;
+      color: var(--accent); display: flex; align-items: center;
+      justify-content: space-between; min-height: 46px;
+    }
 
     /* COD PARADA */
     .cod-group { margin-bottom: 8px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
     .cod-group-header {
       display: flex; align-items: center; gap: 8px;
-      padding: 12px 14px; background: var(--bg);
+      padding: 11px 12px; background: var(--bg);
       cursor: pointer; user-select: none; transition: background 0.12s;
-      min-height: 52px;
+      min-height: 50px;
     }
     .cod-group-header:hover { background: #ECEAE4; }
     .cod-group-header.has-sel { background: #f0efe9; }
@@ -88,9 +133,17 @@
     .cod-group-arrow { font-size: 12px; color: var(--muted); transition: transform 0.2s; margin-left: auto; flex-shrink: 0; }
     .cod-group-header.open .cod-group-arrow { transform: rotate(90deg); }
 
+    @media (min-width: 480px) {
+      .cod-group-desc { display: block; }
+    }
+
     .cod-subitems { display: none; padding: 10px; border-top: 1px solid var(--border); background: var(--surface); }
     .cod-subitems.open { display: block; }
-    .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .sub-grid { display: grid; grid-template-columns: 1fr; gap: 6px; }
+
+    @media (min-width: 400px) {
+      .sub-grid { grid-template-columns: 1fr 1fr; }
+    }
 
     .sub-item {
       display: flex; align-items: center; gap: 8px;
@@ -109,15 +162,30 @@
     .sub-label { font-size: 12px; flex: 1; line-height: 1.3; }
 
     /* MANUT */
-    .manut-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-    .manut-group { display: flex; flex-direction: column; gap: 8px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .manut-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+
+    @media (min-width: 560px) {
+      .manut-grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    .manut-group { display: flex; flex-direction: column; gap: 8px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
     .manut-group:last-child { border-bottom: none; padding-bottom: 0; }
+
+    @media (min-width: 560px) {
+      .manut-group { border-bottom: none; padding-bottom: 0; }
+    }
+
     .manut-num-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
-    .manut-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .manut-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
     /* CHECK LISTS */
     .check-col-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-    .three-col { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    .three-col { display: grid; grid-template-columns: 1fr; gap: 14px; }
+
+    @media (min-width: 500px) {
+      .three-col { grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    }
+
     .check-item {
       display: flex; align-items: center; gap: 8px; padding: 10px 12px;
       border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px;
@@ -152,7 +220,7 @@
     /* MANUT MODE TOGGLE */
     .manut-mode-toggle {
       display: flex; background: var(--bg); border: 1px solid var(--border);
-      border-radius: 12px; padding: 4px; margin-bottom: 14px; gap: 0;
+      border-radius: 12px; padding: 4px; margin-bottom: 12px;
     }
     .manut-mode-btn {
       flex: 1; padding: 10px 8px; border: none; background: none;
@@ -160,7 +228,7 @@
       font-size: 12px; font-weight: 500; color: var(--muted);
       cursor: pointer; transition: all 0.18s;
       display: flex; align-items: center; justify-content: center; gap: 5px;
-      text-align: center; line-height: 1.3;
+      text-align: center; line-height: 1.3; min-height: 44px;
     }
     .manut-mode-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 6px rgba(0,0,0,0.09); }
     .manut-mode-btn .mode-icon { font-size: 14px; flex-shrink: 0; }
@@ -168,7 +236,7 @@
     .info-pill {
       display: flex; align-items: flex-start; gap: 6px; padding: 10px 12px;
       background: #E6F1FB; border: 1px solid #B5D4F4;
-      border-radius: 10px; font-size: 12px; color: #185FA5; margin-bottom: 14px; line-height: 1.4;
+      border-radius: 10px; font-size: 12px; color: #185FA5; margin-bottom: 12px; line-height: 1.4;
     }
 
     /* SUBMIT */
@@ -181,7 +249,7 @@
     .btn-primary:hover { opacity: 0.88; }
     .btn-primary:active { transform: scale(0.98); }
     .btn-secondary {
-      padding: 15px 16px; background: var(--surface); color: var(--text);
+      padding: 15px 14px; background: var(--surface); color: var(--text);
       border: 1px solid var(--border); border-radius: 10px;
       font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer;
       text-decoration: none; display: flex; align-items: center; transition: border-color 0.15s;
@@ -191,7 +259,7 @@
 
     .error-bar {
       background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border);
-      border-radius: 9px; padding: 12px 14px; font-size: 13px; margin-bottom: 14px; display: none;
+      border-radius: 9px; padding: 12px 14px; font-size: 13px; margin-bottom: 12px; display: none;
       line-height: 1.4;
     }
 
@@ -202,7 +270,7 @@
     }
     .chamado-box.done { border-left-color: var(--green); }
     .chamado-title { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 6px; }
-    .chamado-equip { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+    .chamado-equip { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
     .chamado-meta { font-size: 12px; color: var(--muted); line-height: 1.6; }
 
     .done-banner {
@@ -210,6 +278,13 @@
       border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; display: none;
     }
     .done-banner-title { font-size: 13px; font-weight: 600; color: var(--green); line-height: 1.4; }
+
+    .time-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
 
     .toast {
       position: fixed; bottom: 24px; left: 50%;
@@ -219,24 +294,6 @@
       opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 999; white-space: nowrap;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    /* Responsive */
-    @media (min-width: 560px) {
-      .three-col { grid-template-columns: 1fr 1fr 1fr; }
-      .manut-grid { grid-template-columns: 1fr 1fr 1fr; }
-      .manut-group { border-bottom: none; padding-bottom: 0; }
-      .cod-group-desc { display: block; }
-    }
-    @media (min-width: 480px) {
-      .sub-grid { grid-template-columns: 1fr 1fr; }
-      .manut-fields { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 479px) {
-      .field-grid { grid-template-columns: 1fr; }
-      .field.span-2 { grid-column: span 1; }
-      .sub-grid { grid-template-columns: 1fr; }
-      .manut-fields { grid-template-columns: 1fr; }
-    }
   </style>
 </head>
 <body>
@@ -267,11 +324,11 @@
           <div class="field"><label>Data final</label><input type="date" id="data-final"/></div>
           <div class="field"><label>Início ocorrência *</label><input type="time" id="inicio-ocorrencia"/></div>
           <div class="field"><label>Fim ocorrência</label><input type="time" id="fim-ocorrencia"/></div>
-          <div class="field" style="grid-column: span 2;">
-            <label>Duração da parada</label>
-            <div id="duracao-display" style="padding:11px 12px;background:var(--bg);border:1px solid var(--border);border-radius:9px;font-size:16px;font-weight:600;color:var(--accent);display:flex;align-items:center;justify-content:space-between;min-height:44px">
+          <div class="field span-2">
+            <label>Duração</label>
+            <div class="dur-display">
               <span id="dur-value">—</span>
-              <span id="dur-unit" style="font-size:12px;color:var(--muted);font-weight:500">minutos</span>
+              <span style="font-size:12px;color:var(--muted);font-weight:500">minutos</span>
             </div>
           </div>
           <div class="field span-2">
@@ -282,7 +339,7 @@
       </div>
 
       <div class="card">
-        <div class="card-title">Código de Parada — selecione um sub-código</div>
+        <div class="card-title">Código de Parada</div>
         <div id="cod-grid"></div>
       </div>
 
@@ -290,7 +347,7 @@
         <div class="card-title">Descrição da ocorrência *</div>
         <div class="field">
           <label>Descreva o problema</label>
-          <textarea id="descricao" rows="4" placeholder="Descreva o problema, o que foi observado..."></textarea>
+          <textarea id="descricao" rows="4" placeholder="Descreva o problema observado..."></textarea>
         </div>
       </div>
 
@@ -328,7 +385,7 @@
             <div class="done-banner-title" id="done-banner-txt">✓ Manutenção já registrada</div>
           </div>
           <div class="chamado-box" id="chamado-box">
-            <div class="chamado-title">Chamado aberto pelo operador</div>
+            <div class="chamado-title">Chamado do operador</div>
             <div class="chamado-equip" id="c-equip">—</div>
             <div class="chamado-meta" id="c-meta">—</div>
           </div>
@@ -340,21 +397,21 @@
                 <span class="manut-num-label">1 — Principal *</span>
                 <div class="manut-fields">
                   <div class="field"><label>Crachá</label><input type="text" id="m1-cracha" placeholder="00000" inputmode="numeric"/></div>
-                  <div class="field"><label>Nome</label><input type="text" id="m1-nome" placeholder="Nome completo"/></div>
+                  <div class="field"><label>Nome</label><input type="text" id="m1-nome" placeholder="Nome"/></div>
                 </div>
               </div>
               <div class="manut-group">
                 <span class="manut-num-label">2 — Auxiliar</span>
                 <div class="manut-fields">
                   <div class="field"><label>Crachá</label><input type="text" id="m2-cracha" placeholder="00000" inputmode="numeric"/></div>
-                  <div class="field"><label>Nome</label><input type="text" id="m2-nome" placeholder="Nome completo"/></div>
+                  <div class="field"><label>Nome</label><input type="text" id="m2-nome" placeholder="Nome"/></div>
                 </div>
               </div>
               <div class="manut-group">
                 <span class="manut-num-label">3 — Auxiliar</span>
                 <div class="manut-fields">
                   <div class="field"><label>Crachá</label><input type="text" id="m3-cracha" placeholder="00000" inputmode="numeric"/></div>
-                  <div class="field"><label>Nome</label><input type="text" id="m3-nome" placeholder="Nome completo"/></div>
+                  <div class="field"><label>Nome</label><input type="text" id="m3-nome" placeholder="Nome"/></div>
                 </div>
               </div>
             </div>
@@ -384,7 +441,7 @@
               <label>O que foi executado</label>
               <textarea id="observacoes" rows="4" placeholder="Peças trocadas, ajustes realizados..."></textarea>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+            <div class="time-row">
               <div class="field" style="margin-bottom:0"><label>Início manut.</label><input type="time" id="inicio-manut"/></div>
               <div class="field" style="margin-bottom:0"><label>Fim manut.</label><input type="time" id="fim-manut"/></div>
             </div>
@@ -418,11 +475,11 @@
             <div class="field"><label>Operador (ref.)</label><input type="text" id="mn-operador-ref" placeholder="Nome do operador"/></div>
             <div class="field"><label>Início ocorrência *</label><input type="time" id="mn-inicio"/></div>
             <div class="field"><label>Fim ocorrência</label><input type="time" id="mn-fim"/></div>
-            <div class="field" style="grid-column: span 2;">
-              <label>Duração da parada</label>
-              <div id="mn-duracao-display" style="padding:11px 12px;background:var(--bg);border:1px solid var(--border);border-radius:9px;font-size:16px;font-weight:600;color:var(--accent);display:flex;align-items:center;justify-content:space-between;min-height:44px">
+            <div class="field span-2">
+              <label>Duração</label>
+              <div class="dur-display">
                 <span id="mn-dur-value">—</span>
-                <span id="mn-dur-unit" style="font-size:12px;color:var(--muted);font-weight:500">minutos</span>
+                <span style="font-size:12px;color:var(--muted);font-weight:500">minutos</span>
               </div>
             </div>
             <div class="field span-2">
@@ -452,21 +509,21 @@
               <span class="manut-num-label">1 — Principal *</span>
               <div class="manut-fields">
                 <div class="field"><label>Crachá</label><input type="text" id="mn-m1-cracha" placeholder="00000" inputmode="numeric"/></div>
-                <div class="field"><label>Nome</label><input type="text" id="mn-m1-nome" placeholder="Nome completo"/></div>
+                <div class="field"><label>Nome</label><input type="text" id="mn-m1-nome" placeholder="Nome"/></div>
               </div>
             </div>
             <div class="manut-group">
               <span class="manut-num-label">2 — Auxiliar</span>
               <div class="manut-fields">
                 <div class="field"><label>Crachá</label><input type="text" id="mn-m2-cracha" placeholder="00000" inputmode="numeric"/></div>
-                <div class="field"><label>Nome</label><input type="text" id="mn-m2-nome" placeholder="Nome completo"/></div>
+                <div class="field"><label>Nome</label><input type="text" id="mn-m2-nome" placeholder="Nome"/></div>
               </div>
             </div>
             <div class="manut-group">
               <span class="manut-num-label">3 — Auxiliar</span>
               <div class="manut-fields">
                 <div class="field"><label>Crachá</label><input type="text" id="mn-m3-cracha" placeholder="00000" inputmode="numeric"/></div>
-                <div class="field"><label>Nome</label><input type="text" id="mn-m3-nome" placeholder="Nome completo"/></div>
+                <div class="field"><label>Nome</label><input type="text" id="mn-m3-nome" placeholder="Nome"/></div>
               </div>
             </div>
           </div>
@@ -496,7 +553,7 @@
             <label>O que foi executado</label>
             <textarea id="mn-observacoes" rows="3" placeholder="Peças trocadas, ajustes realizados..."></textarea>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+          <div class="time-row">
             <div class="field" style="margin-bottom:0"><label>Início manut.</label><input type="time" id="mn-inicio-manut"/></div>
             <div class="field" style="margin-bottom:0"><label>Fim manut.</label><input type="time" id="mn-fim-manut"/></div>
           </div>
@@ -658,6 +715,24 @@
       btn.classList.add('sel'); _mnSelArea = btn.textContent;
     }
 
+    function calcDur(inicioId, fimId, displayId) {
+      const inicio = document.getElementById(inicioId).value;
+      const fim = document.getElementById(fimId).value;
+      const valEl = document.getElementById(displayId);
+      if (!inicio || !fim) { valEl.textContent = '—'; return null; }
+      const [h1, m1] = inicio.split(':').map(Number);
+      const [h2, m2] = fim.split(':').map(Number);
+      let mins = (h2 * 60 + m2) - (h1 * 60 + m1);
+      if (mins < 0) mins += 24 * 60;
+      valEl.textContent = mins;
+      return mins;
+    }
+
+    document.getElementById('inicio-ocorrencia').addEventListener('change', () => calcDur('inicio-ocorrencia', 'fim-ocorrencia', 'dur-value'));
+    document.getElementById('fim-ocorrencia').addEventListener('change', () => calcDur('inicio-ocorrencia', 'fim-ocorrencia', 'dur-value'));
+    document.getElementById('mn-inicio').addEventListener('change', () => calcDur('mn-inicio', 'mn-fim', 'mn-dur-value'));
+    document.getElementById('mn-fim').addEventListener('change', () => calcDur('mn-inicio', 'mn-fim', 'mn-dur-value'));
+
     function populateRelSelect() {
       const rels = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
       const abertos = rels.filter(r => !r.manutencao);
@@ -722,61 +797,6 @@
       }
     }
 
-    function calcularDuracao(inicioId, fimId, displayId) {
-      const inicio = document.getElementById(inicioId).value;
-      const fim = document.getElementById(fimId).value;
-      const display = document.getElementById(displayId);
-      
-      if (!inicio || !fim) {
-        document.getElementById('dur-value').textContent = '—';
-        return null;
-      }
-      
-      const [h1, m1] = inicio.split(':').map(Number);
-      const [h2, m2] = fim.split(':').map(Number);
-      let minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
-      
-      if (minutos < 0) minutos += 24 * 60;
-      
-      document.getElementById('dur-value').textContent = minutos;
-      return minutos;
-    }
-
-    document.getElementById('inicio-ocorrencia').addEventListener('change', () => {
-      calcularDuracao('inicio-ocorrencia', 'fim-ocorrencia');
-    });
-    document.getElementById('fim-ocorrencia').addEventListener('change', () => {
-      calcularDuracao('inicio-ocorrencia', 'fim-ocorrencia');
-    });
-    document.getElementById('mn-inicio').addEventListener('change', () => {
-      const inicio = document.getElementById('mn-inicio').value;
-      const fim = document.getElementById('mn-fim').value;
-      if (!inicio || !fim) {
-        document.getElementById('mn-dur-value').textContent = '—';
-        return null;
-      }
-      const [h1, m1] = inicio.split(':').map(Number);
-      const [h2, m2] = fim.split(':').map(Number);
-      let minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
-      if (minutos < 0) minutos += 24 * 60;
-      document.getElementById('mn-dur-value').textContent = minutos;
-      return minutos;
-    });
-    document.getElementById('mn-fim').addEventListener('change', () => {
-      const inicio = document.getElementById('mn-inicio').value;
-      const fim = document.getElementById('mn-fim').value;
-      if (!inicio || !fim) {
-        document.getElementById('mn-dur-value').textContent = '—';
-        return null;
-      }
-      const [h1, m1] = inicio.split(':').map(Number);
-      const [h2, m2] = fim.split(':').map(Number);
-      let minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
-      if (minutos < 0) minutos += 24 * 60;
-      document.getElementById('mn-dur-value').textContent = minutos;
-      return minutos;
-    });
-
     function salvarOperador() {
       const linha = document.getElementById('linha').value.trim();
       const codEquip = document.getElementById('cod-equip').value.trim();
@@ -792,9 +812,9 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
-      
-      const duracao = calcularDuracao('inicio-ocorrencia', 'fim-ocorrencia');
-      
+
+      const duracao = calcDur('inicio-ocorrencia', 'fim-ocorrencia', 'dur-value');
+
       const relatorio = {
         id: Date.now(), linha,
         lote: document.getElementById('lote').value.trim(),
@@ -850,6 +870,7 @@
       const equip = document.getElementById('mn-equipamento').value.trim();
       const data = document.getElementById('mn-data').value;
       const inicio = document.getElementById('mn-inicio').value;
+      const fim = document.getElementById('mn-fim').value;
       const desc = document.getElementById('mn-descricao').value.trim();
       const m1cracha = document.getElementById('mn-m1-cracha').value.trim();
       const m1nome = document.getElementById('mn-m1-nome').value.trim();
@@ -860,13 +881,13 @@
         err.style.display = 'block'; window.scrollTo({ top: 0, behavior: 'smooth' }); return;
       }
       if (!m1cracha || !m1nome || !mnSelTarefa || !_mnSelArea) {
-        err.textContent = 'Preencha os dados do manutentor: Crachá, Nome, Tarefa e Área.';
+        err.textContent = 'Preencha: Crachá, Nome do manutentor, Tarefa e Área.';
         err.style.display = 'block'; window.scrollTo({ top: 0, behavior: 'smooth' }); return;
       }
+
+      const duracao = calcDur('mn-inicio', 'mn-fim', 'mn-dur-value');
       const operadorRef = document.getElementById('mn-operador-ref').value.trim();
-      
-      const duracao = calcularDuracao('inicio-ocorrencia', 'fim-ocorrencia');
-      
+
       const relatorio = {
         id: Date.now(), linha,
         lote: document.getElementById('mn-lote').value.trim(),

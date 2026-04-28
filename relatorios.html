@@ -36,10 +36,10 @@
     .topbar {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
-      padding: 14px 24px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       position: sticky;
       top: 0;
       z-index: 50;
@@ -50,20 +50,30 @@
       background: none; border: none; cursor: pointer;
       font-family: 'DM Sans', sans-serif; font-size: 13px;
       color: var(--muted); text-decoration: none;
-      transition: color 0.15s;
+      transition: color 0.15s; white-space: nowrap; flex-shrink: 0;
     }
     .back-btn:hover { color: var(--text); }
-    .topbar-title { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
 
-    .main { max-width: 720px; margin: 0 auto; padding: 24px 20px 60px; }
+    .topbar-title {
+      font-size: 14px; font-weight: 600; letter-spacing: -0.3px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .main { max-width: 720px; margin: 0 auto; padding: 16px 12px 60px; }
+
+    @media (min-width: 480px) {
+      .main { padding: 24px 20px 60px; }
+      .topbar { padding: 14px 24px; }
+      .topbar-title { font-size: 15px; }
+    }
 
     .filter-row {
       display: flex; gap: 8px;
-      margin-bottom: 20px; flex-wrap: wrap;
+      margin-bottom: 16px; flex-wrap: wrap;
     }
 
     .filter-btn {
-      padding: 7px 14px;
+      padding: 7px 12px;
       border: 1px solid var(--border);
       border-radius: 20px;
       background: var(--surface);
@@ -71,37 +81,48 @@
       font-size: 12px; font-weight: 500;
       color: var(--muted); cursor: pointer;
       transition: all 0.15s;
+      white-space: nowrap;
     }
     .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
     .search-input {
-      flex: 1; min-width: 180px;
+      flex: 1; min-width: 140px;
       padding: 8px 14px;
       border: 1px solid var(--border);
       border-radius: 20px;
       font-family: 'DM Sans', sans-serif;
-      font-size: 13px; color: var(--text);
+      font-size: 14px; color: var(--text);
       background: var(--surface); outline: none;
       transition: border-color 0.15s;
     }
     .search-input:focus { border-color: #aaa; }
 
+    /* STATS — 2 colunas no mobile, 4 no desktop */
     .stats-row {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-      gap: 10px; margin-bottom: 24px;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    @media (min-width: 480px) {
+      .stats-row { grid-template-columns: repeat(4, 1fr); gap: 10px; }
     }
 
     .stat-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 14px 16px; text-align: center;
+      padding: 12px 14px; text-align: center;
     }
 
     .stat-val {
-      font-size: 24px; font-weight: 600;
+      font-size: 22px; font-weight: 600;
       letter-spacing: -1px; line-height: 1; margin-bottom: 3px;
+    }
+
+    @media (min-width: 480px) {
+      .stat-val { font-size: 24px; }
     }
 
     .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -119,8 +140,6 @@
     .rel-card-header {
       display: flex;
       align-items: stretch;
-      gap: 0;
-      cursor: pointer;
     }
 
     .status-bar {
@@ -131,25 +150,35 @@
     .rel-header-content {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 14px 16px;
+      gap: 10px;
+      padding: 12px 12px;
       flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+
+    @media (min-width: 480px) {
+      .rel-header-content { padding: 14px 16px; gap: 12px; }
     }
 
     .rel-main { flex: 1; min-width: 0; }
 
     .rel-top {
       display: flex; align-items: center;
-      gap: 8px; margin-bottom: 4px;
+      gap: 6px; margin-bottom: 4px;
       flex-wrap: wrap;
     }
 
-    .rel-equip { font-size: 14px; font-weight: 600; letter-spacing: -0.2px; }
+    .rel-equip { font-size: 13px; font-weight: 600; letter-spacing: -0.2px; }
+
+    @media (min-width: 400px) {
+      .rel-equip { font-size: 14px; }
+    }
 
     .badge {
       display: inline-flex; align-items: center;
-      padding: 3px 9px; border-radius: 20px;
-      font-size: 11px; font-weight: 500;
+      padding: 2px 7px; border-radius: 20px;
+      font-size: 10px; font-weight: 500;
       white-space: nowrap;
     }
 
@@ -158,29 +187,36 @@
     .badge-green  { background: var(--green-bg);  color: var(--green); border: 1px solid var(--green-border); }
     .badge-blue   { background: #E6F1FB; color: #185FA5; border: 1px solid #b5d4f4; }
 
-    .rel-meta { font-size: 12px; color: var(--muted); }
+    .rel-meta { font-size: 11px; color: var(--muted); }
 
-    /* Botão manutenção — sempre visível */
+    @media (min-width: 400px) {
+      .rel-meta { font-size: 12px; }
+    }
+
     .btn-manut-wrap {
-      padding: 12px 14px 12px 0;
+      padding: 12px 12px 12px 0;
       display: flex;
       align-items: center;
       flex-shrink: 0;
     }
 
     .btn-manut {
-      padding: 9px 16px;
+      padding: 8px 12px;
       background: var(--accent);
       color: #fff;
       border: none;
       border-radius: 8px;
       font-family: 'DM Sans', sans-serif;
-      font-size: 12px; font-weight: 500;
+      font-size: 11px; font-weight: 500;
       cursor: pointer;
       white-space: nowrap;
       transition: opacity 0.15s;
       text-decoration: none;
       display: inline-block;
+    }
+
+    @media (min-width: 400px) {
+      .btn-manut { font-size: 12px; padding: 9px 16px; }
     }
 
     .btn-manut:hover { opacity: 0.82; }
@@ -194,8 +230,12 @@
     /* EXPAND */
     .rel-body {
       display: none;
-      padding: 0 16px 16px 20px;
+      padding: 0 14px 14px 18px;
       border-top: 1px solid var(--border);
+    }
+
+    @media (min-width: 480px) {
+      .rel-body { padding: 0 16px 16px 20px; }
     }
 
     .rel-body.open { display: block; }
@@ -203,17 +243,17 @@
     .detail-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px 20px;
+      gap: 8px 16px;
       margin-top: 12px;
     }
 
     .detail-key { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
-    .detail-val { font-size: 13px; margin-top: 2px; }
+    .detail-val { font-size: 12px; margin-top: 2px; }
 
     .desc-box {
-      margin-top: 12px; padding: 12px;
+      margin-top: 12px; padding: 10px 12px;
       background: var(--bg); border-radius: 8px;
-      font-size: 13px; color: var(--text); line-height: 1.5;
+      font-size: 12px; color: var(--text); line-height: 1.5;
     }
 
     .manut-preview {
@@ -229,24 +269,6 @@
     .empty-icon { font-size: 40px; margin-bottom: 12px; }
     .empty-title { font-size: 16px; font-weight: 500; margin-bottom: 6px; color: var(--text); }
     .empty-sub { font-size: 13px; }
-
-    @media (max-width: 480px) {
-      .stats-row { grid-template-columns: 1fr 1fr; }
-      .detail-grid { grid-template-columns: 1fr; }
-      .topbar { padding: 12px 16px; }
-      .main { padding: 16px 12px 60px; }
-      .filter-row { gap: 6px; }
-      .search-input { min-width: 120px; font-size: 14px; }
-      .filter-btn { font-size: 11px; padding: 6px 12px; }
-      .rel-card-header { flex-wrap: wrap; }
-      .rel-header-content { padding: 10px 12px; gap: 8px; }
-      .rel-equip { font-size: 13px; }
-      .rel-meta { font-size: 11px; }
-      .btn-manut { font-size: 11px; padding: 8px 12px; }
-      .badge { font-size: 10px; padding: 2px 6px; }
-      .detail-val { font-size: 12px; }
-      .desc-box { font-size: 12px; padding: 10px; }
-    }
   </style>
 </head>
 <body>
@@ -259,7 +281,7 @@
   <div class="main">
 
     <div class="filter-row">
-      <input class="search-input" id="search" type="text" placeholder="Buscar por equipamento, operador..." oninput="renderList()"/>
+      <input class="search-input" id="search" type="text" placeholder="Buscar equipamento, operador..." oninput="renderList()"/>
       <button class="filter-btn active" onclick="setFiltro('todos', this)">Todos</button>
       <button class="filter-btn" onclick="setFiltro('aberto', this)">Em aberto</button>
       <button class="filter-btn" onclick="setFiltro('atendido', this)">Atendidos</button>
@@ -363,7 +385,7 @@
         const codBadge = getCodBadge(r.codMotivo);
         const barColor = r.manutencao ? 'var(--green)' : (['1','2'].includes(r.codMotivo) ? 'var(--red)' : 'var(--amber)');
         const nomeMotivo = codigos[r.codMotivo] || `Cód. ${r.codMotivo}`;
-        const btnLabel = r.manutencao ? 'Ver atend.' : 'Manutenção';
+        const btnLabel = r.manutencao ? 'Ver' : 'Manut.';
         const btnCls   = r.manutencao ? 'btn-manut done' : 'btn-manut';
 
         const card = document.createElement('div');
@@ -389,21 +411,20 @@
           </div>
           <div class="rel-body" id="body-${r.id}">
             <div class="detail-grid">
-              <div class="detail-item"><div class="detail-key">Cód. Equipamento</div><div class="detail-val">${r.codEquipamento || '—'}</div></div>
-              <div class="detail-item"><div class="detail-key">Lote</div><div class="detail-val">${r.lote || '—'}</div></div>
-              <div class="detail-item"><div class="detail-key">Data inicial</div><div class="detail-val">${formatDate(r.dataInicial)}</div></div>
-              <div class="detail-item"><div class="detail-key">Data final</div><div class="detail-val">${formatDate(r.dataFinal) || '—'}</div></div>
-              <div class="detail-item"><div class="detail-key">Início</div><div class="detail-val">${r.inicioOcorrencia || '—'}</div></div>
-              <div class="detail-item"><div class="detail-key">Fim</div><div class="detail-val">${r.fimOcorrencia || '—'}</div></div>
-              <div class="detail-item"><div class="detail-key">Duração</div><div class="detail-val">${r.duracao !== null && r.duracao !== undefined ? r.duracao + ' min' : '—'}</div></div>
-              <div class="detail-item"><div class="detail-key">Turno</div><div class="detail-val">${r.turno || '—'}</div></div>
-              <div class="detail-item"><div class="detail-key">Crachá op.</div><div class="detail-val">${r.cracha || '—'}</div></div>
+              <div><div class="detail-key">Cód. Equip.</div><div class="detail-val">${r.codEquipamento || '—'}</div></div>
+              <div><div class="detail-key">Lote</div><div class="detail-val">${r.lote || '—'}</div></div>
+              <div><div class="detail-key">Data inicial</div><div class="detail-val">${formatDate(r.dataInicial)}</div></div>
+              <div><div class="detail-key">Data final</div><div class="detail-val">${formatDate(r.dataFinal) || '—'}</div></div>
+              <div><div class="detail-key">Início</div><div class="detail-val">${r.inicioOcorrencia || '—'}</div></div>
+              <div><div class="detail-key">Fim</div><div class="detail-val">${r.fimOcorrencia || '—'}</div></div>
+              <div><div class="detail-key">Duração</div><div class="detail-val">${r.duracao !== null && r.duracao !== undefined ? r.duracao + ' min' : '—'}</div></div>
+              <div><div class="detail-key">Turno</div><div class="detail-val">${r.turno || '—'}</div></div>
             </div>
             <div class="desc-box">${r.descricao || '—'}</div>
             ${r.manutencao ? `
               <div class="manut-preview">
-                <strong>Manutenção registrada por ${r.manutencao.manut1Nome || '—'}</strong>
-                Tarefa: ${r.manutencao.tarefa || '—'} · Área: ${r.manutencao.area || '—'} · Motivo: ${r.manutencao.motivo || '—'}
+                <strong>Registrado por ${r.manutencao.manut1Nome || '—'}</strong>
+                Tarefa: ${r.manutencao.tarefa || '—'} · Área: ${r.manutencao.area || '—'}
               </div>` : ''}
           </div>
         `;
