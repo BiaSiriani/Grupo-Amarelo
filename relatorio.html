@@ -352,9 +352,82 @@
       opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 999; white-space: nowrap;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    /* ── OPERATOR MODAL (admin only) ── */
+    .op-modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(24,23,15,0.5);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .op-modal-overlay.hidden { display: none; }
+    .op-modal-box {
+      background: var(--surface); border-radius: 18px;
+      padding: 28px 24px; width: 100%; max-width: 380px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.20);
+    }
+    .op-modal-header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+    }
+    .op-modal-icon {
+      width: 38px; height: 38px; background: var(--accent); border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 13px; flex-shrink: 0;
+    }
+    .op-modal-title { font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
+    .op-modal-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .op-modal-field { margin-bottom: 14px; }
+    .op-modal-field label {
+      display: block; font-size: 11px; font-weight: 600;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.7px; margin-bottom: 6px;
+    }
+    .op-modal-field input {
+      width: 100%; padding: 13px 14px;
+      border: 1px solid var(--border); border-radius: 9px;
+      font-family: 'DM Sans', sans-serif; font-size: 16px;
+      color: var(--text); background: var(--surface); outline: none;
+      transition: border-color 0.15s;
+    }
+    .op-modal-field input:focus { border-color: #aaa; }
+    .op-modal-err {
+      background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border);
+      border-radius: 8px; padding: 9px 12px; font-size: 13px;
+      margin-bottom: 12px; display: none;
+    }
+    .op-modal-btn {
+      width: 100%; padding: 14px; background: var(--accent); color: #fff;
+      border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .op-modal-btn:hover { opacity: 0.88; }
+    .op-modal-btn:active { transform: scale(0.98); }
   </style>
 </head>
 <body>
+  <!-- ===== MODAL OPERADOR (admin only) ===== -->
+  <div class="op-modal-overlay hidden" id="op-modal">
+    <div class="op-modal-box">
+      <div class="op-modal-header">
+        <div class="op-modal-icon">MS</div>
+        <div>
+          <div class="op-modal-title">Identificação do Operador</div>
+          <div class="op-modal-sub">Informe quem está registrando a parada</div>
+        </div>
+      </div>
+      <div class="op-modal-err" id="op-modal-err">Preencha o nome e o crachá do operador.</div>
+      <div class="op-modal-field">
+        <label>Nome do operador *</label>
+        <input type="text" id="op-modal-nome" placeholder="Ex: João Silva" autocomplete="off"/>
+      </div>
+      <div class="op-modal-field">
+        <label>Crachá / Matrícula *</label>
+        <input type="text" id="op-modal-cracha" placeholder="Ex: 00123" inputmode="numeric" autocomplete="off"/>
+      </div>
+      <button class="op-modal-btn" onclick="confirmarOperador()">Continuar →</button>
+    </div>
+  </div>
+
   <div class="topbar">
     <a class="back-btn" href="home.html">← Voltar</a>
     <span class="topbar-title">Relatório de Parada</span>
@@ -687,8 +760,36 @@
     const user = JSON.parse(localStorage.getItem('ms_user') || 'null');
     if (!user) window.location.href = 'index.html';
 
-    document.getElementById('cracha').value   = user.cracha;
-    document.getElementById('operador').value = user.nome;
+    const _isAdmin = user.cracha === 'admin';
+    const _urlParams = new URLSearchParams(window.location.search);
+    const _isModeManut = _urlParams.get('modo') === 'manut' || _urlParams.get('relId') || _urlParams.get('modo') === 'novo-manut';
+
+    // Se for admin e estiver na aba operador, exibe o modal de identificação
+    if (_isAdmin && !_isModeManut) {
+      document.getElementById('op-modal').classList.remove('hidden');
+      setTimeout(() => document.getElementById('op-modal-nome').focus(), 100);
+    } else {
+      // Usuário normal: preenche os campos com os dados do login
+      document.getElementById('cracha').value   = user.cracha;
+      document.getElementById('operador').value = user.nome;
+    }
+
+    function confirmarOperador() {
+      const nome   = document.getElementById('op-modal-nome').value.trim();
+      const cracha = document.getElementById('op-modal-cracha').value.trim();
+      const err    = document.getElementById('op-modal-err');
+      if (!nome || !cracha) { err.style.display = 'block'; return; }
+      err.style.display = 'none';
+      document.getElementById('cracha').value   = cracha;
+      document.getElementById('operador').value = nome;
+      document.getElementById('op-modal').classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !document.getElementById('op-modal').classList.contains('hidden')) {
+        confirmarOperador();
+      }
+    });
 
     const hoje = new Date().toISOString().slice(0, 10);
     document.getElementById('data-inicial').value = hoje;
@@ -1159,13 +1260,12 @@
       if (sec === 'manutencao') populateRelSelect();
     }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('modo') === 'manut') switchSection('manutencao', document.querySelectorAll('.tab-sw-btn')[1]);
-    if (urlParams.get('relId')) {
+    if (_urlParams.get('modo') === 'manut') switchSection('manutencao', document.querySelectorAll('.tab-sw-btn')[1]);
+    if (_urlParams.get('relId')) {
       switchSection('manutencao', document.querySelectorAll('.tab-sw-btn')[1]);
-      setTimeout(() => { document.getElementById('rel-select').value = urlParams.get('relId'); loadRel(); }, 100);
+      setTimeout(() => { document.getElementById('rel-select').value = _urlParams.get('relId'); loadRel(); }, 100);
     }
-    if (urlParams.get('modo') === 'novo-manut') {
+    if (_urlParams.get('modo') === 'novo-manut') {
       switchSection('manutencao', document.querySelectorAll('.tab-sw-btn')[1]);
       setManutMode('novo');
     }
