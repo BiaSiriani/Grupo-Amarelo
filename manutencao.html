@@ -302,6 +302,29 @@
     .done-banner-title { font-size: 14px; font-weight: 600; color: var(--green); margin-bottom: 4px; }
     .done-banner-sub { font-size: 12px; color: var(--green); }
 
+    /* DETAIL GRID — usado no resumo expandido */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 20px;
+      margin-top: 12px;
+    }
+
+    /* FIX: era regra vazia — agora tem estilos corretos */
+    .detail-item { display: flex; flex-direction: column; gap: 3px; }
+    .detail-key { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
+    .detail-val { font-size: 13px; margin-top: 2px; }
+
+    .desc-box {
+      margin-top: 12px;
+      padding: 12px;
+      background: var(--bg);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
     /* SUBMIT */
     .submit-row { display: flex; gap: 10px; }
 
@@ -675,7 +698,7 @@
         tarefa:       selTarefa,
         motivo:       selMotivo,
         causa:        selCausa,
-        area:         selArea,
+        area:         _selArea,
         observacoes:  obs,
         inicioManut:  document.getElementById('inicio-manut').value,
         fimManut:     document.getElementById('fim-manut').value,
