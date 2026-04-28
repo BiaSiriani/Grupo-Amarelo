@@ -722,9 +722,10 @@
       }
     }
 
-    function calcularDuracao(inicioId, fimId) {
+    function calcularDuracao(inicioId, fimId, displayId) {
       const inicio = document.getElementById(inicioId).value;
       const fim = document.getElementById(fimId).value;
+      const display = document.getElementById(displayId);
       
       if (!inicio || !fim) {
         document.getElementById('dur-value').textContent = '—';
@@ -782,7 +783,6 @@
       const equip = document.getElementById('equipamento').value.trim();
       const dataIni = document.getElementById('data-inicial').value;
       const inicio = document.getElementById('inicio-ocorrencia').value;
-      const fim = document.getElementById('fim-ocorrencia').value;
       const desc = document.getElementById('descricao').value.trim();
       const err = document.getElementById('error-bar');
       err.style.display = 'none';
@@ -801,7 +801,7 @@
         cracha: user.cracha, operador: user.nome,
         codEquipamento: codEquip, equipamento: equip,
         dataInicial: dataIni, dataFinal: document.getElementById('data-final').value,
-        inicioOcorrencia: inicio, fimOcorrencia: fim,
+        inicioOcorrencia: inicio, fimOcorrencia: document.getElementById('fim-ocorrencia').value,
         duracao: duracao,
         codMotivo: selectedSubCod.cod, subCodigo: selectedSubCod.sub, subNome: selectedSubCod.nome,
         descricao: desc, dataISO: hoje, turno: user.turno, criadoEm: new Date().toISOString(),
@@ -865,14 +865,7 @@
       }
       const operadorRef = document.getElementById('mn-operador-ref').value.trim();
       
-      const duracao = (() => {
-        if (!inicio || !fim) return null;
-        const [h1, m1] = inicio.split(':').map(Number);
-        const [h2, m2] = fim.split(':').map(Number);
-        let mins = (h2 * 60 + m2) - (h1 * 60 + m1);
-        if (mins < 0) mins += 24 * 60;
-        return mins;
-      })();
+      const duracao = calcularDuracao('inicio-ocorrencia', 'fim-ocorrencia');
       
       const relatorio = {
         id: Date.now(), linha,
