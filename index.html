@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MáquinaStop — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F4F2EE;
+      --surface: #FFFFFF;
+      --border: #E2DFD8;
+      --text: #18170F;
+      --muted: #7A7870;
+      --accent: #1A1916;
+      --red: #C93B3A;
+      --red-bg: #FDF0F0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 2px 24px rgba(0,0,0,0.06);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--accent);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: -1px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    .logo-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .tabs {
+      display: flex;
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 28px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      background: none;
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+    }
+
+    .form-section { display: none; }
+    .form-section.active { display: block; }
+
+    .field { margin-bottom: 16px; }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      margin-bottom: 6px;
+    }
+
+    .field input, .field select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--surface);
+      outline: none;
+      transition: border-color 0.15s;
+      appearance: none;
+    }
+
+    .field input:focus, .field select:focus {
+      border-color: #aaa;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 13px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: opacity 0.15s, transform 0.1s;
+      letter-spacing: -0.2px;
+    }
+
+    .btn:hover { opacity: 0.88; }
+    .btn:active { transform: scale(0.98); }
+
+    .error-msg {
+      background: var(--red-bg);
+      color: var(--red);
+      border: 1px solid #f0caca;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .success-msg {
+      background: #EAF3DE;
+      color: #3B6D11;
+      border: 1px solid #c0dd97;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon">MS</div>
+      <div>
+        <div class="logo-text">MáquinaStop</div>
+        <div class="logo-sub">Relatório de Paradas — Marilan</div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('login')">Entrar</button>
+      <button class="tab-btn" onclick="switchTab('cadastro')">Criar conta</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="form-section active" id="sec-login">
+      <div class="error-msg" id="login-error">Usuário ou senha incorretos.</div>
+      <div class="field">
+        <label>Crachá / Usuário</label>
+        <input type="text" id="login-cracha" placeholder="Ex: 00123" autocomplete="username"/>
+      </div>
+      <div class="field">
+        <label>Senha</label>
+        <input type="password" id="login-senha" placeholder="••••••" autocomplete="current-password"/>
+      </div>
+      <button class="btn" onclick="doLogin()">Entrar no sistema</button>
+    </div>
+
+    <!-- CADASTRO -->
+    <div class="form-section" id="sec-cadastro">
+      <div class="success-msg" id="cad-success">Conta criada! Faça login para continuar.</div>
+      <div class="error-msg" id="cad-error">Preencha todos os campos.</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Nome</label>
+          <input type="text" id="cad-nome" placeholder="João"/>
+        </div>
+        <div class="field">
+          <label>Sobrenome</label>
+          <input type="text" id="cad-sobrenome" placeholder="Silva"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Crachá (matrícula)</label>
+        <input type="text" id="cad-cracha" placeholder="Ex: 00123"/>
+      </div>
+      <div class="field">
+        <label>Turno</label>
+        <select id="cad-turno">
+          <option value="">Selecione o turno</option>
+          <option>Turno A — Manhã</option>
+          <option>Turno B — Tarde</option>
+          <option>Turno C — Noite</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Senha</label>
+        <input type="password" id="cad-senha" placeholder="Crie uma senha"/>
+      </div>
+      <button class="btn" onclick="doCadastro()">Criar conta</button>
+    </div>
+
+    <div class="footer-note">Marilan Alimentos © 2025</div>
+  </div>
+
+  <script>
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach((b, i) => {
+        b.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'cadastro'));
+      });
+      document.getElementById('sec-login').classList.toggle('active', tab === 'login');
+      document.getElementById('sec-cadastro').classList.toggle('active', tab === 'cadastro');
+    }
+
+    function doLogin() {
+      const cracha = document.getElementById('login-cracha').value.trim();
+      const senha  = document.getElementById('login-senha').value.trim();
+      const err    = document.getElementById('login-error');
+      err.style.display = 'none';
+
+      if (!cracha || !senha) { err.style.display = 'block'; return; }
+
+      const users = JSON.parse(localStorage.getItem('ms_users') || '[]');
+      const user  = users.find(u => u.cracha === cracha && u.senha === senha);
+
+      // fallback admin padrão
+      const isAdmin = cracha === 'admin' && senha === 'admin123';
+
+      if (user || isAdmin) {
+        const loggedUser = user || { nome: 'Administrador', cracha: 'admin', turno: 'Turno A' };
+        localStorage.setItem('ms_user', JSON.stringify(loggedUser));
+        window.location.href = 'home.html';
+      } else {
+        err.style.display = 'block';
+      }
+    }
+
+    function doCadastro() {
+      const nome      = document.getElementById('cad-nome').value.trim();
+      const sobrenome = document.getElementById('cad-sobrenome').value.trim();
+      const cracha    = document.getElementById('cad-cracha').value.trim();
+      const turno     = document.getElementById('cad-turno').value;
+      const senha     = document.getElementById('cad-senha').value.trim();
+      const err       = document.getElementById('cad-error');
+      const ok        = document.getElementById('cad-success');
+      err.style.display = 'none';
+      ok.style.display  = 'none';
+
+      if (!nome || !sobrenome || !cracha || !turno || !senha) {
+        err.style.display = 'block'; return;
+      }
+
+      const users = JSON.parse(localStorage.getItem('ms_users') || '[]');
+      users.push({ nome: nome + ' ' + sobrenome, cracha, turno, senha });
+      localStorage.setItem('ms_users', JSON.stringify(users));
+
+      ok.style.display = 'block';
+      setTimeout(() => switchTab('login'), 1800);
+    }
+
+    // Enter para login
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') doLogin();
+    });
+  </script>
+</body>
+</html>

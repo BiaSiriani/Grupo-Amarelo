@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MáquinaStop — Relatório de Parada</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F4F2EE;
+      --surface: #FFFFFF;
+      --border: #E2DFD8;
+      --text: #18170F;
+      --muted: #7A7870;
+      --accent: #1A1916;
+      --red: #C93B3A;
+      --red-bg: #FDF0F0;
+      --red-border: #f0caca;
+      --amber: #BA7517;
+      --amber-bg: #FAEEDA;
+      --green: #3B6D11;
+      --green-bg: #EAF3DE;
+      --green-border: #c0dd97;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--text);
+    }
+
+    /* TOPBAR */
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      padding: 4px 0;
+      transition: color 0.15s;
+      text-decoration: none;
+    }
+
+    .back-btn:hover { color: var(--text); }
+    .back-arrow { font-size: 18px; line-height: 1; }
+
+    .topbar-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    /* MAIN */
+    .main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 28px 20px 80px;
+    }
+
+    /* CARD */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* GRID FIELDS */
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .field-grid.cols-1 { grid-template-columns: 1fr; }
+    .field-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field.span-2 { grid-column: span 2; }
+
+    .field label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+    }
+
+    .field input, .field select, .field textarea {
+      padding: 10px 13px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--text);
+      background: var(--surface);
+      outline: none;
+      transition: border-color 0.15s;
+      appearance: none;
+      resize: none;
+    }
+
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: #aaa;
+    }
+
+    .field input[readonly] {
+      background: var(--bg);
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+
+    /* COD PARADA GRID */
+    .cod-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .cod-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+    }
+
+    .cod-item:hover {
+      border-color: #bbb;
+      background: var(--bg);
+    }
+
+    .cod-item.selected {
+      border-color: var(--accent);
+      background: #f0efe9;
+    }
+
+    .cod-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      appearance: none;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s;
+      background: var(--surface);
+    }
+
+    .cod-item.selected input[type="checkbox"] {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .cod-item.selected input[type="checkbox"]::after {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 8px;
+      border: 2px solid white;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg) translate(1px, -1px);
+      margin: 2px auto 0;
+    }
+
+    .cod-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      min-width: 18px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .cod-name {
+      font-size: 13px;
+      font-weight: 400;
+      flex: 1;
+    }
+
+    .cod-item.selected .cod-name {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    /* SUBMIT */
+    .submit-area { display: flex; gap: 10px; }
+
+    .btn-primary {
+      flex: 1;
+      padding: 14px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: -0.2px;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-secondary {
+      padding: 14px 20px;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-secondary:hover { border-color: #aaa; }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--accent);
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s;
+      z-index: 999;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .error-bar {
+      background: var(--red-bg);
+      color: var(--red);
+      border: 1px solid var(--red-border);
+      border-radius: 9px;
+      padding: 11px 16px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    @media (max-width: 480px) {
+      .main { padding: 20px 12px 80px; }
+      .field-grid { grid-template-columns: 1fr; }
+      .field.span-2 { grid-column: span 1; }
+      .cod-grid { grid-template-columns: 1fr; }
+      .field-grid.cols-3 { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="back-btn" href="home.html">
+      <span class="back-arrow">←</span>
+      Voltar
+    </a>
+    <span class="topbar-title">Relatório de Parada</span>
+  </div>
+
+  <div class="main">
+    <div class="error-bar" id="error-bar">Preencha todos os campos obrigatórios e selecione o código de parada.</div>
+
+    <!-- CAMPO OPERADOR -->
+    <div class="card">
+      <div class="card-title">Campo Operador</div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Linha *</label>
+          <input type="text" id="linha" placeholder="Ex: Linha 03"/>
+        </div>
+        <div class="field">
+          <label>Lote</label>
+          <input type="text" id="lote" placeholder="Ex: L2504-007"/>
+        </div>
+        <div class="field">
+          <label>Crachá</label>
+          <input type="text" id="cracha" readonly/>
+        </div>
+        <div class="field">
+          <label>Operador</label>
+          <input type="text" id="operador" readonly/>
+        </div>
+        <div class="field">
+          <label>Cód. Equipamento *</label>
+          <input type="text" id="cod-equip" placeholder="Ex: INJ-01"/>
+        </div>
+        <div class="field">
+          <label>Equipamento *</label>
+          <input type="text" id="equipamento" placeholder="Ex: Injetora 01"/>
+        </div>
+        <div class="field">
+          <label>Data inicial da ocorrência *</label>
+          <input type="date" id="data-inicial"/>
+        </div>
+        <div class="field">
+          <label>Data final da ocorrência</label>
+          <input type="date" id="data-final"/>
+        </div>
+        <div class="field">
+          <label>Início da ocorrência *</label>
+          <input type="time" id="inicio-ocorrencia"/>
+        </div>
+        <div class="field">
+          <label>Fim da ocorrência</label>
+          <input type="time" id="fim-ocorrencia"/>
+        </div>
+        <div class="field span-2">
+          <label>Cód. Motivo (será preenchido ao selecionar abaixo)</label>
+          <input type="text" id="cod-motivo" readonly placeholder="Selecione o código de parada abaixo"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- CÓDIGO DE PARADA -->
+    <div class="card">
+      <div class="card-title">Cód. Parada — selecione um</div>
+      <div class="cod-grid" id="cod-grid">
+        <!-- gerado pelo JS -->
+      </div>
+    </div>
+
+    <!-- DESCRIÇÃO -->
+    <div class="card">
+      <div class="card-title">Descrição</div>
+      <div class="field">
+        <label>Descreva a ocorrência *</label>
+        <textarea id="descricao" rows="4" placeholder="Descreva o problema, o que foi feito e qualquer informação relevante..."></textarea>
+      </div>
+    </div>
+
+    <!-- BOTÕES -->
+    <div class="submit-area">
+      <a class="btn-secondary" href="home.html">Cancelar</a>
+      <button class="btn-primary" onclick="salvar()">Registrar parada</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Parada registrada com sucesso!</div>
+
+  <script>
+    // Guard
+    const user = JSON.parse(localStorage.getItem('ms_user') || 'null');
+    if (!user) window.location.href = 'index.html';
+
+    // Preenche campos do operador
+    document.getElementById('cracha').value   = user.cracha;
+    document.getElementById('operador').value = user.nome;
+
+    // Data atual
+    const hoje = new Date().toISOString().slice(0, 10);
+    document.getElementById('data-inicial').value = hoje;
+
+    // Hora atual
+    const agora = new Date();
+    const hh = String(agora.getHours()).padStart(2, '0');
+    const mm = String(agora.getMinutes()).padStart(2, '0');
+    document.getElementById('inicio-ocorrencia').value = `${hh}:${mm}`;
+
+    // Códigos de parada
+    const codigos = [
+      { num: 1,  nome: 'Quebra' },
+      { num: 2,  nome: 'Set-up' },
+      { num: 3,  nome: 'Troca fer.' },
+      { num: 4,  nome: 'Produção' },
+      { num: 5,  nome: 'Pequenas paradas' },
+      { num: 6,  nome: 'Velocidade' },
+      { num: 7,  nome: 'Defeito' },
+      { num: 8,  nome: 'Programada' },
+      { num: 9,  nome: 'Gestão' },
+      { num: 10, nome: 'Movimento operacionais' },
+      { num: 11, nome: 'Organização' },
+      { num: 12, nome: 'Logística' },
+      { num: 13, nome: 'Medições e ajuste' },
+    ];
+
+    const grid = document.getElementById('cod-grid');
+    let selectedCod = null;
+
+    codigos.forEach(c => {
+      const item = document.createElement('div');
+      item.className = 'cod-item';
+      item.dataset.num = c.num;
+      item.innerHTML = `
+        <input type="checkbox" id="cod-${c.num}"/>
+        <span class="cod-num">${c.num}</span>
+        <span class="cod-name">${c.nome}</span>
+      `;
+      item.addEventListener('click', () => selectCod(c.num, item));
+      grid.appendChild(item);
+    });
+
+    function selectCod(num, el) {
+      // desseleciona todos
+      document.querySelectorAll('.cod-item').forEach(i => {
+        i.classList.remove('selected');
+        i.querySelector('input[type="checkbox"]').checked = false;
+      });
+      // seleciona o clicado
+      el.classList.add('selected');
+      el.querySelector('input[type="checkbox"]').checked = true;
+      selectedCod = num;
+      document.getElementById('cod-motivo').value = num;
+    }
+
+    function salvar() {
+      const linha     = document.getElementById('linha').value.trim();
+      const codEquip  = document.getElementById('cod-equip').value.trim();
+      const equip     = document.getElementById('equipamento').value.trim();
+      const dataIni   = document.getElementById('data-inicial').value;
+      const inicio    = document.getElementById('inicio-ocorrencia').value;
+      const desc      = document.getElementById('descricao').value.trim();
+      const err       = document.getElementById('error-bar');
+
+      err.style.display = 'none';
+
+      if (!linha || !codEquip || !equip || !dataIni || !inicio || !desc || !selectedCod) {
+        err.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      const relatorio = {
+        id:            Date.now(),
+        linha,
+        lote:          document.getElementById('lote').value.trim(),
+        cracha:        user.cracha,
+        operador:      user.nome,
+        codEquipamento: codEquip,
+        equipamento:   equip,
+        dataInicial:   dataIni,
+        dataFinal:     document.getElementById('data-final').value,
+        inicioOcorrencia: inicio,
+        fimOcorrencia: document.getElementById('fim-ocorrencia').value,
+        codMotivo:     String(selectedCod),
+        descricao:     desc,
+        dataISO:       hoje,
+        turno:         user.turno,
+        criadoEm:      new Date().toISOString(),
+      };
+
+      const lista = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
+      lista.push(relatorio);
+      localStorage.setItem('ms_relatorios', JSON.stringify(lista));
+
+      // Mostra toast e redireciona
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => window.location.href = 'home.html', 1600);
+    }
+  </script>
+</body>
+</html>
