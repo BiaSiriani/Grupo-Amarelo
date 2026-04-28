@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MáquinaStop — Relatórios Abertos</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F4F2EE;
+      --surface: #FFFFFF;
+      --border: #E2DFD8;
+      --text: #18170F;
+      --muted: #7A7870;
+      --accent: #1A1916;
+      --red: #C93B3A;
+      --red-bg: #FDF0F0;
+      --red-border: #f0caca;
+      --amber: #BA7517;
+      --amber-bg: #FAEEDA;
+      --amber-border: #FAC775;
+      --green: #3B6D11;
+      --green-bg: #EAF3DE;
+      --green-border: #c0dd97;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--text);
+    }
+
+    /* TOPBAR */
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .back-btn:hover { color: var(--text); }
+
+    .topbar-title { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
+
+    /* MAIN */
+    .main { max-width: 720px; margin: 0 auto; padding: 24px 20px 60px; }
+
+    /* FILTROS */
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 7px 14px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--surface);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 180px;
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--text);
+      background: var(--surface);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .search-input:focus { border-color: #aaa; }
+
+    /* STATS */
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+
+    .stat-val {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* CARDS DE RELATÓRIO */
+    .rel-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      cursor: pointer;
+    }
+
+    .rel-card:hover {
+      border-color: #bbb;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .rel-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+    }
+
+    .status-bar {
+      width: 4px;
+      border-radius: 4px;
+      align-self: stretch;
+      flex-shrink: 0;
+      min-height: 48px;
+    }
+
+    .rel-main { flex: 1; }
+
+    .rel-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .rel-equip {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .badge-red    { background: var(--red-bg);   color: #A32D2D; border: 1px solid var(--red-border); }
+    .badge-amber  { background: var(--amber-bg);  color: #854F0B; border: 1px solid var(--amber-border); }
+    .badge-green  { background: var(--green-bg);  color: var(--green); border: 1px solid var(--green-border); }
+    .badge-blue   { background: #E6F1FB; color: #185FA5; border: 1px solid #b5d4f4; }
+
+    .rel-meta {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .rel-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+
+    .rel-date { font-size: 11px; color: var(--muted); }
+
+    .btn-manut {
+      padding: 7px 14px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-manut:hover { opacity: 0.82; }
+
+    .btn-manut.done {
+      background: var(--green-bg);
+      color: var(--green);
+      border: 1px solid var(--green-border);
+    }
+
+    /* EXPAND */
+    .rel-body {
+      display: none;
+      padding: 0 16px 16px 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .rel-body.open { display: block; }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 20px;
+      margin-top: 12px;
+    }
+
+    .detail-item { }
+    .detail-key { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
+    .detail-val { font-size: 13px; margin-top: 2px; }
+
+    .desc-box {
+      margin-top: 12px;
+      padding: 12px;
+      background: var(--bg);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .manut-preview {
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: var(--green-bg);
+      border: 1px solid var(--green-border);
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--green);
+    }
+
+    .manut-preview strong { display: block; margin-bottom: 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* EMPTY */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+
+    .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty-title { font-size: 16px; font-weight: 500; margin-bottom: 6px; color: var(--text); }
+    .empty-sub { font-size: 13px; }
+
+    @media (max-width: 480px) {
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .rel-right { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="back-btn" href="home.html">← Voltar</a>
+    <span class="topbar-title">Relatórios de Parada</span>
+  </div>
+
+  <div class="main">
+
+    <!-- FILTROS -->
+    <div class="filter-row">
+      <input class="search-input" id="search" type="text" placeholder="Buscar por equipamento, operador..." oninput="renderList()"/>
+      <button class="filter-btn active" onclick="setFiltro('todos', this)">Todos</button>
+      <button class="filter-btn" onclick="setFiltro('aberto', this)">Em aberto</button>
+      <button class="filter-btn" onclick="setFiltro('atendido', this)">Atendidos</button>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-val" id="s-total">0</div>
+        <div class="stat-label">Total</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--red)" id="s-aberto">0</div>
+        <div class="stat-label">Em aberto</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--green)" id="s-atendido">0</div>
+        <div class="stat-label">Atendidos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--amber)" id="s-hoje">0</div>
+        <div class="stat-label">Hoje</div>
+      </div>
+    </div>
+
+    <!-- LISTA -->
+    <div id="list-container"></div>
+  </div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('ms_user') || 'null');
+    if (!user) window.location.href = 'index.html';
+
+    const codigos = {
+      '1':'Quebra','2':'Set-up','3':'Troca fer.','4':'Produção',
+      '5':'Pequenas paradas','6':'Velocidade','7':'Defeito',
+      '8':'Programada','9':'Gestão','10':'Mov. operacionais',
+      '11':'Organização','12':'Logística','13':'Medições e ajuste'
+    };
+
+    let filtro = 'todos';
+
+    function setFiltro(f, btn) {
+      filtro = f;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderList();
+    }
+
+    function getRelatorios() {
+      return JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
+    }
+
+    function getStatusBadge(r) {
+      if (r.manutencao) return { cls: 'badge-green', label: 'Atendido' };
+      return { cls: 'badge-red', label: 'Em aberto' };
+    }
+
+    function getCodBadge(cod) {
+      const altos = ['1', '2'];
+      const medios = ['3', '7', '5'];
+      if (altos.includes(cod)) return 'badge-red';
+      if (medios.includes(cod)) return 'badge-amber';
+      return 'badge-blue';
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '—';
+      const [y, m, d] = iso.split('-');
+      return `${d}/${m}/${y}`;
+    }
+
+    function renderList() {
+      const rels = getRelatorios();
+      const hoje = new Date().toISOString().slice(0, 10);
+      const search = document.getElementById('search').value.toLowerCase();
+
+      // stats
+      document.getElementById('s-total').textContent    = rels.length;
+      document.getElementById('s-aberto').textContent   = rels.filter(r => !r.manutencao).length;
+      document.getElementById('s-atendido').textContent = rels.filter(r => r.manutencao).length;
+      document.getElementById('s-hoje').textContent     = rels.filter(r => r.dataISO === hoje).length;
+
+      let lista = [...rels].reverse();
+
+      if (filtro === 'aberto')    lista = lista.filter(r => !r.manutencao);
+      if (filtro === 'atendido')  lista = lista.filter(r => r.manutencao);
+
+      if (search) {
+        lista = lista.filter(r =>
+          (r.equipamento || '').toLowerCase().includes(search) ||
+          (r.operador || '').toLowerCase().includes(search) ||
+          (r.linha || '').toLowerCase().includes(search)
+        );
+      }
+
+      const container = document.getElementById('list-container');
+      container.innerHTML = '';
+
+      if (lista.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📋</div>
+            <div class="empty-title">Nenhum relatório encontrado</div>
+            <div class="empty-sub">Tente mudar o filtro ou registrar uma nova parada.</div>
+          </div>`;
+        return;
+      }
+
+      lista.forEach(r => {
+        const status  = getStatusBadge(r);
+        const codBadge = getCodBadge(r.codMotivo);
+        const barColor = r.manutencao ? 'var(--green)' : (['1','2'].includes(r.codMotivo) ? 'var(--red)' : 'var(--amber)');
+        const nomeMotivo = codigos[r.codMotivo] || `Cód. ${r.codMotivo}`;
+        const btnLabel = r.manutencao ? 'Ver atendimento' : 'Preencher manutenção';
+        const btnCls   = r.manutencao ? 'btn-manut done' : 'btn-manut';
+
+        const card = document.createElement('div');
+        card.className = 'rel-card';
+        card.innerHTML = `
+          <div class="rel-card-header" onclick="toggleCard(this)">
+            <div class="status-bar" style="background:${barColor}"></div>
+            <div class="rel-main">
+              <div class="rel-top">
+                <span class="rel-equip">${r.equipamento || '—'}</span>
+                <span class="badge ${status.cls}">${status.label}</span>
+                <span class="badge ${codBadge}">${r.codMotivo} — ${nomeMotivo}</span>
+              </div>
+              <div class="rel-meta">
+                Linha ${r.linha || '—'} · Op: ${r.operador || '—'} · ${formatDate(r.dataInicial)} ${r.inicioOcorrencia || ''}
+              </div>
+            </div>
+            <div class="rel-right">
+              <span class="rel-date">${formatDate(r.dataInicial)}</span>
+              <a class="${btnCls}" href="manutencao.html?id=${r.id}" onclick="event.stopPropagation()">
+                ${btnLabel}
+              </a>
+            </div>
+          </div>
+          <div class="rel-body" id="body-${r.id}">
+            <div class="detail-grid">
+              <div class="detail-item"><div class="detail-key">Cód. Equipamento</div><div class="detail-val">${r.codEquipamento || '—'}</div></div>
+              <div class="detail-item"><div class="detail-key">Lote</div><div class="detail-val">${r.lote || '—'}</div></div>
+              <div class="detail-item"><div class="detail-key">Data inicial</div><div class="detail-val">${formatDate(r.dataInicial)}</div></div>
+              <div class="detail-item"><div class="detail-key">Data final</div><div class="detail-val">${formatDate(r.dataFinal) || '—'}</div></div>
+              <div class="detail-item"><div class="detail-key">Início</div><div class="detail-val">${r.inicioOcorrencia || '—'}</div></div>
+              <div class="detail-item"><div class="detail-key">Fim</div><div class="detail-val">${r.fimOcorrencia || '—'}</div></div>
+              <div class="detail-item"><div class="detail-key">Turno</div><div class="detail-val">${r.turno || '—'}</div></div>
+              <div class="detail-item"><div class="detail-key">Crachá op.</div><div class="detail-val">${r.cracha || '—'}</div></div>
+            </div>
+            <div class="desc-box">${r.descricao || '—'}</div>
+            ${r.manutencao ? `
+              <div class="manut-preview">
+                <strong>Manutenção registrada por ${r.manutencao.manut1Nome || '—'}</strong>
+                Tarefa: ${r.manutencao.tarefa || '—'} · Área: ${r.manutencao.area || '—'} · Motivo: ${r.manutencao.motivo || '—'}
+              </div>` : ''}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function toggleCard(header) {
+      const body = header.nextElementSibling;
+      body.classList.toggle('open');
+    }
+
+    renderList();
+  </script>
+</body>
+</html>
