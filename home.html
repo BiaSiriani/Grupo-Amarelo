@@ -7,164 +7,48 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #F4F2EE;
-      --surface: #FFFFFF;
-      --border: #E2DFD8;
-      --text: #18170F;
-      --muted: #7A7870;
-      --accent: #1A1916;
-      --red: #C93B3A;
-      --red-bg: #FDF0F0;
-      --red-border: #f0caca;
-      --amber: #BA7517;
-      --amber-bg: #FAEEDA;
-      --amber-border: #FAC775;
-      --green: #3B6D11;
-      --green-bg: #EAF3DE;
-      --green-border: #c0dd97;
+      --bg: #F4F2EE; --surface: #FFFFFF; --border: #E2DFD8;
+      --text: #18170F; --muted: #7A7870; --accent: #1A1916;
+      --red: #C93B3A; --red-bg: #FDF0F0; --red-border: #f0caca;
+      --amber: #BA7517; --amber-bg: #FAEEDA; --amber-border: #FAC775;
+      --green: #3B6D11; --green-bg: #EAF3DE; --green-border: #c0dd97;
     }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      min-height: 100vh;
-      color: var(--text);
-    }
-
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); min-height: 100vh; color: var(--text); }
     .topbar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 50;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 14px 24px; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 50;
     }
-
     .top-logo { display: flex; align-items: center; gap: 10px; }
-
-    .logo-icon {
-      width: 34px; height: 34px;
-      background: var(--accent);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-weight: 700; font-size: 13px;
-    }
-
+    .logo-icon { width: 34px; height: 34px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 13px; }
     .logo-name { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
-
     .top-user { display: flex; align-items: center; gap: 10px; }
-
     .user-info { text-align: right; }
     .user-name { font-size: 13px; font-weight: 500; }
     .user-turno { font-size: 11px; color: var(--muted); }
-
-    .avatar {
-      width: 34px; height: 34px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 600;
-      cursor: pointer; flex-shrink: 0;
-    }
-
-    .main {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 28px 20px 60px;
-    }
-
+    .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+    .main { max-width: 720px; margin: 0 auto; padding: 28px 20px 60px; }
     .page-title { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 4px; }
     .page-sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
-
     .action-btn {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 14px;
-      padding: 20px 24px;
-      width: 100%;
-      cursor: pointer;
-      text-align: left;
-      margin-bottom: 12px;
-      transition: opacity 0.15s, transform 0.12s;
-      text-decoration: none;
+      display: flex; align-items: center; gap: 18px;
+      background: var(--accent); color: #fff; border: none;
+      border-radius: 14px; padding: 20px 24px; width: 100%;
+      cursor: pointer; text-align: left; margin-bottom: 12px;
+      transition: opacity 0.15s, transform 0.12s; text-decoration: none;
     }
-
     .action-btn:hover { opacity: 0.88; }
     .action-btn:active { transform: scale(0.99); }
-
-    .action-icon {
-      width: 44px; height: 44px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px; flex-shrink: 0;
-    }
-
+    .action-icon { width: 44px; height: 44px; background: rgba(255,255,255,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
     .action-label { font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
     .action-sub { font-size: 12px; opacity: 0.65; margin-top: 2px; }
-
-    .section-title {
-      font-size: 11px; font-weight: 600;
-      color: var(--muted); text-transform: uppercase;
-      letter-spacing: 0.8px; margin-bottom: 12px;
-      margin-top: 28px;
-    }
-
-    .stats-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-    }
-
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      text-align: center;
-    }
-
-    .stat-val {
-      font-size: 28px; font-weight: 600;
-      letter-spacing: -1px; line-height: 1;
-      margin-bottom: 4px;
-    }
-
-    .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-
-    .logout-btn {
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 7px 14px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px;
-      color: var(--muted);
-      cursor: pointer;
-      transition: border-color 0.15s, color 0.15s;
-    }
-
+    .logout-btn { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 7px 14px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--muted); cursor: pointer; transition: border-color 0.15s, color 0.15s; }
     .logout-btn:hover { border-color: var(--red); color: var(--red); }
-
-    @media (max-width: 480px) {
-      .topbar { padding: 12px 16px; }
-      .main { padding: 20px 14px 60px; }
-      .user-info { display: none; }
-    }
+    @media (max-width: 480px) { .topbar { padding: 12px 16px; } .main { padding: 20px 14px 60px; } .user-info { display: none; } }
   </style>
 </head>
 <body>
-
   <div class="topbar">
     <div class="top-logo">
       <div class="logo-icon">MS</div>
@@ -184,7 +68,6 @@
     <div class="page-title">Bom dia, <span id="first-name">Operador</span> 👋</div>
     <div class="page-sub" id="today-date">—</div>
 
-    <!-- BOTÕES PRINCIPAIS -->
     <a class="action-btn" href="relatorio.html">
       <div class="action-icon">📋</div>
       <div>
@@ -211,55 +94,21 @@
       </div>
       <span style="margin-left:auto; font-size:20px; opacity:0.3;">›</span>
     </a>
-
-    <!-- STATS -->
-    <div class="section-title">Resumo — hoje</div>
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-val" id="stat-total" style="color: var(--text)">0</div>
-        <div class="stat-label">Total</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" id="stat-alta" style="color: var(--red)">0</div>
-        <div class="stat-label">Alta grav.</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" id="stat-media" style="color: var(--amber)">0</div>
-        <div class="stat-label">Média/Baixa</div>
-      </div>
-    </div>
   </div>
 
   <script>
     const user = JSON.parse(localStorage.getItem('ms_user') || 'null');
     if (!user) window.location.href = 'index.html';
-
     document.getElementById('user-name').textContent = user.nome;
     document.getElementById('user-turno').textContent = user.turno;
     document.getElementById('first-name').textContent = user.nome.split(' ')[0];
     document.getElementById('user-avatar').textContent = user.nome.charAt(0).toUpperCase();
-
     const h = new Date().getHours();
     const greeting = h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite';
     document.querySelector('.page-title').innerHTML = `${greeting}, <span>${user.nome.split(' ')[0]}</span> 👋`;
-
     const now = new Date();
-    document.getElementById('today-date').textContent = now.toLocaleDateString('pt-BR', {
-      weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
-    });
-
-    const relatorios = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
-    const hoje = now.toISOString().slice(0, 10);
-    const deHoje = relatorios.filter(r => r.dataISO === hoje);
-
-    document.getElementById('stat-total').textContent = deHoje.length;
-    document.getElementById('stat-alta').textContent  = deHoje.filter(r => r.codMotivo && ['1','2'].includes(r.codMotivo)).length;
-    document.getElementById('stat-media').textContent = deHoje.filter(r => r.codMotivo && !['1','2'].includes(r.codMotivo)).length;
-
-    function logout() {
-      localStorage.removeItem('ms_user');
-      window.location.href = 'index.html';
-    }
+    document.getElementById('today-date').textContent = now.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+    function logout() { localStorage.removeItem('ms_user'); window.location.href = 'index.html'; }
   </script>
 </body>
 </html>
