@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MáquinaStop — Campo Manutentor</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <title>PararNão — Campo Manutentor</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #F4F2EE;
+      --bg: #FFF8F2;
       --surface: #FFFFFF;
-      --border: #E2DFD8;
-      --text: #18170F;
-      --muted: #7A7870;
-      --accent: #1A1916;
+      --border: #F2D5BE;
+      --text: #2A1A0E;
+      --muted: #A0816A;
+      --accent: #E8620A;
       --red: #C93B3A;
       --red-bg: #FDF0F0;
       --red-border: #f0caca;
@@ -576,6 +576,17 @@
       margin-top: 14px;
     }
     .two-col-time .field { margin-bottom: 0; }
+  
+    /* ── MARILAN THEME OVERRIDES ── */
+    .topbar { background: linear-gradient(135deg, #fff 0%, #FFF5EE 100%); border-bottom: 2px solid #F2C99A; }
+    .logo-icon, .avatar { background: linear-gradient(135deg, #E8620A 0%, #C44E05 100%) !important; }
+    .action-btn[href="relatorio.html"] { background: linear-gradient(135deg, #E8620A 0%, #C44E05 100%) !important; }
+    .btn { background: linear-gradient(135deg, #E8620A 0%, #C44E05 100%) !important; }
+    .btn-manut:not(.done) { background: linear-gradient(135deg, #E8620A 0%, #C44E05 100%) !important; }
+    .tab-btn.active { background: var(--surface); color: #E8620A !important; box-shadow: 0 1px 4px rgba(232,98,10,0.15); }
+    .filter-btn.active { background: #E8620A !important; border-color: #E8620A !important; }
+    .logout-btn:hover { border-color: #E8620A !important; color: #E8620A !important; }
+
   </style>
 </head>
 <body>
