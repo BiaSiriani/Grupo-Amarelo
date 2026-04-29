@@ -767,6 +767,8 @@
     });
   }
 
+  // Calcula duração em minutos de um relatório
+  // Prioridade: duracao salva → inicioOcorrencia→fimManutencao → inicioOcorrencia→fimOcorrencia
   function calcDurMin(inicio, fim) {
     if (!inicio || !fim) return null;
     const [h1, m1] = inicio.split(':').map(Number);
@@ -774,6 +776,13 @@
     let mins = (h2 * 60 + m2) - (h1 * 60 + m1);
     if (mins < 0) mins += 24 * 60;
     return mins;
+  }
+
+  // Obtém a duração real de um relatório: início da ocorrência até fim da manutenção
+  function getDuracao(r) {
+    if (r.duracao != null) return r.duracao;
+    const fim = r.fimManutencao || (r.manutencao && r.manutencao.fimManut) || r.fimOcorrencia;
+    return calcDurMin(r.inicioOcorrencia, fim);
   }
 
   function formatDate(iso) {
@@ -817,7 +826,7 @@
   function renderKPIs(data) {
     const aberto = data.filter(r => !r.manutencao).length;
     const ok    = data.filter(r => r.manutencao).length;
-    const durs  = data.map(r => r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia)).filter(d => d !== null && d > 0);
+    const durs  = data.map(r => getDuracao(r)).filter(d => d !== null && d > 0);
     const avg   = durs.length ? Math.round(durs.reduce((a,b)=>a+b,0)/durs.length) : null;
 
     document.getElementById('kpi-total').textContent  = data.length;
@@ -959,7 +968,7 @@
   function renderDurRank(data) {
     const byCode = {};
     data.forEach(r => {
-      const dur = r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia);
+      const dur = getDuracao(r);
       if (dur === null || dur <= 0) return;
       if (!byCode[r.codMotivo]) byCode[r.codMotivo] = { total: 0, count: 0 };
       byCode[r.codMotivo].total += dur;
@@ -1009,7 +1018,7 @@
       const k = r.equipamento || '—';
       if (!byEquip[k]) byEquip[k] = { name: k, linha: r.linha||'—', count: 0, durs: [], altas: 0 };
       byEquip[k].count++;
-      const dur = r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia);
+      const dur = getDuracao(r);
       if (dur !== null && dur > 0) byEquip[k].durs.push(dur);
       if (['1','2'].includes(r.codMotivo)) byEquip[k].altas++;
     });
@@ -1032,7 +1041,7 @@
       document.getElementById('m-kpi-dur-sub').textContent = allDurMachines[0].name;
     }
 
-    const totalMin = data.map(r => r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia))
+    const totalMin = data.map(r => getDuracao(r))
       .filter(d => d !== null && d > 0).reduce((a,b)=>a+b,0);
     document.getElementById('m-kpi-total-min').textContent = totalMin;
 
@@ -1171,7 +1180,7 @@
     document.getElementById('h-incompleto').textContent = incompletos.length;
     document.getElementById('h-hoje').textContent     = all.filter(r => r.dataISO === hoje).length;
 
-    const durs = all.map(r => r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia)).filter(d => d !== null && d > 0);
+    const durs = all.map(r => getDuracao(r)).filter(d => d !== null && d > 0);
     const avg = durs.length ? Math.round(durs.reduce((a,b)=>a+b,0)/durs.length) : null;
     document.getElementById('h-dur').textContent = avg ?? '—';
 
@@ -1199,7 +1208,7 @@
     });
 
     const tbody = document.getElementById('h-tbody');
-    const filtDurs = lista.map(r => r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia)).filter(d => d !== null && d > 0);
+    const filtDurs = lista.map(r => getDuracao(r)).filter(d => d !== null && d > 0);
     const filtAvg = filtDurs.length ? Math.round(filtDurs.reduce((a,b)=>a+b,0)/filtDurs.length) : null;
 
     document.getElementById('h-footer-count').textContent = `${lista.length} registro${lista.length !== 1 ? 's' : ''}`;
@@ -1211,7 +1220,7 @@
     }
 
     tbody.innerHTML = lista.map(r => {
-      const dur = r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia);
+      const dur = getDuracao(r);
       const m = r.manutencao;
       const bc = getCodBadgeClass(r.codMotivo);
       return `<tr style="${!m ? 'background:rgba(201,59,58,.02)' : ''}">
@@ -1244,7 +1253,7 @@
     ];
     const rows = all.map(r => {
       const m = r.manutencao;
-      const dur = r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia);
+      const dur = getDuracao(r);
       return [
         r.dataInicial||'', r.linha||'', r.codEquipamento||'', r.equipamento||'',
         r.codMotivo||'', CODIGOS[r.codMotivo]||'',
@@ -1262,7 +1271,7 @@
     all.forEach(r => {
       byCod[r.codMotivo] = byCod[r.codMotivo] || { cod: r.codMotivo, nome: CODIGOS[r.codMotivo]||'?', count: 0, durTotal: 0, durCount: 0 };
       byCod[r.codMotivo].count++;
-      const dur = r.duracao ?? calcDurMin(r.inicioOcorrencia, r.fimOcorrencia);
+      const dur = getDuracao(r);
       if (dur !== null && dur > 0) { byCod[r.codMotivo].durTotal += dur; byCod[r.codMotivo].durCount++; }
     });
     const ws2 = XLSX.utils.aoa_to_sheet([

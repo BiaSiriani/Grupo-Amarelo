@@ -803,6 +803,73 @@
       { num: 13, nome: 'Med. e Ajustes', desc: 'Ajustes para garantir qualidade', subs: ['13.1 Ajuste de peso','13.2 Limpeza não programada','13.3 Ajuste de lona','13.4 Ajuste maquinário (formação biscoito)','13.5 Ajuste forno','13.6 Ajuste empacotamento'] },
     ];
 
+    // ── Cadastro de equipamentos ──
+    // Carrega do localStorage ou usa lista padrão
+    function getEquipamentos() {
+      const stored = localStorage.getItem('ms_equipamentos');
+      if (stored) return JSON.parse(stored);
+      // Lista de equipamentos da planta
+      return [
+        { cod: '100001', nome: 'Silo de Farinha' },
+        { cod: '100002', nome: 'Misturador Industrial' },
+        { cod: '100003', nome: 'Dosador de Ingredientes' },
+        { cod: '200001', nome: 'Laminadora de Massa' },
+        { cod: '200002', nome: 'Cortadora Rotativa' },
+        { cod: '200003', nome: 'Extrusora de Biscoitos' },
+        { cod: '300001', nome: 'Forno de Túnel' },
+        { cod: '300002', nome: 'Esteira de Resfriamento' },
+        { cod: '400001', nome: 'Máquina Recheadora' },
+        { cod: '400002', nome: 'Banhadora de Chocolate' },
+        { cod: '500001', nome: 'Embaladora Flow-pack' },
+        { cod: '500002', nome: 'Detector de Metais' },
+        { cod: '500003', nome: 'Datadora Industrial' },
+        { cod: '500004', nome: 'Robô Paletizador' },
+      ];
+    }
+
+    function buscarNomeMaquina(cod) {
+      if (!cod) return '';
+      const equips = getEquipamentos();
+      const found = equips.find(e => e.cod.trim().toLowerCase() === cod.trim().toLowerCase());
+      return found ? found.nome : '';
+    }
+
+    function setupAutoFillEquip(codInputId, nomeInputId) {
+      const codEl  = document.getElementById(codInputId);
+      const nomeEl = document.getElementById(nomeInputId);
+      let lastCod = '';
+
+      codEl.addEventListener('input', () => {
+        const cod = codEl.value.trim();
+        if (cod === lastCod) return;
+        lastCod = cod;
+        const nome = buscarNomeMaquina(cod);
+        if (nome) {
+          nomeEl.value = nome;
+          nomeEl.style.color = 'var(--green)';
+          nomeEl.style.borderColor = 'var(--green-border)';
+        } else {
+          // Só limpa se o usuário não preencheu manualmente
+          if (nomeEl.dataset.autoFilled === 'true') {
+            nomeEl.value = '';
+            nomeEl.style.color = '';
+            nomeEl.style.borderColor = '';
+          }
+        }
+        nomeEl.dataset.autoFilled = nome ? 'true' : 'false';
+      });
+
+      // Se o usuário editar o nome manualmente, desativa o auto-preenchimento
+      nomeEl.addEventListener('input', () => {
+        nomeEl.dataset.autoFilled = 'false';
+        nomeEl.style.color = '';
+        nomeEl.style.borderColor = '';
+      });
+    }
+
+    setupAutoFillEquip('cod-equip', 'equipamento');
+    setupAutoFillEquip('mn-cod-equip', 'mn-equipamento');
+
     let selectedSubCod = null;
     let selectedSubCodNovo = null;
 
@@ -912,23 +979,74 @@
     buildCheckList('mn-motivo-list', motivos, true, v => mnSelMotivo = v);
     buildCheckList('mn-causa-list', causas, true, v => mnSelCausa = v);
 
-    function calcDur(inicioId, fimId, displayId) {
-      const inicio = document.getElementById(inicioId).value;
-      const fim = document.getElementById(fimId).value;
-      const valEl = document.getElementById(displayId);
-      if (!inicio || !fim) { valEl.textContent = '—'; return null; }
+    function calcDurFromTimes(inicio, fim) {
+      if (!inicio || !fim) return null;
       const [h1, m1] = inicio.split(':').map(Number);
       const [h2, m2] = fim.split(':').map(Number);
       let mins = (h2 * 60 + m2) - (h1 * 60 + m1);
       if (mins < 0) mins += 24 * 60;
-      valEl.textContent = mins;
       return mins;
     }
 
-    document.getElementById('inicio-ocorrencia').addEventListener('change', () => calcDur('inicio-ocorrencia', 'fim-ocorrencia', 'dur-value'));
-    document.getElementById('fim-ocorrencia').addEventListener('change', () => calcDur('inicio-ocorrencia', 'fim-ocorrencia', 'dur-value'));
-    document.getElementById('mn-inicio').addEventListener('change', () => calcDur('mn-inicio', 'mn-fim', 'mn-dur-value'));
-    document.getElementById('mn-fim').addEventListener('change', () => calcDur('mn-inicio', 'mn-fim', 'mn-dur-value'));
+    function calcDur(inicioId, fimId, displayId) {
+      const inicio = document.getElementById(inicioId).value;
+      const fim    = document.getElementById(fimId).value;
+      const valEl  = document.getElementById(displayId);
+      const mins   = calcDurFromTimes(inicio, fim);
+      valEl.textContent = mins !== null ? mins : '—';
+      return mins;
+    }
+
+    // ── Duração total real: início da ocorrência → fim da manutenção ──
+    function calcDurTotal() {
+      const inicio   = document.getElementById('inicio-ocorrencia').value;
+      const fimManut = document.getElementById('fim-manut').value;
+      const valEl    = document.getElementById('dur-value');
+      if (!inicio) { valEl.textContent = '—'; return null; }
+      if (!fimManut) {
+        // Sem fim manut. ainda — mostra só a diferença até fim ocorrência (parcial)
+        const fimOc = document.getElementById('fim-ocorrencia').value;
+        const mins  = calcDurFromTimes(inicio, fimOc);
+        valEl.textContent = mins !== null ? mins + ' ⏳' : '—';
+        return mins;
+      }
+      const mins = calcDurFromTimes(inicio, fimManut);
+      valEl.textContent = mins !== null ? mins : '—';
+      return mins;
+    }
+
+    // Duração total para o painel "Nova parada pelo manutentor": início → fim manut
+    function calcDurTotalNovo() {
+      const inicio   = document.getElementById('mn-inicio').value;
+      const fimManut = document.getElementById('mn-fim-manut').value;
+      const valEl    = document.getElementById('mn-dur-value');
+      if (!inicio) { valEl.textContent = '—'; return null; }
+      if (!fimManut) {
+        const fimOc = document.getElementById('mn-fim').value;
+        const mins  = calcDurFromTimes(inicio, fimOc);
+        valEl.textContent = mins !== null ? mins + ' ⏳' : '—';
+        return mins;
+      }
+      const mins = calcDurFromTimes(inicio, fimManut);
+      valEl.textContent = mins !== null ? mins : '—';
+      return mins;
+    }
+
+    // Eventos — seção operador
+    document.getElementById('inicio-ocorrencia').addEventListener('change', calcDurTotal);
+    document.getElementById('fim-ocorrencia').addEventListener('change', calcDurTotal);
+
+    // Fim manut. está na aba manutenção; ouve quando carregado/alterado
+    function hookFimManut() {
+      const el = document.getElementById('fim-manut');
+      if (el) el.addEventListener('change', calcDurTotal);
+    }
+    hookFimManut();
+
+    // Nova parada pelo manutentor
+    document.getElementById('mn-inicio').addEventListener('change', calcDurTotalNovo);
+    document.getElementById('mn-fim').addEventListener('change', calcDurTotalNovo);
+    document.getElementById('mn-fim-manut').addEventListener('change', calcDurTotalNovo);
 
     // ── Video helpers ──
     function formatFileSize(bytes) {
@@ -1082,7 +1200,7 @@
         return;
       }
 
-      const duracao = calcDur('inicio-ocorrencia', 'fim-ocorrencia', 'dur-value');
+      const duracao = calcDurTotal();
 
       const relatorio = {
         id: Date.now(), linha,
@@ -1128,6 +1246,18 @@
       const videoMeta = (videoFiles.atender && videoFiles.atender !== 'existing')
         ? { videoNome: videoFiles.atender.name, videoSize: formatFileSize(videoFiles.atender.size) }
         : { videoNome: rels[currentRelIdx]?.manutencao?.videoNome || '', videoSize: rels[currentRelIdx]?.manutencao?.videoSize || '' };
+
+      const fimManutVal = document.getElementById('fim-manut').value;
+      const inicioOcorr = rels[currentRelIdx]?.inicioOcorrencia;
+      // Recalcula duração total: início ocorrência → fim manutenção
+      if (inicioOcorr && fimManutVal) {
+        const [h1, m1] = inicioOcorr.split(':').map(Number);
+        const [h2, m2] = fimManutVal.split(':').map(Number);
+        let totalMins = (h2 * 60 + m2) - (h1 * 60 + m1);
+        if (totalMins < 0) totalMins += 24 * 60;
+        rels[currentRelIdx].duracao = totalMins;
+        rels[currentRelIdx].fimManutencao = fimManutVal;
+      }
 
       rels[currentRelIdx].manutencao = {
         manut1Cracha: m1cracha, manut1Nome: m1nome,
@@ -1176,7 +1306,7 @@
         return;
       }
 
-      const duracao = calcDur('mn-inicio', 'mn-fim', 'mn-dur-value');
+      const duracao = calcDurTotalNovo();
       const operadorRef = document.getElementById('mn-operador-ref').value.trim();
 
       const relatorio = {
