@@ -23,23 +23,20 @@
 
     .main { max-width: 680px; margin: 0 auto; padding: 24px 20px; }
 
-    /* CARD STYLE */
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 14px; }
     .card-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
 
-    /* MANUTENTORES GRID */
     .manut-grid { display: flex; flex-direction: column; gap: 0; }
     @media (min-width: 560px) { .manut-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; } }
     .manut-group { display: flex; flex-direction: column; gap: 8px; padding: 16px 0; border-bottom: 1px solid var(--border); }
     .manut-group:last-child { border-bottom: none; }
     .manut-num { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; }
 
-    /* FIELDS */
     .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
     .field label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; }
     input, select, textarea { padding: 10px 13px; border: 1px solid var(--border); border-radius: 9px; font-family: 'DM Sans', sans-serif; font-size: 16px; width: 100%; outline: none; background: var(--surface); }
 
-    /* VIDEO SECTION (PADRÃO FORMULARIO.HTML)[cite: 12] */
+    /* VIDEO */
     .video-hint { margin-bottom: 14px; padding: 12px 14px; background: #E6F1FB; border: 1px solid #B5D4F4; border-radius: 10px; font-size: 13px; color: #185FA5; line-height: 1.5; }
     .video-upload-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 32px 20px; text-align: center; cursor: pointer; background: var(--bg); position: relative; }
     .upload-icon { font-size: 40px; display: block; margin-bottom: 10px; }
@@ -54,12 +51,35 @@
     .video-remove-btn { padding: 6px 12px; background: none; border: 1px solid var(--green-border); border-radius: 6px; font-size: 12px; color: var(--green); cursor: pointer; }
     video.preview-player { width: 100%; border-radius: 10px; background: #000; max-height: 280px; }
 
-    /* CHECKBOXES */
-    .check-item { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; cursor: pointer; font-size: 13px; }
-    .check-item.sel { border-color: var(--accent); background: #f0efe9; }
-    
-    .btn-primary { width: 100%; padding: 16px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; margin-top: 20px; }
+    /* CLASSIFICAÇÃO — 3 colunas com scroll */
+    .class-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .class-col-title { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+    .class-col { display: flex; flex-direction: column; gap: 4px; max-height: 340px; overflow-y: auto; }
+
+    .check-item {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      line-height: 1.3;
+      transition: all 0.12s;
+      user-select: none;
+    }
+    .check-item:hover { border-color: var(--accent); background: #FFF3EC; }
+    .check-item.sel { border-color: var(--accent); background: #FFF3EC; font-weight: 600; }
+    .check-item .dot { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--border); flex-shrink: 0; transition: all 0.12s; }
+    .check-item.sel .dot { background: var(--accent); border-color: var(--accent); }
+
+    .btn-primary { width: 100%; padding: 16px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; margin-top: 20px; font-size: 15px; font-family: 'DM Sans', sans-serif; }
     .done-banner { background: var(--green-bg); border: 1px solid var(--green-border); padding: 16px; border-radius: 12px; margin-bottom: 20px; display: none; }
+
+    .saving-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 999; align-items: center; justify-content: center; flex-direction: column; gap: 14px; }
+    .saving-overlay.active { display: flex; }
+    .saving-spinner { width: 44px; height: 44px; border: 4px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .saving-text { color: #fff; font-size: 15px; font-weight: 600; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -69,13 +89,18 @@
     <span class="topbar-title">Campo Manutentor</span>
   </div>
 
+  <div class="saving-overlay" id="saving-overlay">
+    <div class="saving-spinner"></div>
+    <div class="saving-text">Salvando vídeo...</div>
+  </div>
+
   <div class="main">
     <div class="done-banner" id="done-banner">
       <div style="font-weight: 600; color: var(--green);">✓ Atendimento já registrado</div>
       <div id="done-banner-sub" style="font-size: 12px; color: var(--green);"></div>
     </div>
 
-    <!-- 1. MANUTENTORES[cite: 12] -->
+    <!-- 1. MANUTENTORES -->
     <div class="card">
       <div class="card-title">Manutentores</div>
       <div class="manut-grid">
@@ -97,7 +122,7 @@
       </div>
     </div>
 
-    <!-- 2. OBSERVAÇÕES E HORÁRIOS (LOGA ABAIXO DOS NOMES) -->
+    <!-- 2. RELATO -->
     <div class="card">
       <div class="card-title">Relato da Manutenção</div>
       <div class="field">
@@ -110,21 +135,35 @@
       </div>
     </div>
 
-    <!-- 3. CLASSIFICAÇÃO[cite: 12] -->
+    <!-- 3. CLASSIFICAÇÃO COMPLETA -->
     <div class="card">
       <div class="card-title">Tarefa · Motivo · Causa *</div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
-        <div id="tarefa-list"></div>
-        <div id="motivo-list"></div>
-        <div id="causa-list"></div>
+      <div class="class-grid">
+        <div>
+          <div class="class-col-title">Tarefa</div>
+          <div class="class-col" id="tarefa-list"></div>
+        </div>
+        <div>
+          <div class="class-col-title">Motivo</div>
+          <div class="class-col" id="motivo-list"></div>
+        </div>
+        <div>
+          <div class="class-col-title">Causa</div>
+          <div class="class-col" id="causa-list"></div>
+        </div>
+      </div>
+      <!-- ÁREA -->
+      <div style="margin-top: 14px;">
+        <div class="class-col-title" style="margin-bottom: 8px;">Área</div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="area-list"></div>
       </div>
     </div>
 
-    <!-- 4. VÍDEO (PADRÃO FORMULARIO.HTML)[cite: 12] -->
+    <!-- 4. VÍDEO -->
     <div class="card">
       <div class="card-title">Vídeo do Atendimento *</div>
       <div class="video-hint">
-        📹 Grave um vídeo mostrando o <strong>problema na máquina</strong> e o <strong>passo a passo do conserto</strong>. Registro <strong>obrigatório</strong>.[cite: 12]
+        📹 Grave um vídeo mostrando o <strong>problema na máquina</strong> e o <strong>passo a passo do conserto</strong>. Registro <strong>obrigatório</strong>.
       </div>
 
       <div class="video-upload-zone" id="video-zone">
@@ -137,7 +176,7 @@
 
       <div class="video-preview-wrap" id="video-preview-wrap">
         <div class="video-preview-info">
-          <span class="video-preview-icon">✅</span>
+          <span style="font-size: 20px;">✅</span>
           <div style="flex: 1;">
             <div id="video-file-name" style="font-size: 13px; font-weight: 600; color: var(--green);">—</div>
             <div id="video-file-size" style="font-size: 11px; color: var(--green); opacity: 0.8;">—</div>
@@ -152,87 +191,251 @@
   </div>
 
   <script>
+    // ─── DADOS COMPLETOS DO FORMULÁRIO FÍSICO ───
+    const TAREFAS  = ['Ajustar','Consertar','Destravar','Limpar','Reapertar','Regular','Trocar','Acompanhar'];
+    const MOTIVOS  = [
+      {cod:'16', label:'Entupimento'},
+      {cod:'99', label:'Desgaste'},
+      {cod:'100', label:'Quebra'},
+      {cod:'101', label:'Folga'},
+      {cod:'105', label:'Sujidade'},
+      {cod:'106', label:'Desalinhamento'},
+      {cod:'107', label:'Vazamento'},
+      {cod:'114', label:'Curto circuito'},
+      {cod:'118', label:'Mal contato'},
+      {cod:'129', label:'Ruído'},
+      {cod:'130', label:'Vibração'},
+      {cod:'133', label:'Sobrecarga'},
+    ];
+    const CAUSAS   = [
+      {cod:'07', label:'Falha sensor'},
+      {cod:'16', label:'Vibração'},
+      {cod:'25', label:'Folga'},
+      {cod:'27', label:'Rolamento travado'},
+      {cod:'36', label:'Sobrecarga'},
+      {cod:'37', label:'Cabo rompido'},
+      {cod:'50', label:'Desarme disjuntor'},
+      {cod:'70', label:'Emergência acionada'},
+      {cod:'72', label:'Mal contato'},
+      {cod:'73', label:'Fio solto'},
+      {cod:'87', label:'Parafuso quebrado'},
+      {cod:'90', label:'Ruído'},
+    ];
+    const AREAS    = ['Mecânica','Elétrica','Operacional'];
+
+    // ─── ESTADO ───
     const params = new URLSearchParams(window.location.search);
-    const relId = parseInt(params.get('id'));
-    const rels = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
-    const idx = rels.findIndex(r => r.id === relId);
-    const rel = rels[idx];
-    let videoFile = null, selT, selM, selC;
+    const relId  = parseInt(params.get('id'));
+    let videoFile = null;
+    let selT = null, selM = null, selC = null, selA = null;
+    let db = null;
 
-    window.onload = () => {
-      renderList('tarefa-list', ['Ajustar','Trocar','Reparar'], 't');
-      renderList('motivo-list', ['Quebra','Desgaste','Sujeira'], 'm');
-      renderList('causa-list', ['Falha Humana','Peça Velha'], 'c');
-      if (rel && rel.manutencao) restaurar(rel.manutencao);
-    };
+    // ─── INDEXEDDB ───
+    function openDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open('paperless_videos', 1);
+        req.onupgradeneeded = e => e.target.result.createObjectStore('videos');
+        req.onsuccess  = e => resolve(e.target.result);
+        req.onerror    = e => reject(e);
+      });
+    }
 
-    function renderList(id, items, type) {
-      const el = document.getElementById(id);
+    async function saveVideoToDB(relId, file) {
+      const d = await openDB();
+      return new Promise((resolve, reject) => {
+        const tx  = d.transaction('videos', 'readwrite');
+        const req = tx.objectStore('videos').put(file, 'video_' + relId);
+        req.onsuccess = () => resolve();
+        req.onerror   = e => reject(e);
+      });
+    }
+
+    async function getVideoFromDB(relId) {
+      const d = await openDB();
+      return new Promise((resolve) => {
+        const tx  = d.transaction('videos', 'readonly');
+        const req = tx.objectStore('videos').get('video_' + relId);
+        req.onsuccess = e => resolve(e.target.result || null);
+        req.onerror   = () => resolve(null);
+      });
+    }
+
+    async function deleteVideoFromDB(relId) {
+      const d = await openDB();
+      return new Promise((resolve) => {
+        const tx = d.transaction('videos', 'readwrite');
+        tx.objectStore('videos').delete('video_' + relId);
+        tx.oncomplete = () => resolve();
+        tx.onerror    = () => resolve();
+      });
+    }
+
+    // ─── RENDER LISTAS ───
+    function renderList(containerId, items, type, isObj) {
+      const el = document.getElementById(containerId);
       items.forEach(item => {
+        const label = isObj ? `${item.cod} — ${item.label}` : item;
+        const val   = isObj ? item.label : item;
         const d = document.createElement('div');
         d.className = 'check-item';
-        d.innerText = item;
+        d.dataset.val = val;
+        d.innerHTML = `<span class="dot"></span><span>${label}</span>`;
         d.onclick = () => {
           el.querySelectorAll('.check-item').forEach(i => i.classList.remove('sel'));
           d.classList.add('sel');
-          if(type==='t') selT=item; if(type==='m') selM=item; if(type==='c') selC=item;
+          if (type==='t') selT = val;
+          if (type==='m') selM = val;
+          if (type==='c') selC = val;
+          if (type==='a') selA = val;
         };
         el.appendChild(d);
       });
     }
 
+    function renderAreas() {
+      const el = document.getElementById('area-list');
+      AREAS.forEach(a => {
+        const d = document.createElement('div');
+        d.className = 'check-item';
+        d.dataset.val = a;
+        d.innerHTML = `<span class="dot"></span><span>${a}</span>`;
+        d.style.flexShrink = '0';
+        d.onclick = () => {
+          el.querySelectorAll('.check-item').forEach(i => i.classList.remove('sel'));
+          d.classList.add('sel');
+          selA = a;
+        };
+        el.appendChild(d);
+      });
+    }
+
+    function restoreSelection(containerId, val) {
+      if (!val) return;
+      document.querySelectorAll(`#${containerId} .check-item`).forEach(d => {
+        if (d.dataset.val === val) d.classList.add('sel');
+      });
+    }
+
+    // ─── VIDEO ───
     function onVideoSelect(e) {
       const file = e.target.files[0];
-      if (file) {
-        videoFile = file;
-        document.getElementById('video-zone').style.display = 'none';
-        document.getElementById('video-file-name').innerText = file.name;
-        document.getElementById('video-file-size').innerText = (file.size / (1024*1024)).toFixed(1) + ' MB';
-        document.getElementById('video-player').src = URL.createObjectURL(file);
-        document.getElementById('video-preview-wrap').classList.add('visible');
-      }
+      if (!file) return;
+      videoFile = file;
+      document.getElementById('video-zone').style.display = 'none';
+      document.getElementById('video-file-name').innerText = file.name;
+      document.getElementById('video-file-size').innerText = (file.size / (1024*1024)).toFixed(1) + ' MB';
+      document.getElementById('video-player').src = URL.createObjectURL(file);
+      document.getElementById('video-preview-wrap').classList.add('visible');
     }
 
     function removeVideo() {
       videoFile = null;
-      document.getElementById('video-input').value = "";
+      document.getElementById('video-input').value = '';
       document.getElementById('video-zone').style.display = 'block';
       document.getElementById('video-preview-wrap').classList.remove('visible');
+      document.getElementById('video-player').src = '';
     }
 
-    function salvar() {
-      if(!selT || !videoFile || !document.getElementById('m1-nome').value) {
-        alert("Preencha os campos obrigatórios e grave o vídeo!");
-        return;
+    // ─── SALVAR ───
+    async function salvar() {
+      const m1Nome = document.getElementById('m1-nome').value.trim();
+      if (!m1Nome) { alert('Preencha o nome do manutentor principal!'); return; }
+      if (!selT)   { alert('Selecione uma Tarefa!'); return; }
+      if (!videoFile) { alert('Grave ou selecione o vídeo do atendimento!'); return; }
+
+      document.getElementById('saving-overlay').classList.add('active');
+
+      try {
+        const rels = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
+        const idx  = rels.findIndex(r => r.id === relId);
+        if (idx === -1) { alert('Relatório não encontrado!'); return; }
+
+        // Salva vídeo no IndexedDB
+        if (videoFile && videoFile !== 'existing') {
+          await saveVideoToDB(relId, videoFile);
+        }
+
+        rels[idx].manutencao = {
+          manut1Cracha:  document.getElementById('m1-cracha').value,
+          manut1Nome:    m1Nome,
+          manut2Cracha:  document.getElementById('m2-cracha').value,
+          manut2Nome:    document.getElementById('m2-nome').value,
+          manut3Cracha:  document.getElementById('m3-cracha').value,
+          manut3Nome:    document.getElementById('m3-nome').value,
+          observacoes:   document.getElementById('observacoes').value,
+          inicioManut:   document.getElementById('inicio-manut').value,
+          fimManut:      document.getElementById('fim-manut').value,
+          tarefa: selT, motivo: selM, causa: selC, area: selA,
+          videoNome: videoFile === 'existing'
+            ? rels[idx].manutencao.videoNome
+            : videoFile.name,
+          videoSalvo: true,
+          dataRegistro: new Date().toISOString()
+        };
+
+        localStorage.setItem('ms_relatorios', JSON.stringify(rels));
+        window.location.href = 'relatorios.html';
+      } catch (err) {
+        console.error(err);
+        alert('Erro ao salvar: ' + err.message);
+      } finally {
+        document.getElementById('saving-overlay').classList.remove('active');
       }
-      rels[idx].manutencao = {
-        manut1Cracha: document.getElementById('m1-cracha').value,
-        manut1Nome: document.getElementById('m1-nome').value,
-        observacoes: document.getElementById('observacoes').value,
-        inicioManut: document.getElementById('inicio-manut').value,
-        fimManut: document.getElementById('fim-manut').value,
-        tarefa: selT, motivo: selM, causa: selC,
-        videoNome: videoFile === 'existing' ? rel.manutencao.videoNome : videoFile.name
-      };
-      localStorage.setItem('ms_relatorios', JSON.stringify(rels));
-      window.location.href = 'relatorios.html';
     }
 
-    function restaurar(m) {
+    // ─── RESTAURAR ───
+    async function restaurar(m) {
       document.getElementById('done-banner').style.display = 'block';
-      document.getElementById('done-banner-sub').innerText = `Por: ${m.manut1Nome}`;
-      document.getElementById('m1-cracha').value = m.manut1Cracha;
-      document.getElementById('m1-nome').value = m.manut1Nome;
-      document.getElementById('observacoes').value = m.observacoes;
-      document.getElementById('inicio-manut').value = m.inicioManut;
-      document.getElementById('fim-manut').value = m.fimManut;
-      if(m.videoNome) {
-        videoFile = 'existing';
-        document.getElementById('video-zone').style.display = 'none';
-        document.getElementById('video-preview-wrap').classList.add('visible');
-        document.getElementById('video-file-name').innerText = m.videoNome;
+      document.getElementById('done-banner-sub').innerText = `Por: ${m.manut1Nome} — ${m.tarefa || ''}`;
+      document.getElementById('m1-cracha').value    = m.manut1Cracha || '';
+      document.getElementById('m1-nome').value      = m.manut1Nome   || '';
+      document.getElementById('m2-cracha').value    = m.manut2Cracha || '';
+      document.getElementById('m2-nome').value      = m.manut2Nome   || '';
+      document.getElementById('m3-cracha').value    = m.manut3Cracha || '';
+      document.getElementById('m3-nome').value      = m.manut3Nome   || '';
+      document.getElementById('observacoes').value  = m.observacoes  || '';
+      document.getElementById('inicio-manut').value = m.inicioManut  || '';
+      document.getElementById('fim-manut').value    = m.fimManut     || '';
+
+      selT = m.tarefa; selM = m.motivo; selC = m.causa; selA = m.area;
+      restoreSelection('tarefa-list', m.tarefa);
+      restoreSelection('motivo-list', m.motivo);
+      restoreSelection('causa-list',  m.causa);
+      restoreSelection('area-list',   m.area);
+
+      // Tenta carregar vídeo do IndexedDB
+      if (m.videoSalvo) {
+        const file = await getVideoFromDB(relId);
+        if (file) {
+          videoFile = file;
+          document.getElementById('video-zone').style.display = 'none';
+          document.getElementById('video-file-name').innerText = file.name || m.videoNome;
+          document.getElementById('video-file-size').innerText = file.size
+            ? (file.size / (1024*1024)).toFixed(1) + ' MB' : '';
+          document.getElementById('video-player').src = URL.createObjectURL(file);
+          document.getElementById('video-preview-wrap').classList.add('visible');
+        } else if (m.videoNome) {
+          // Vídeo foi registrado mas não está mais disponível localmente
+          videoFile = 'existing';
+          document.getElementById('video-zone').style.display = 'none';
+          document.getElementById('video-file-name').innerText = m.videoNome;
+          document.getElementById('video-file-size').innerText = 'Arquivo salvo anteriormente';
+          document.getElementById('video-preview-wrap').classList.add('visible');
+        }
       }
     }
+
+    // ─── INIT ───
+    window.onload = async () => {
+      renderList('tarefa-list', TAREFAS,  't', false);
+      renderList('motivo-list', MOTIVOS,  'm', true);
+      renderList('causa-list',  CAUSAS,   'c', true);
+      renderAreas();
+
+      const rels = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
+      const rel  = rels.find(r => r.id === relId);
+      if (rel && rel.manutencao) await restaurar(rel.manutencao);
+    };
   </script>
 </body>
 </html>
