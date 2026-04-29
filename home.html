@@ -86,13 +86,13 @@
     <div class="page-title" id="greeting">Olá 👋</div>
     <div class="page-sub" id="today-date">—</div>
 
-    <a class="action-btn" href="relatorio.html">
-      <div class="action-icon">📋</div>
+    <a class="action-btn" href="relatorio.html" id="btn-relatorio">
+      <div class="action-icon" id="btn-relatorio-icon">📋</div>
       <div>
         <div class="action-label">Registrar parada de máquina</div>
-        <div class="action-sub">Preencher relatório de ocorrência</div>
+        <div class="action-sub" id="btn-relatorio-sub">Preencher relatório de ocorrência</div>
       </div>
-      <span class="action-arrow">›</span>
+      <span class="action-arrow" id="btn-relatorio-arrow">›</span>
     </a>
 
     <a class="action-btn" href="relatorios.html" style="background:var(--surface);color:var(--text);border:1px solid #F2C99A;">
@@ -126,6 +126,25 @@
     const now = new Date();
     document.getElementById('today-date').textContent = now.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
     function logout() { localStorage.removeItem('ms_user'); window.location.href = 'index.html'; }
+
+    // ── Bloqueia botão de relatório para não-admins ──
+    const _isAdmin = user.cracha === 'admin';
+    if (!_isAdmin) {
+      const btn = document.getElementById('btn-relatorio');
+      btn.style.background = '#F5F3EE';
+      btn.style.color = 'var(--muted)';
+      btn.style.border = '1.5px solid var(--border)';
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        alert('⛔ Acesso restrito\n\nO registro de paradas é exclusivo para o Administrador.\n\nEntre em contato com o responsável para registrar uma ocorrência.');
+      });
+      document.getElementById('btn-relatorio-icon').style.background = '#E8E6DF';
+      document.getElementById('btn-relatorio-icon').textContent = '🔒';
+      document.getElementById('btn-relatorio-sub').textContent = 'Restrito ao Administrador';
+      document.getElementById('btn-relatorio-arrow').textContent = '🔒';
+      document.getElementById('btn-relatorio-arrow').style.fontSize = '15px';
+      document.getElementById('btn-relatorio-arrow').style.opacity = '0.5';
+    }
   </script>
 </body>
 </html>

@@ -773,43 +773,53 @@
   <script>
     const user = JSON.parse(localStorage.getItem('ms_user') || 'null');
     if (!user) window.location.href = 'index.html';
-    const _isAdmin = user.cracha === 'admin';
 
-    // ── PERFIL: determina se é manutentor (não-admin e turno contém 'manut' ou vem do campo manutor)
-    // Para simplificar: usuários cujo turno é "Manutenção" são manutentores.
-    // Ajuste conforme sua lógica de perfil real.
+    // ── PERFIS ──
+    // Admin: crachá === 'admin'  → pode registrar parada pelo operador (via modal)
+    // Manutentor: turno/perfil contém 'manut' → só aba Manutenção
+    // Qualquer outro usuário não-admin → BLOQUEADO na aba Operador
+    const _isAdmin = user.cracha === 'admin';
     const _isManut = !_isAdmin && (
-      (user.turno || '').toLowerCase().includes('manut') ||
+      (user.turno  || '').toLowerCase().includes('manut') ||
       (user.perfil || '').toLowerCase().includes('manut')
     );
+    // Todo usuário que não é admin é bloqueado no formulário de operador
+    const _isBlockedFromOp = !_isAdmin;
 
-    // Admin: mostra modal para identificar operador
     if (_isAdmin) {
+      // Admin: abre modal para identificar o operador, bloqueia aba manut
       document.getElementById('op-modal').classList.remove('hidden');
       setTimeout(() => document.getElementById('op-modal-nome').focus(), 100);
+      const tabManut = document.getElementById('tab-btn-manutencao');
+      tabManut.disabled = true;
+      tabManut.title = 'Administrador não registra atendimentos de manutenção';
+
     } else if (_isManut) {
-      // Manutentor: bloqueia aba operador e abre direto em manut
+      // Manutentor: bloqueia aba operador, abre direto em Manutenção
       document.getElementById('op-blocked-banner').style.display = 'block';
       document.getElementById('op-form-content').style.display = 'none';
-      // Bloqueia botão de operador na tab bar
       const opBtn = document.getElementById('tab-btn-operador');
       opBtn.disabled = true;
       opBtn.title = 'Área restrita ao Operador';
-      // Abre aba manutentor automaticamente
-      setTimeout(() => {
-        switchSection('manutencao', document.getElementById('tab-btn-manutencao'));
-      }, 100);
-    } else {
-      // Operador normal
-      document.getElementById('cracha').value   = user.cracha;
-      document.getElementById('operador').value = user.nome;
-    }
+      setTimeout(() => switchSection('manutencao', document.getElementById('tab-btn-manutencao')), 100);
 
-    // Admin: bloquear aba manut
-    if (_isAdmin) {
-      const tabBtn = document.getElementById('tab-btn-manutencao');
-      tabBtn.disabled = true;
-      tabBtn.title = 'Administrador não pode usar esta função';
+    } else {
+      // Usuário comum (não-admin, não-manut): bloqueia formulário de operador
+      document.getElementById('op-blocked-banner').style.display = 'block';
+      document.getElementById('op-form-content').style.display = 'none';
+      // Atualiza o banner com mensagem específica para usuário comum
+      document.getElementById('op-blocked-banner').innerHTML = `
+        <div class="blocked-banner">
+          <span class="icon">🔒</span>
+          <h3>Acesso restrito</h3>
+          <p>O registro de paradas de máquina é exclusivo para o perfil <strong>Administrador</strong>.<br>
+          Entre em contato com o responsável ou acesse com login de administrador.</p>
+          <a href="home.html" style="display:inline-block;margin-top:14px;padding:10px 20px;background:var(--accent);color:#fff;border-radius:8px;text-decoration:none;font-size:13px;font-weight:600;">← Voltar ao início</a>
+        </div>`;
+      // Desabilita aba operador na topbar
+      const opBtn = document.getElementById('tab-btn-operador');
+      opBtn.disabled = true;
+      opBtn.title = 'Acesso restrito ao Administrador';
     }
 
     function confirmarOperador() {
