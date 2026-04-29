@@ -4,589 +4,62 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PaperLess — Campo Manutentor</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #FFF8F2;
-      --surface: #FFFFFF;
-      --border: #F2D5BE;
-      --text: #2A1A0E;
-      --muted: #A0816A;
-      --accent: #E8620A;
-      --red: #C93B3A;
-      --red-bg: #FDF0F0;
-      --red-border: #f0caca;
-      --amber: #BA7517;
-      --amber-bg: #FAEEDA;
-      --amber-border: #FAC775;
-      --green: #3B6D11;
-      --green-bg: #EAF3DE;
-      --green-border: #c0dd97;
+      --bg: #FFF8F2; --surface: #FFFFFF; --border: #F2D5BE;
+      --text: #2A1A0E; --muted: #A0816A; --accent: #E8620A;
+      --red: #C93B3A; --red-bg: #FDF0F0; --red-border: #f0caca;
+      --green: #3B6D11; --green-bg: #EAF3DE; --green-border: #c0dd97;
     }
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      min-height: 100vh;
-      color: var(--text);
-    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); min-height: 100vh; color: var(--text); padding-bottom: 80px; }
 
-    .topbar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 24px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
+    .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; gap: 14px; position: sticky; top: 0; z-index: 50; }
+    .back-btn { text-decoration: none; color: var(--muted); font-size: 13px; cursor: pointer; }
+    .topbar-title { font-size: 15px; font-weight: 600; }
 
-    .back-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.15s;
-    }
-    .back-btn:hover { color: var(--text); }
+    .main { max-width: 680px; margin: 0 auto; padding: 24px 20px; }
 
-    .topbar-title { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
+    /* CARD STYLE */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 14px; }
+    .card-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
 
-    .main { max-width: 680px; margin: 0 auto; padding: 24px 20px 80px; }
+    /* MANUTENTORES GRID */
+    .manut-grid { display: flex; flex-direction: column; gap: 0; }
+    @media (min-width: 560px) { .manut-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; } }
+    .manut-group { display: flex; flex-direction: column; gap: 8px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .manut-group:last-child { border-bottom: none; }
+    .manut-num { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; }
 
-    /* RESUMO DO CHAMADO */
-    .chamado-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px 20px;
-      margin-bottom: 20px;
-      border-left: 4px solid var(--red);
-    }
-
-    .chamado-title {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.7px;
-      margin-bottom: 10px;
-    }
-
-    .chamado-equip {
-      font-size: 18px;
-      font-weight: 600;
-      letter-spacing: -0.4px;
-      margin-bottom: 6px;
-    }
-
-    .chamado-meta {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 3px 9px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 500;
-      margin-left: 8px;
-    }
-    .badge-red   { background: var(--red-bg);  color: #A32D2D; border: 1px solid var(--red-border); }
-    .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
-
-    .desc-preview {
-      margin-top: 10px;
-      padding: 10px 12px;
-      background: var(--bg);
-      border-radius: 8px;
-      font-size: 13px;
-      color: var(--text);
-      line-height: 1.5;
-    }
-
-    /* CARD */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 22px;
-      margin-bottom: 14px;
-    }
-
-    .card-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 18px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .manut-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-
-    @media (min-width: 560px) {
-      .manut-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 16px;
-      }
-    }
-
-    .manut-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding: 16px 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .manut-group:first-child { padding-top: 0; }
-
-    .manut-group:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-
-    @media (min-width: 560px) {
-      .manut-group {
-        padding: 0;
-        border-bottom: none;
-      }
-    }
-
-    .manut-num {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-    }
-
-    /* FIELD */
+    /* FIELDS */
     .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
-    .field:last-child { margin-bottom: 0; }
+    .field label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; }
+    input, select, textarea { padding: 10px 13px; border: 1px solid var(--border); border-radius: 9px; font-family: 'DM Sans', sans-serif; font-size: 16px; width: 100%; outline: none; background: var(--surface); }
 
-    .field label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.7px;
-    }
+    /* VIDEO SECTION (PADRÃO FORMULARIO.HTML)[cite: 12] */
+    .video-hint { margin-bottom: 14px; padding: 12px 14px; background: #E6F1FB; border: 1px solid #B5D4F4; border-radius: 10px; font-size: 13px; color: #185FA5; line-height: 1.5; }
+    .video-upload-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 32px 20px; text-align: center; cursor: pointer; background: var(--bg); position: relative; }
+    .upload-icon { font-size: 40px; display: block; margin-bottom: 10px; }
+    .upload-required-badge { display: inline-flex; padding: 3px 10px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 20px; font-size: 10px; font-weight: 700; color: var(--red); text-transform: uppercase; margin-bottom: 12px; }
+    .upload-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .upload-sub { font-size: 12px; color: var(--muted); line-height: 1.6; }
+    #video-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
-    .field input, .field select, .field textarea {
-      padding: 10px 13px;
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      color: var(--text);
-      background: var(--surface);
-      outline: none;
-      transition: border-color 0.15s;
-      appearance: none;
-      resize: none;
-      width: 100%;
-    }
+    .video-preview-wrap { display: none; margin-top: 14px; }
+    .video-preview-wrap.visible { display: block; }
+    .video-preview-info { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--green-bg); border: 1px solid var(--green-border); border-radius: 10px; margin-bottom: 10px; }
+    .video-remove-btn { padding: 6px 12px; background: none; border: 1px solid var(--green-border); border-radius: 6px; font-size: 12px; color: var(--green); cursor: pointer; }
+    video.preview-player { width: 100%; border-radius: 10px; background: #000; max-height: 280px; }
 
-    .field input:focus, .field select:focus, .field textarea:focus { border-color: #aaa; }
-
-    /* CHECK GRID */
-    .three-col {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-
-    @media (min-width: 560px) {
-      .three-col {
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 14px;
-      }
-    }
-
-    .check-col-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 10px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .check-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      margin-bottom: 6px;
-      cursor: pointer;
-      transition: all 0.12s;
-      min-height: 44px;
-    }
-
-    .check-item:hover {
-      border-color: #bbb;
-      background: var(--bg);
-    }
-
-    .check-item.sel {
-      border-color: var(--accent);
-      background: #f0efe9;
-    }
-
-    .check-item input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      border: 1.5px solid var(--border);
-      border-radius: 4px;
-      appearance: none;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: all 0.12s;
-      background: var(--surface);
-    }
-
-    .check-item.sel input[type="checkbox"] {
-      background: var(--accent);
-      border-color: var(--accent);
-    }
-
-    .check-item.sel input[type="checkbox"]::after {
-      content: '';
-      display: block;
-      width: 4px;
-      height: 8px;
-      border: 2px solid white;
-      border-top: none;
-      border-left: none;
-      transform: rotate(45deg) translate(2px, -1px);
-      margin: 2px auto 0;
-    }
-
-    .check-label {
-      font-size: 13px;
-      flex: 1;
-      line-height: 1.3;
-    }
-
-    .check-num {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--muted);
-      min-width: 22px;
-      font-variant-numeric: tabular-nums;
-    }
-
-    /* AREA */
-    .area-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .area-btn {
-      flex: 1;
-      min-width: 90px;
-      padding: 12px 16px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--surface);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.12s;
-      color: var(--muted);
-      font-weight: 500;
-      min-height: 44px;
-      text-align: center;
-    }
-
-    .area-btn:hover { border-color: #bbb; color: var(--text); }
-    .area-btn.sel { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-    /* ── UPLOAD DE VÍDEO ── */
-    .video-upload-zone {
-      border: 2px dashed var(--border);
-      border-radius: 12px;
-      padding: 32px 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-      background: var(--bg);
-    }
-
-    .video-upload-zone:hover,
-    .video-upload-zone.dragover {
-      border-color: var(--accent);
-      background: #f0efe9;
-    }
-
-    .video-upload-zone.has-file {
-      border-style: solid;
-      border-color: var(--green);
-      background: var(--green-bg);
-    }
-
-    .video-upload-zone.error-zone {
-      border-color: var(--red);
-      background: var(--red-bg);
-    }
-
-    .video-upload-zone input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
-    }
-
-    .upload-icon {
-      font-size: 40px;
-      margin-bottom: 10px;
-      display: block;
-      line-height: 1;
-    }
-
-    .upload-required-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 10px;
-      background: var(--red-bg);
-      border: 1px solid var(--red-border);
-      border-radius: 20px;
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--red);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 12px;
-    }
-
-    .upload-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
-
-    .upload-sub {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .video-preview-wrap {
-      display: none;
-      margin-top: 14px;
-    }
-
-    .video-preview-wrap.visible {
-      display: block;
-    }
-
-    .video-preview-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 14px;
-      background: var(--green-bg);
-      border: 1px solid var(--green-border);
-      border-radius: 10px;
-      margin-bottom: 10px;
-    }
-
-    .video-preview-icon {
-      font-size: 22px;
-      flex-shrink: 0;
-    }
-
-    .video-preview-details {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .video-preview-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--green);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .video-preview-size {
-      font-size: 11px;
-      color: var(--green);
-      opacity: 0.75;
-      margin-top: 2px;
-    }
-
-    .video-remove-btn {
-      padding: 6px 12px;
-      background: none;
-      border: 1px solid var(--green-border);
-      border-radius: 6px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px;
-      color: var(--green);
-      cursor: pointer;
-      transition: all 0.15s;
-      flex-shrink: 0;
-      white-space: nowrap;
-    }
-
-    .video-remove-btn:hover {
-      background: var(--red-bg);
-      border-color: var(--red-border);
-      color: var(--red);
-    }
-
-    video.preview-player {
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid var(--green-border);
-      max-height: 280px;
-      background: #000;
-      display: block;
-    }
-
-    .video-hint {
-      margin-bottom: 14px;
-      padding: 12px 14px;
-      background: #E6F1FB;
-      border: 1px solid #B5D4F4;
-      border-radius: 10px;
-      font-size: 13px;
-      color: #185FA5;
-      line-height: 1.5;
-    }
-
-    /* DONE BANNER */
-    .done-banner {
-      background: var(--green-bg);
-      border: 1px solid var(--green-border);
-      border-radius: 12px;
-      padding: 16px 20px;
-      margin-bottom: 20px;
-      display: none;
-    }
-
-    .done-banner-title { font-size: 14px; font-weight: 600; color: var(--green); margin-bottom: 4px; }
-    .done-banner-sub { font-size: 12px; color: var(--green); }
-
-    /* SUBMIT */
-    .submit-row { display: flex; gap: 10px; }
-
-    .btn-primary {
-      flex: 1;
-      padding: 15px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.15s, transform 0.1s;
-      min-height: 50px;
-    }
-
-    .btn-primary:hover { opacity: 0.88; }
-    .btn-primary:active { transform: scale(0.98); }
-
-    .btn-secondary {
-      padding: 15px 20px;
-      background: var(--surface);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      cursor: pointer;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      white-space: nowrap;
-    }
-
-    .btn-secondary:hover { border-color: #aaa; }
-
-    .error-bar {
-      background: var(--red-bg);
-      color: var(--red);
-      border: 1px solid var(--red-border);
-      border-radius: 9px;
-      padding: 12px 16px;
-      font-size: 13px;
-      margin-bottom: 16px;
-      display: none;
-      line-height: 1.5;
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--green);
-      color: #fff;
-      padding: 12px 22px;
-      border-radius: 24px;
-      font-size: 13px;
-      font-weight: 500;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.3s;
-      z-index: 999;
-    }
-
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    .two-col-time {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 14px;
-    }
-    .two-col-time .field { margin-bottom: 0; }
-  
-    /* ── MARILAN THEME OVERRIDES ── */
-    .topbar { background: linear-gradient(135deg, #fff 0%, #FFF5EE 100%); border-bottom: 2px solid #F2C99A; }
-    .logo-icon, .avatar { background: linear-gradient(135deg, #E8620A 0%, #C44E05 100%) !important; }
-    .action-btn[href="relatorio.html"] { background: linear-gradient(135deg, #E8620A 0%, #C44E05 100%) !important; }
-    .btn { background: linear-gradient(135deg, #E8620A 0%, #C44E05 100%) !important; }
-    .btn-manut:not(.done) { background: linear-gradient(135deg, #E8620A 0%, #C44E05 100%) !important; }
-    .tab-btn.active { background: var(--surface); color: #E8620A !important; box-shadow: 0 1px 4px rgba(232,98,10,0.15); }
-    .filter-btn.active { background: #E8620A !important; border-color: #E8620A !important; }
-    .logout-btn:hover { border-color: #E8620A !important; color: #E8620A !important; }
-
+    /* CHECKBOXES */
+    .check-item { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; cursor: pointer; font-size: 13px; }
+    .check-item.sel { border-color: var(--accent); background: #f0efe9; }
+    
+    .btn-primary { width: 100%; padding: 16px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; margin-top: 20px; }
+    .done-banner { background: var(--green-bg); border: 1px solid var(--green-border); padding: 16px; border-radius: 12px; margin-bottom: 20px; display: none; }
   </style>
 </head>
 <body>
@@ -597,120 +70,77 @@
   </div>
 
   <div class="main">
-    <div class="error-bar" id="error-bar"></div>
-
     <div class="done-banner" id="done-banner">
-      <div class="done-banner-title">✓ Manutenção já registrada</div>
-      <div class="done-banner-sub" id="done-banner-sub">—</div>
+      <div style="font-weight: 600; color: var(--green);">✓ Atendimento já registrado</div>
+      <div id="done-banner-sub" style="font-size: 12px; color: var(--green);"></div>
     </div>
 
-    <!-- RESUMO DO CHAMADO -->
-    <div class="chamado-box" id="chamado-box">
-      <div class="chamado-title">Chamado aberto pelo operador</div>
-      <div class="chamado-equip" id="c-equip">Carregando...</div>
-      <div class="chamado-meta" id="c-meta">—</div>
-      <div class="desc-preview" id="c-desc">—</div>
-    </div>
-
-    <!-- MANUTENTORES -->
+    <!-- 1. MANUTENTORES[cite: 12] -->
     <div class="card">
       <div class="card-title">Manutentores</div>
       <div class="manut-grid">
-
         <div class="manut-group">
           <span class="manut-num">1 — Principal *</span>
-          <div class="field">
-            <label>Crachá</label>
-            <input type="text" id="m1-cracha" placeholder="00000" inputmode="numeric"/>
-          </div>
-          <div class="field">
-            <label>Nome</label>
-            <input type="text" id="m1-nome" placeholder="Nome completo"/>
-          </div>
+          <div class="field"><label>Crachá</label><input type="text" id="m1-cracha" placeholder="00000"></div>
+          <div class="field"><label>Nome</label><input type="text" id="m1-nome" placeholder="Nome completo"></div>
         </div>
-
         <div class="manut-group">
           <span class="manut-num">2 — Auxiliar</span>
-          <div class="field">
-            <label>Crachá</label>
-            <input type="text" id="m2-cracha" placeholder="00000" inputmode="numeric"/>
-          </div>
-          <div class="field">
-            <label>Nome</label>
-            <input type="text" id="m2-nome" placeholder="Nome completo"/>
-          </div>
+          <div class="field"><label>Crachá</label><input type="text" id="m2-cracha" placeholder="00000"></div>
+          <div class="field"><label>Nome</label><input type="text" id="m2-nome" placeholder="Nome completo"></div>
         </div>
-
         <div class="manut-group">
           <span class="manut-num">3 — Auxiliar</span>
-          <div class="field">
-            <label>Crachá</label>
-            <input type="text" id="m3-cracha" placeholder="00000" inputmode="numeric"/>
-          </div>
-          <div class="field">
-            <label>Nome</label>
-            <input type="text" id="m3-nome" placeholder="Nome completo"/>
-          </div>
+          <div class="field"><label>Crachá</label><input type="text" id="m3-cracha" placeholder="00000"></div>
+          <div class="field"><label>Nome</label><input type="text" id="m3-nome" placeholder="Nome completo"></div>
         </div>
-
       </div>
     </div>
 
-    <!-- TAREFA / MOTIVO / CAUSA -->
+    <!-- 2. OBSERVAÇÕES E HORÁRIOS (LOGA ABAIXO DOS NOMES) -->
+    <div class="card">
+      <div class="card-title">Relato da Manutenção</div>
+      <div class="field">
+        <label>Descreva o que foi feito *</label>
+        <textarea id="observacoes" rows="4" placeholder="Informe as peças trocadas e ajustes realizados..."></textarea>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;">
+        <div class="field"><label>Início Manut.</label><input type="time" id="inicio-manut"></div>
+        <div class="field"><label>Fim Manut.</label><input type="time" id="fim-manut"></div>
+      </div>
+    </div>
+
+    <!-- 3. CLASSIFICAÇÃO[cite: 12] -->
     <div class="card">
       <div class="card-title">Tarefa · Motivo · Causa *</div>
-      <div class="three-col">
-        <div>
-          <div class="check-col-title">Tarefa</div>
-          <div id="tarefa-list"></div>
-        </div>
-        <div>
-          <div class="check-col-title">Motivo</div>
-          <div id="motivo-list"></div>
-        </div>
-        <div>
-          <div class="check-col-title">Causa</div>
-          <div id="causa-list"></div>
-        </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+        <div id="tarefa-list"></div>
+        <div id="motivo-list"></div>
+        <div id="causa-list"></div>
       </div>
     </div>
 
-    <!-- ÁREA — oculto para admin -->
-    <div class="card" id="card-area">
-      <div class="card-title">Área *</div>
-      <div class="area-row" id="area-row">
-        <button class="area-btn" onclick="selArea(this)">Mecânica</button>
-        <button class="area-btn" onclick="selArea(this)">Elétrica</button>
-        <button class="area-btn" onclick="selArea(this)">Operacional</button>
-      </div>
-    </div>
-
-    <!-- UPLOAD DE VÍDEO -->
+    <!-- 4. VÍDEO (PADRÃO FORMULARIO.HTML)[cite: 12] -->
     <div class="card">
       <div class="card-title">Vídeo do Atendimento *</div>
-
       <div class="video-hint">
-        📹 Grave um vídeo mostrando o <strong>problema na máquina</strong> e o <strong>passo a passo do conserto</strong>. Este registro é <strong>obrigatório</strong> para finalizar o atendimento.
+        📹 Grave um vídeo mostrando o <strong>problema na máquina</strong> e o <strong>passo a passo do conserto</strong>. Registro <strong>obrigatório</strong>.[cite: 12]
       </div>
 
-      <div class="video-upload-zone" id="video-zone"
-           ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+      <div class="video-upload-zone" id="video-zone">
         <input type="file" id="video-input" accept="video/*" capture="environment" onchange="onVideoSelect(event)"/>
         <span class="upload-icon">🎥</span>
         <div class="upload-required-badge">⚠ Obrigatório</div>
         <div class="upload-title">Toque para gravar ou selecionar vídeo</div>
-        <div class="upload-sub">
-          Formatos: MP4, MOV, AVI, WebM<br>
-          Tamanho máximo: 500 MB
-        </div>
+        <div class="upload-sub">Formatos: MP4, MOV, AVI | Máx: 500 MB</div>
       </div>
 
       <div class="video-preview-wrap" id="video-preview-wrap">
         <div class="video-preview-info">
           <span class="video-preview-icon">✅</span>
-          <div class="video-preview-details">
-            <div class="video-preview-name" id="video-file-name">—</div>
-            <div class="video-preview-size" id="video-file-size">—</div>
+          <div style="flex: 1;">
+            <div id="video-file-name" style="font-size: 13px; font-weight: 600; color: var(--green);">—</div>
+            <div id="video-file-size" style="font-size: 11px; color: var(--green); opacity: 0.8;">—</div>
           </div>
           <button class="video-remove-btn" onclick="removeVideo()">Remover</button>
         </div>
@@ -718,243 +148,91 @@
       </div>
     </div>
 
-    <!-- OBSERVAÇÕES -->
-    <div class="card">
-      <div class="card-title">Observações</div>
-      <div class="field">
-        <label>Descreva o que foi feito</label>
-        <textarea id="observacoes" rows="4" placeholder="Informe o que foi executado, peças trocadas, ajustes realizados..."></textarea>
-      </div>
-      <div class="two-col-time">
-        <div class="field">
-          <label>Início da manutenção</label>
-          <input type="time" id="inicio-manut"/>
-        </div>
-        <div class="field">
-          <label>Fim da manutenção</label>
-          <input type="time" id="fim-manut"/>
-        </div>
-      </div>
-    </div>
-
-    <!-- BOTÕES -->
-    <div class="submit-row">
-      <a class="btn-secondary" href="relatorios.html">Cancelar</a>
-      <button class="btn-primary" id="btn-salvar" onclick="salvar()">Registrar atendimento</button>
-    </div>
+    <button class="btn-primary" onclick="salvar()">Registrar Atendimento</button>
   </div>
 
-  <div class="toast" id="toast">✓ Atendimento registrado!</div>
-<script>
-    const user = JSON.parse(localStorage.getItem('ms_user') || 'null');
-    if (!user) window.location.href = 'index.html';
-
-    const _isAdmin = user.cracha === 'admin';
+  <script>
     const params = new URLSearchParams(window.location.search);
-    const relId  = parseInt(params.get('id'));
+    const relId = parseInt(params.get('id'));
+    const rels = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
+    const idx = rels.findIndex(r => r.id === relId);
+    const rel = rels[idx];
+    let videoFile = null, selT, selM, selC;
 
-    const rels   = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
-    const idx    = rels.findIndex(r => r.id === relId);
-    const rel    = rels[idx];
-
-    let selTarefa = null, selMotivo = null, selCausa = null, _selArea = null;
-    let videoFile = null;
-
-    // Listas de Opções
-    const tarefas = ['Ajustar','Consertar','Destravar','Limpar','Reapertar','Regular','Trocar','Acompanhar'];
-    const motivos = [
-      {num:'16', nome:'Entupimento'}, {num:'99', nome:'Desgaste'},
-      {num:'100',nome:'Quebra'},      {num:'101',nome:'Folga'},
-      {num:'105',nome:'Sujidade'},    {num:'106',nome:'Desalinhamento'},
-      {num:'107',nome:'Vazamento'},   {num:'114',nome:'Curto circuito'},
-      {num:'118',nome:'Mal contato'}, {num:'129',nome:'Ruído'},
-      {num:'130',nome:'Vibração'},    {num:'133',nome:'Sobrecarga'},
-    ];
-    const causas = [
-      {num:'07',nome:'Falha sensor'},       {num:'16',nome:'Vibração'},
-      {num:'25',nome:'Folga'},              {num:'27',nome:'Rolamento travado'},
-      {num:'36',nome:'Sobrecarga'},         {num:'37',nome:'Cabo rompido'},
-      {num:'50',nome:'Desarme disjuntor'}, {num:'70',nome:'Emergência acionada'},
-      {num:'72',nome:'Mal contato'},        {num:'73',nome:'Fio solto'},
-      {num:'87',nome:'Parafuso quebrado'}, {num:'90',nome:'Ruído'},
-    ];
-
-    window.onload = function() {
-        if (_isAdmin) {
-            const cardArea = document.getElementById('card-area');
-            if(cardArea) cardArea.style.display = 'none';
-        }
-
-        if (!rel) {
-            document.getElementById('chamado-box').innerHTML = '<div style="color:var(--red);font-size:14px">Relatório não encontrado.</div>';
-            return;
-        }
-
-        renderDadosChamado();
-        buildCheckList('tarefa-list', tarefas, false, 'tarefa');
-        buildCheckList('motivo-list', motivos, true, 'motivo');
-        buildCheckList('causa-list',  causas,  true, 'causa');
-
-        if (rel.manutencao) {
-            restaurarManutencao(rel.manutencao);
-        }
+    window.onload = () => {
+      renderList('tarefa-list', ['Ajustar','Trocar','Reparar'], 't');
+      renderList('motivo-list', ['Quebra','Desgaste','Sujeira'], 'm');
+      renderList('causa-list', ['Falha Humana','Peça Velha'], 'c');
+      if (rel && rel.manutencao) restaurar(rel.manutencao);
     };
 
-    function renderDadosChamado() {
-        const codigos = {
-            '1':'Quebra','2':'Set-up','3':'Troca fer.','4':'Produção','5':'Pequenas paradas',
-            '6':'Velocidade','7':'Defeito','8':'Programada','9':'Gestão','10':'Mov. operacionais',
-            '11':'Organização','12':'Logística','13':'Medições e ajuste'
+    function renderList(id, items, type) {
+      const el = document.getElementById(id);
+      items.forEach(item => {
+        const d = document.createElement('div');
+        d.className = 'check-item';
+        d.innerText = item;
+        d.onclick = () => {
+          el.querySelectorAll('.check-item').forEach(i => i.classList.remove('sel'));
+          d.classList.add('sel');
+          if(type==='t') selT=item; if(type==='m') selM=item; if(type==='c') selC=item;
         };
-        document.getElementById('c-equip').textContent = rel.equipamento || '—';
-        document.getElementById('c-meta').innerHTML =
-            `Linha ${rel.linha || '—'} · Cód. ${rel.codEquipamento || '—'} · Operador: ${rel.operador || '—'}<br>` +
-            `Data: ${rel.dataInicial || '—'} · Início: ${rel.inicioOcorrencia || '—'} · ` +
-            `Cód. Parada: <strong>${rel.codMotivo} — ${codigos[rel.codMotivo] || '?'}</strong>`;
-        document.getElementById('c-desc').textContent = rel.descricao || '—';
+        el.appendChild(d);
+      });
     }
 
-    function restaurarManutencao(m) {
-        document.getElementById('done-banner').style.display = 'block';
-        document.getElementById('done-banner-sub').textContent = `Registrado por ${m.manut1Nome || '—'} · Tarefa: ${m.tarefa || '—'}`;
-        
-        document.getElementById('m1-cracha').value    = m.manut1Cracha || '';
-        document.getElementById('m1-nome').value      = m.manut1Nome   || '';
-        document.getElementById('m2-cracha').value    = m.manut2Cracha || '';
-        document.getElementById('m2-nome').value      = m.manut2Nome   || '';
-        document.getElementById('m3-cracha').value    = m.manut3Cracha || '';
-        document.getElementById('m3-nome').value      = m.manut3Nome   || '';
-        document.getElementById('observacoes').value  = m.observacoes  || '';
-        document.getElementById('inicio-manut').value = m.inicioManut   || '';
-        document.getElementById('fim-manut').value    = m.fimManut     || '';
-
-        if(m.tarefa) marcarItemLista('tarefa-list', m.tarefa);
-        if(m.motivo) marcarItemLista('motivo-list', m.motivo);
-        if(m.causa)  marcarItemLista('causa-list', m.causa);
-        
-        selTarefa = m.tarefa;
-        selMotivo = m.motivo;
-        selCausa  = m.causa;
-
-        if (!_isAdmin && m.area) {
-            document.querySelectorAll('.area-btn').forEach(btn => {
-                if (btn.textContent.trim() === m.area) btn.classList.add('sel');
-            });
-            _selArea = m.area;
-        }
-
-        // Lógica do Vídeo Concluído
-        if (m.videoNome) {
-            document.getElementById('video-file-name').textContent = m.videoNome;
-            document.getElementById('video-file-size').textContent = m.videoSize || 'Vídeo salvo';
-            
-            // Oculta a zona de upload (caixa verde da sua foto)
-            document.getElementById('video-zone').style.display = 'none';
-            
-            // Mostra o player de vídeo
-            const player = document.getElementById('video-player');
-            player.style.display = 'block';
-            player.setAttribute('controls', 'true'); // Garante que dê para dar play
-            
-            document.getElementById('video-preview-wrap').classList.add('visible');
-            
-            // Remove o botão de excluir vídeo para evitar edições pós-conclusão
-            const btnRemove = document.querySelector('.remove-btn');
-            if(btnRemove) btnRemove.style.display = 'none';
-
-            videoFile = 'existing'; 
-        }
-    }
-
-    function buildCheckList(containerId, items, withNum, type) {
-        const el = document.getElementById(containerId);
-        el.innerHTML = '';
-        items.forEach(item => {
-            const d = document.createElement('div');
-            d.className = 'check-item';
-            const label = typeof item === 'string' ? item : item.nome;
-            const num   = typeof item === 'string' ? '' : item.num;
-            const val   = typeof item === 'string' ? item : item.num + ' - ' + item.nome;
-            d.innerHTML = withNum ? `<input type="checkbox"/><span class="check-num">${num}</span><span>${label}</span>` : `<input type="checkbox"/><span>${label}</span>`;
-            d.setAttribute('data-value', val);
-            d.onclick = () => {
-                el.querySelectorAll('.check-item').forEach(i => { i.classList.remove('sel'); i.querySelector('input').checked = false; });
-                d.classList.add('sel'); d.querySelector('input').checked = true;
-                if (type === 'tarefa') selTarefa = val;
-                if (type === 'motivo') selMotivo = val;
-                if (type === 'causa')  selCausa  = val;
-            };
-            el.appendChild(d);
-        });
-    }
-
-    function marcarItemLista(id, valor) {
-        const items = document.querySelectorAll(`#${id} .check-item`);
-        items.forEach(i => {
-            if (i.getAttribute('data-value') === valor) {
-                i.classList.add('sel');
-                i.querySelector('input').checked = true;
-            }
-        });
-    }
-
-    function selArea(btn) {
-        document.querySelectorAll('.area-btn').forEach(b => b.classList.remove('sel'));
-        btn.classList.add('sel');
-        _selArea = btn.textContent.trim();
-    }
-
-    function onVideoSelect(event) {
-        const file = event.target.files[0];
-        if (file) handleVideoFile(file);
-    }
-
-    function handleVideoFile(file) {
+    function onVideoSelect(e) {
+      const file = e.target.files[0];
+      if (file) {
         videoFile = file;
-        const zone = document.getElementById('video-zone');
-        zone.classList.add('has-file');
-        document.getElementById('video-file-name').textContent = file.name;
-        document.getElementById('video-file-size').textContent = (file.size / (1024*1024)).toFixed(1) + ' MB';
-        
-        const player = document.getElementById('video-player');
-        player.style.display = 'block';
-        player.src = URL.createObjectURL(file);
+        document.getElementById('video-zone').style.display = 'none';
+        document.getElementById('video-file-name').innerText = file.name;
+        document.getElementById('video-file-size').innerText = (file.size / (1024*1024)).toFixed(1) + ' MB';
+        document.getElementById('video-player').src = URL.createObjectURL(file);
         document.getElementById('video-preview-wrap').classList.add('visible');
+      }
+    }
+
+    function removeVideo() {
+      videoFile = null;
+      document.getElementById('video-input').value = "";
+      document.getElementById('video-zone').style.display = 'block';
+      document.getElementById('video-preview-wrap').classList.remove('visible');
     }
 
     function salvar() {
-        const m1cracha = document.getElementById('m1-cracha').value.trim();
-        const m1nome   = document.getElementById('m1-nome').value.trim();
-        if (!m1cracha || !m1nome || !selTarefa || !selMotivo || !videoFile) {
-            alert("Preencha todos os campos obrigatórios e anexe o vídeo!");
-            return;
-        }
-
-        let videoMeta = videoFile === 'existing' 
-            ? { videoNome: rels[idx].manutencao.videoNome, videoSize: rels[idx].manutencao.videoSize }
-            : { videoNome: videoFile.name, videoSize: (videoFile.size / (1024*1024)).toFixed(1) + ' MB' };
-
-        rels[idx].manutencao = {
-            manut1Cracha: m1cracha,
-            manut1Nome:   m1nome,
-            manut2Cracha: document.getElementById('m2-cracha').value.trim(),
-            manut2Nome:   document.getElementById('m2-nome').value.trim(),
-            manut3Cracha: document.getElementById('m3-cracha').value.trim(),
-            manut3Nome:   document.getElementById('m3-nome').value.trim(),
-            tarefa:       selTarefa,
-            motivo:       selMotivo,
-            causa:        selCausa,
-            area:         _isAdmin ? (rels[idx]?.manutencao?.area || '') : _selArea,
-            observacoes:  document.getElementById('observacoes').value.trim(),
-            inicioManut:  document.getElementById('inicio-manut').value,
-            fimManut:     document.getElementById('fim-manut').value,
-            registradoEm: new Date().toISOString(),
-            ...videoMeta
-        };
-
-        localStorage.setItem('ms_relatorios', JSON.stringify(rels));
-        window.location.href = 'relatorios.html';
+      if(!selT || !videoFile || !document.getElementById('m1-nome').value) {
+        alert("Preencha os campos obrigatórios e grave o vídeo!");
+        return;
+      }
+      rels[idx].manutencao = {
+        manut1Cracha: document.getElementById('m1-cracha').value,
+        manut1Nome: document.getElementById('m1-nome').value,
+        observacoes: document.getElementById('observacoes').value,
+        inicioManut: document.getElementById('inicio-manut').value,
+        fimManut: document.getElementById('fim-manut').value,
+        tarefa: selT, motivo: selM, causa: selC,
+        videoNome: videoFile === 'existing' ? rel.manutencao.videoNome : videoFile.name
+      };
+      localStorage.setItem('ms_relatorios', JSON.stringify(rels));
+      window.location.href = 'relatorios.html';
     }
-</script>
+
+    function restaurar(m) {
+      document.getElementById('done-banner').style.display = 'block';
+      document.getElementById('done-banner-sub').innerText = `Por: ${m.manut1Nome}`;
+      document.getElementById('m1-cracha').value = m.manut1Cracha;
+      document.getElementById('m1-nome').value = m.manut1Nome;
+      document.getElementById('observacoes').value = m.observacoes;
+      document.getElementById('inicio-manut').value = m.inicioManut;
+      document.getElementById('fim-manut').value = m.fimManut;
+      if(m.videoNome) {
+        videoFile = 'existing';
+        document.getElementById('video-zone').style.display = 'none';
+        document.getElementById('video-preview-wrap').classList.add('visible');
+        document.getElementById('video-file-name').innerText = m.videoNome;
+      }
+    }
+  </script>
 </body>
 </html>
