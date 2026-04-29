@@ -138,10 +138,34 @@
     .manut-num-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
     .manut-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-    /* CLASSIFICAÇÃO — 4 colunas */
-    .check-col-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-    .four-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    @media (min-width: 600px) { .four-col { grid-template-columns: 1fr 1fr 1fr 1fr; } }
+    /* ── ÁREA DESTAQUE (card azul) ── */
+    .area-card {
+      background: #EEF5FF; border: 1px solid #B5D4F4;
+      border-radius: 14px; padding: 16px 14px; margin-bottom: 10px;
+    }
+    .area-card .card-title { color: #185FA5; border-bottom-color: #B5D4F4; }
+    .area-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+    .area-item {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 6px; padding: 14px 8px; border: 2px solid #B5D4F4;
+      border-radius: 12px; cursor: pointer; transition: all 0.15s;
+      background: var(--surface); text-align: center; min-height: 72px;
+    }
+    .area-item:hover { border-color: #185FA5; background: #E6F1FB; }
+    .area-item.sel { border-color: #185FA5; background: #185FA5; color: #fff; }
+    .area-item.sel .area-icon { filter: brightness(10); }
+    .area-icon { font-size: 22px; line-height: 1; }
+    .area-label { font-size: 12px; font-weight: 600; }
+
+    /* ── TAREFA · MOTIVO · CAUSA — layout 3 colunas melhorado ── */
+    .tmc-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 520px) { .tmc-grid { grid-template-columns: 1fr 1fr 1fr; } }
+    .tmc-col-title {
+      font-size: 11px; font-weight: 700; color: var(--text);
+      text-transform: uppercase; letter-spacing: 0.7px;
+      margin-bottom: 8px; padding-bottom: 6px; border-bottom: 2px solid var(--border);
+      display: flex; align-items: center; gap: 5px;
+    }
     .check-item {
       display: flex; align-items: center; gap: 6px; padding: 9px 11px;
       border: 1px solid var(--border); border-radius: 8px; margin-bottom: 5px;
@@ -152,6 +176,24 @@
     .check-label { font-size: 12px; flex: 1; line-height: 1.3; }
     .check-num { font-size: 10px; font-weight: 700; color: var(--muted); min-width: 28px; flex-shrink: 0; }
     .check-item.sel .check-num { color: var(--accent); }
+
+    /* ── RELATO DETALHADO ── */
+    .relato-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px 14px; margin-bottom: 10px;
+    }
+    .relato-section-title {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+      color: var(--muted); margin-bottom: 8px; margin-top: 16px;
+    }
+    .relato-section-title:first-child { margin-top: 0; }
+    .relato-sel-preview {
+      padding: 10px 12px; background: #f0efe9;
+      border: 1px solid var(--accent); border-radius: 9px;
+      font-size: 12px; font-weight: 500; color: var(--accent);
+      display: none; margin-top: 6px; align-items: center; gap: 6px;
+    }
+    .relato-sel-preview.visible { display: flex; }
 
     /* VIDEO */
     .video-upload-zone {
@@ -210,6 +252,15 @@
       background: #E6F1FB; border: 1px solid #B5D4F4;
       border-radius: 10px; font-size: 12px; color: #185FA5; margin-bottom: 12px; line-height: 1.4;
     }
+
+    /* Blocked section banner */
+    .blocked-banner {
+      background: var(--red-bg); border: 1px solid var(--red-border);
+      border-radius: 14px; padding: 28px 20px; text-align: center; margin-bottom: 10px;
+    }
+    .blocked-banner .icon { font-size: 36px; margin-bottom: 10px; display: block; }
+    .blocked-banner h3 { font-size: 15px; font-weight: 600; color: var(--red); margin-bottom: 6px; }
+    .blocked-banner p { font-size: 13px; color: #A32D2D; line-height: 1.5; }
 
     .submit-area { display: flex; gap: 10px; }
     .btn-primary {
@@ -345,7 +396,7 @@
   <div class="topbar">
     <a class="back-btn" href="home.html">← Voltar</a>
     <span class="topbar-title">Relatório de Parada</span>
-    <div class="tab-switcher">
+    <div class="tab-switcher" id="tab-switcher-wrap">
       <button class="tab-sw-btn active" id="tab-btn-operador" onclick="switchSection('operador', this)">📋 Operador</button>
       <button class="tab-sw-btn" id="tab-btn-manutencao" onclick="switchSection('manutencao', this)">🔧 Manut.</button>
     </div>
@@ -356,45 +407,57 @@
 
     <!-- ========== OPERADOR ========== -->
     <div class="section active" id="sec-operador">
-      <div class="card">
-        <div class="card-title">Campo Operador</div>
-        <div class="field-grid">
-          <div class="field"><label>Linha *</label><input type="text" id="linha" placeholder="Ex: Linha 03"/></div>
-          <div class="field"><label>Lote</label><input type="text" id="lote" placeholder="Ex: L2504-007"/></div>
-          <div class="field"><label>Crachá</label><input type="text" id="cracha" readonly/></div>
-          <div class="field"><label>Operador</label><input type="text" id="operador" readonly/></div>
-          <div class="field"><label>Cód. Equipamento *</label><input type="text" id="cod-equip" placeholder="Ex: 500001"/></div>
-          <div class="field"><label>Equipamento *</label><input type="text" id="equipamento" placeholder="Ex: Embaladora"/></div>
-          <div class="field"><label>Data *</label><input type="date" id="data-inicial"/></div>
-          <div class="field"><label>Início ocorrência *</label><input type="time" id="inicio-ocorrencia"/></div>
-          <input type="hidden" id="fim-ocorrencia" value="">
-          <input type="hidden" id="data-final" value="">
-          <div class="field span-2">
-            <label>Cód. selecionado</label>
-            <div class="cod-sel-display" id="cod-sel-display">
-              <span>✓</span><span id="cod-sel-text">—</span>
+
+      <!-- Bloqueio para não-operadores (manutentores) -->
+      <div id="op-blocked-banner" style="display:none">
+        <div class="blocked-banner">
+          <span class="icon">🔒</span>
+          <h3>Área restrita ao Operador</h3>
+          <p>Seu perfil é de <strong>Manutentor</strong>. O registro de paradas pelo operador é feito pelo operador da linha.<br>Use a aba <strong>🔧 Manut.</strong> para registrar seus atendimentos.</p>
+        </div>
+      </div>
+
+      <div id="op-form-content">
+        <div class="card">
+          <div class="card-title">Campo Operador</div>
+          <div class="field-grid">
+            <div class="field"><label>Linha *</label><input type="text" id="linha" placeholder="Ex: Linha 03"/></div>
+            <div class="field"><label>Lote</label><input type="text" id="lote" placeholder="Ex: L2504-007"/></div>
+            <div class="field"><label>Crachá</label><input type="text" id="cracha" readonly/></div>
+            <div class="field"><label>Operador</label><input type="text" id="operador" readonly/></div>
+            <div class="field"><label>Cód. Equipamento *</label><input type="text" id="cod-equip" placeholder="Ex: 500001"/></div>
+            <div class="field"><label>Equipamento *</label><input type="text" id="equipamento" placeholder="Ex: Embaladora"/></div>
+            <div class="field"><label>Data *</label><input type="date" id="data-inicial"/></div>
+            <div class="field"><label>Início ocorrência *</label><input type="time" id="inicio-ocorrencia"/></div>
+            <input type="hidden" id="fim-ocorrencia" value="">
+            <input type="hidden" id="data-final" value="">
+            <div class="field span-2">
+              <label>Cód. selecionado</label>
+              <div class="cod-sel-display" id="cod-sel-display">
+                <span>✓</span><span id="cod-sel-text">—</span>
+              </div>
+              <input type="text" id="cod-motivo" readonly placeholder="⬇ Selecione o código abaixo"/>
             </div>
-            <input type="text" id="cod-motivo" readonly placeholder="⬇ Selecione o código abaixo"/>
           </div>
         </div>
-      </div>
 
-      <div class="card">
-        <div class="card-title">Código de Parada *</div>
-        <div id="cod-grid"></div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Descrição da ocorrência *</div>
-        <div class="field">
-          <label>Descreva o problema</label>
-          <textarea id="descricao" rows="4" placeholder="Descreva o problema observado..."></textarea>
+        <div class="card">
+          <div class="card-title">Código de Parada *</div>
+          <div id="cod-grid"></div>
         </div>
-      </div>
 
-      <div class="submit-area">
-        <a class="btn-secondary" href="home.html">Cancelar</a>
-        <button class="btn-primary" onclick="salvarOperador()">Registrar parada</button>
+        <div class="card">
+          <div class="card-title">Descrição da ocorrência *</div>
+          <div class="field">
+            <label>Descreva o problema</label>
+            <textarea id="descricao" rows="4" placeholder="Descreva o problema observado..."></textarea>
+          </div>
+        </div>
+
+        <div class="submit-area">
+          <a class="btn-secondary" href="home.html">Cancelar</a>
+          <button class="btn-primary" onclick="salvarOperador()">Registrar parada</button>
+        </div>
       </div>
     </div>
 
@@ -441,6 +504,7 @@
               <div class="chamado-meta" id="c-meta">—</div>
             </div>
 
+            <!-- MANUTENTORES -->
             <div class="card">
               <div class="card-title">Manutentores</div>
               <div class="manut-grid">
@@ -468,11 +532,12 @@
               </div>
             </div>
 
+            <!-- HORÁRIOS E OBSERVAÇÕES -->
             <div class="card">
-              <div class="card-title">Observações</div>
+              <div class="card-title">Relato da Manutenção</div>
               <div class="field">
-                <label>O que foi executado</label>
-                <textarea id="observacoes" rows="4" placeholder="Peças trocadas, ajustes realizados..."></textarea>
+                <label>Descreva o que foi feito *</label>
+                <textarea id="observacoes" rows="4" placeholder="Informe as peças trocadas, ajustes realizados, ferramentas utilizadas..."></textarea>
               </div>
               <div class="time-row">
                 <div class="field" style="margin-bottom:0"><label>Início manut.</label><input type="time" id="inicio-manut"/></div>
@@ -480,17 +545,49 @@
               </div>
             </div>
 
-            <!-- ── TAREFA · ÁREA · MOTIVO · CAUSA (4 colunas, dados do papel) ── -->
-            <div class="card">
-              <div class="card-title">Tarefa · Área · Motivo · Causa *</div>
-              <div class="four-col">
-                <div><div class="check-col-title">Tarefa</div><div id="tarefa-list"></div></div>
-                <div><div class="check-col-title">Área</div><div id="area-list"></div></div>
-                <div><div class="check-col-title">Motivo</div><div id="motivo-list"></div></div>
-                <div><div class="check-col-title">Causa</div><div id="causa-list"></div></div>
+            <!-- ══════════════════════════════════════════
+                 ÁREA (card azul separado)
+                 ══════════════════════════════════════════ -->
+            <div class="area-card">
+              <div class="card-title">🏭 Área da Manutenção *</div>
+              <div class="area-grid">
+                <div class="area-item" id="area-mecanica" onclick="selArea('Mecânica','area-mecanica')">
+                  <span class="area-icon">⚙️</span>
+                  <span class="area-label">Mecânica</span>
+                </div>
+                <div class="area-item" id="area-eletrica" onclick="selArea('Elétrica','area-eletrica')">
+                  <span class="area-icon">⚡</span>
+                  <span class="area-label">Elétrica</span>
+                </div>
+                <div class="area-item" id="area-operacional" onclick="selArea('Operacional','area-operacional')">
+                  <span class="area-icon">🔩</span>
+                  <span class="area-label">Operacional</span>
+                </div>
               </div>
             </div>
 
+            <!-- ══════════════════════════════════════════
+                 TAREFA · MOTIVO · CAUSA (3 colunas, dados do papel)
+                 ══════════════════════════════════════════ -->
+            <div class="card">
+              <div class="card-title">Tarefa · Motivo · Causa *</div>
+              <div class="tmc-grid">
+                <div>
+                  <div class="tmc-col-title">🛠 Tarefa</div>
+                  <div id="tarefa-list"></div>
+                </div>
+                <div>
+                  <div class="tmc-col-title">🔍 Motivo</div>
+                  <div id="motivo-list"></div>
+                </div>
+                <div>
+                  <div class="tmc-col-title">💡 Causa</div>
+                  <div id="causa-list"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- VÍDEO -->
             <div class="card">
               <div class="card-title">Vídeo do Atendimento *</div>
               <div class="video-hint">📹 Grave um vídeo mostrando o <strong>problema</strong> e o <strong>passo a passo do conserto</strong>. Registro <strong>obrigatório</strong>.</div>
@@ -590,10 +687,10 @@
           </div>
 
           <div class="card">
-            <div class="card-title">Observações</div>
+            <div class="card-title">Relato da Manutenção</div>
             <div class="field">
-              <label>O que foi executado</label>
-              <textarea id="mn-observacoes" rows="3" placeholder="Peças trocadas, ajustes realizados..."></textarea>
+              <label>O que foi executado *</label>
+              <textarea id="mn-observacoes" rows="3" placeholder="Informe as peças trocadas, ajustes realizados, ferramentas utilizadas..."></textarea>
             </div>
             <div class="time-row">
               <div class="field" style="margin-bottom:0"><label>Início manut.</label><input type="time" id="mn-inicio-manut"/></div>
@@ -601,14 +698,41 @@
             </div>
           </div>
 
-          <!-- ── TAREFA · ÁREA · MOTIVO · CAUSA (nova parada) ── -->
+          <!-- ÁREA (nova parada pelo manut) -->
+          <div class="area-card">
+            <div class="card-title">🏭 Área da Manutenção *</div>
+            <div class="area-grid">
+              <div class="area-item" id="mn-area-mecanica" onclick="selAreaNovo('Mecânica','mn-area-mecanica')">
+                <span class="area-icon">⚙️</span>
+                <span class="area-label">Mecânica</span>
+              </div>
+              <div class="area-item" id="mn-area-eletrica" onclick="selAreaNovo('Elétrica','mn-area-eletrica')">
+                <span class="area-icon">⚡</span>
+                <span class="area-label">Elétrica</span>
+              </div>
+              <div class="area-item" id="mn-area-operacional" onclick="selAreaNovo('Operacional','mn-area-operacional')">
+                <span class="area-icon">🔩</span>
+                <span class="area-label">Operacional</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAREFA · MOTIVO · CAUSA (nova parada) -->
           <div class="card">
-            <div class="card-title">Tarefa · Área · Motivo · Causa *</div>
-            <div class="four-col">
-              <div><div class="check-col-title">Tarefa</div><div id="mn-tarefa-list"></div></div>
-              <div><div class="check-col-title">Área</div><div id="mn-area-list"></div></div>
-              <div><div class="check-col-title">Motivo</div><div id="mn-motivo-list"></div></div>
-              <div><div class="check-col-title">Causa</div><div id="mn-causa-list"></div></div>
+            <div class="card-title">Tarefa · Motivo · Causa *</div>
+            <div class="tmc-grid">
+              <div>
+                <div class="tmc-col-title">🛠 Tarefa</div>
+                <div id="mn-tarefa-list"></div>
+              </div>
+              <div>
+                <div class="tmc-col-title">🔍 Motivo</div>
+                <div id="mn-motivo-list"></div>
+              </div>
+              <div>
+                <div class="tmc-col-title">💡 Causa</div>
+                <div id="mn-causa-list"></div>
+              </div>
             </div>
           </div>
 
@@ -651,12 +775,41 @@
     if (!user) window.location.href = 'index.html';
     const _isAdmin = user.cracha === 'admin';
 
+    // ── PERFIL: determina se é manutentor (não-admin e turno contém 'manut' ou vem do campo manutor)
+    // Para simplificar: usuários cujo turno é "Manutenção" são manutentores.
+    // Ajuste conforme sua lógica de perfil real.
+    const _isManut = !_isAdmin && (
+      (user.turno || '').toLowerCase().includes('manut') ||
+      (user.perfil || '').toLowerCase().includes('manut')
+    );
+
+    // Admin: mostra modal para identificar operador
     if (_isAdmin) {
       document.getElementById('op-modal').classList.remove('hidden');
       setTimeout(() => document.getElementById('op-modal-nome').focus(), 100);
+    } else if (_isManut) {
+      // Manutentor: bloqueia aba operador e abre direto em manut
+      document.getElementById('op-blocked-banner').style.display = 'block';
+      document.getElementById('op-form-content').style.display = 'none';
+      // Bloqueia botão de operador na tab bar
+      const opBtn = document.getElementById('tab-btn-operador');
+      opBtn.disabled = true;
+      opBtn.title = 'Área restrita ao Operador';
+      // Abre aba manutentor automaticamente
+      setTimeout(() => {
+        switchSection('manutencao', document.getElementById('tab-btn-manutencao'));
+      }, 100);
     } else {
+      // Operador normal
       document.getElementById('cracha').value   = user.cracha;
       document.getElementById('operador').value = user.nome;
+    }
+
+    // Admin: bloquear aba manut
+    if (_isAdmin) {
+      const tabBtn = document.getElementById('tab-btn-manutencao');
+      tabBtn.disabled = true;
+      tabBtn.title = 'Administrador não pode usar esta função';
     }
 
     function confirmarOperador() {
@@ -669,15 +822,6 @@
       document.getElementById('operador').value = nome;
       document.getElementById('op-modal').classList.add('hidden');
     }
-
-    function checkAdminBlock() {
-      if (_isAdmin) {
-        const tabBtn = document.getElementById('tab-btn-manutencao');
-        tabBtn.disabled = true;
-        tabBtn.title = 'Administrador não pode usar esta função';
-      }
-    }
-    checkAdminBlock();
 
     // Datas e horas
     const hoje = new Date().toISOString().slice(0, 10);
@@ -718,9 +862,9 @@
         subs:[{cod:'13.1',nome:'Ajuste de peso'},{cod:'13.2',nome:'Limpeza não programada'},{cod:'13.3',nome:'Ajuste de lona'},{cod:'13.4',nome:'Ajuste maquinário (formação biscoito)'},{cod:'13.5',nome:'Ajuste forno'},{cod:'13.6',nome:'Ajuste empacotamento'}]}
     ];
 
-    // ── DADOS DO PAPEL (Campo Manutentor) ──
+    // ── DADOS DO PAPEL (Campo Manutentor) — do crachá físico ──
     const TAREFAS = ['Ajustar','Consertar','Destravar','Limpar','Reapertar','Regular','Trocar','Acompanhar'];
-    const AREAS   = ['Mecânica','Elétrica','Operacional'];
+
     const MOTIVOS = [
       {num:'16', nome:'Entupimento'},{num:'99', nome:'Desgaste'},
       {num:'100',nome:'Quebra'},{num:'101',nome:'Folga'},
@@ -729,6 +873,7 @@
       {num:'118',nome:'Mal contato'},{num:'129',nome:'Ruído'},
       {num:'130',nome:'Vibração'},{num:'133',nome:'Sobrecarga'}
     ];
+
     const CAUSAS = [
       {num:'07',nome:'Falha sensor'},{num:'16',nome:'Vibração'},
       {num:'25',nome:'Folga'},{num:'27',nome:'Rolamento travado'},
@@ -740,9 +885,24 @@
 
     let selectedSub = null, selectedSubNovo = null;
     const videoFiles = { atender: null, novo: null };
-    let selTarefa = null, selArea = null, selMotivo = null, selCausa = null;
-    let mnSelTarefa = null, mnSelArea = null, mnSelMotivo = null, mnSelCausa = null;
+    let selTarefa = null, selAreaVal = null, selMotivo = null, selCausa = null;
+    let mnSelTarefa = null, mnSelAreaVal = null, mnSelMotivo = null, mnSelCausa = null;
     let currentRelIdx = -1;
+
+    // ── ÁREA — seleção visual ──
+    function selArea(val, id) {
+      selAreaVal = val;
+      document.querySelectorAll('#area-mecanica,#area-eletrica,#area-operacional')
+        .forEach(el => el.classList.remove('sel'));
+      document.getElementById(id).classList.add('sel');
+    }
+
+    function selAreaNovo(val, id) {
+      mnSelAreaVal = val;
+      document.querySelectorAll('#mn-area-mecanica,#mn-area-eletrica,#mn-area-operacional')
+        .forEach(el => el.classList.remove('sel'));
+      document.getElementById(id).classList.add('sel');
+    }
 
     // ── COD GRID ──
     function buildCodGrid(containerId, onSelect) {
@@ -807,14 +967,14 @@
       document.getElementById('mn-cod-motivo').value = `${res.cod} — ${res.nome}`;
     });
 
-    // ── CHECK LISTS ──
+    // ── CHECK LISTS (Tarefa, Motivo, Causa) ──
     function buildCheckList(containerId, items, onSelect) {
       const el = document.getElementById(containerId);
       if (!el) return;
       items.forEach(item => {
         const d = document.createElement('div');
         d.className = 'check-item';
-        if (item.num) {
+        if (typeof item === 'object' && item.num) {
           d.innerHTML = `<span class="check-num">${item.num}</span><span class="check-label">${item.nome}</span>`;
         } else {
           d.innerHTML = `<span class="check-label">${item}</span>`;
@@ -822,20 +982,19 @@
         d.onclick = () => {
           el.querySelectorAll('.check-item').forEach(i => i.classList.remove('sel'));
           d.classList.add('sel');
-          onSelect(item.num ? `${item.num} - ${item.nome}` : item);
+          const val = typeof item === 'object' ? `${item.num} - ${item.nome}` : item;
+          onSelect(val);
         };
         el.appendChild(d);
       });
     }
 
-    buildCheckList('tarefa-list',    TAREFAS, v => selTarefa  = v);
-    buildCheckList('area-list',      AREAS,   v => selArea    = v);
-    buildCheckList('motivo-list',    MOTIVOS, v => selMotivo  = v);
-    buildCheckList('causa-list',     CAUSAS,  v => selCausa   = v);
-    buildCheckList('mn-tarefa-list', TAREFAS, v => mnSelTarefa = v);
-    buildCheckList('mn-area-list',   AREAS,   v => mnSelArea   = v);
-    buildCheckList('mn-motivo-list', MOTIVOS, v => mnSelMotivo = v);
-    buildCheckList('mn-causa-list',  CAUSAS,  v => mnSelCausa  = v);
+    buildCheckList('tarefa-list',    TAREFAS, v => selTarefa    = v);
+    buildCheckList('motivo-list',    MOTIVOS, v => selMotivo    = v);
+    buildCheckList('causa-list',     CAUSAS,  v => selCausa     = v);
+    buildCheckList('mn-tarefa-list', TAREFAS, v => mnSelTarefa  = v);
+    buildCheckList('mn-motivo-list', MOTIVOS, v => mnSelMotivo  = v);
+    buildCheckList('mn-causa-list',  CAUSAS,  v => mnSelCausa   = v);
 
     // Auto-fill equipamento
     function getEquipamentos() {
@@ -945,8 +1104,8 @@
 
     // ── SALVAR MANUTENÇÃO ──
     function salvarManutencao() {
-      if (currentRelIdx < 0 || !selTarefa || !videoFiles.atender) {
-        alert('Preencha a tarefa, selecione o manutentor e anexe o vídeo!');
+      if (currentRelIdx < 0 || !selTarefa || !selAreaVal || !videoFiles.atender) {
+        alert('Preencha a tarefa, selecione a área e anexe o vídeo!');
         return;
       }
       const rels = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
@@ -960,7 +1119,7 @@
         observacoes:  document.getElementById('observacoes').value,
         inicioManut:  document.getElementById('inicio-manut').value,
         fimManut:     document.getElementById('fim-manut').value,
-        tarefa: selTarefa, area: selArea, motivo: selMotivo, causa: selCausa,
+        tarefa: selTarefa, area: selAreaVal, motivo: selMotivo, causa: selCausa,
         videoNome: videoFiles.atender.name, registradoEm: new Date().toISOString()
       };
       const r = rels[currentRelIdx];
@@ -976,8 +1135,8 @@
     // ── SALVAR NOVA PARADA PELO MANUTENTOR ──
     function salvarNovoManut() {
       const linha = document.getElementById('mn-linha').value.trim();
-      if (!linha || !selectedSubNovo || !mnSelTarefa || !videoFiles.novo) {
-        alert('Preencha os campos obrigatórios, selecione o código e anexe o vídeo!');
+      if (!linha || !selectedSubNovo || !mnSelTarefa || !mnSelAreaVal || !videoFiles.novo) {
+        alert('Preencha todos os campos obrigatórios, selecione a área e anexe o vídeo!');
         return;
       }
       const now = new Date().toISOString().slice(0,10);
@@ -1005,7 +1164,7 @@
           observacoes:  document.getElementById('mn-observacoes').value,
           inicioManut:  document.getElementById('mn-inicio-manut').value,
           fimManut:     document.getElementById('mn-fim-manut').value,
-          tarefa: mnSelTarefa, area: mnSelArea, motivo: mnSelMotivo, causa: mnSelCausa,
+          tarefa: mnSelTarefa, area: mnSelAreaVal, motivo: mnSelMotivo, causa: mnSelCausa,
           videoNome: videoFiles.novo.name, registradoEm: new Date().toISOString()
         }
       };
@@ -1044,7 +1203,11 @@
       document.querySelectorAll('.tab-sw-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('sec-' + sec).classList.add('active');
       if (btn && !btn.disabled) btn.classList.add('active');
-      else document.getElementById('tab-btn-operador').classList.add('active');
+      else {
+        // fallback: highlight whichever tab is active
+        const activeSec = sec === 'operador' ? 'tab-btn-operador' : 'tab-btn-manutencao';
+        document.getElementById(activeSec).classList.add('active');
+      }
     }
 
     function setManutMode(mode) {
