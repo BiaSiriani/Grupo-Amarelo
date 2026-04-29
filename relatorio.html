@@ -463,6 +463,11 @@
           <div class="field"><label>Equipamento *</label><input type="text" id="equipamento" placeholder="Ex: Injetora 01"/></div>
           <div class="field"><label>Data inicial *</label><input type="date" id="data-inicial"/></div>
           <div class="field"><label>Início ocorrência *</label><input type="time" id="inicio-ocorrencia"/></div>
+          
+          <!-- Campos Ocultos para evitar erro de JS ao salvar -->
+          <input type="hidden" id="fim-ocorrencia" value="">
+          <input type="hidden" id="data-final" value="">
+
           <div class="field span-2">
             <label>Duração</label>
             <div class="dur-display">
@@ -529,6 +534,7 @@
             <div class="chamado-meta" id="c-meta">—</div>
           </div>
 
+          <!-- BLOCO MANUTENTORES MOVIDO PARA CIMA DAS OBSERVAÇÕES[cite: 14] -->
           <div class="card">
             <div class="card-title">Manutentores</div>
             <div class="manut-grid">
@@ -553,6 +559,19 @@
                   <div class="field"><label>Nome</label><input type="text" id="m3-nome" placeholder="Nome"/></div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- BLOCO OBSERVAÇÕES AGORA ABAIXO DOS NOMES[cite: 14] -->
+          <div class="card">
+            <div class="card-title">Observações</div>
+            <div class="field">
+              <label>O que foi executado</label>
+              <textarea id="observacoes" rows="4" placeholder="Peças trocadas, ajustes realizados..."></textarea>
+            </div>
+            <div class="time-row">
+              <div class="field" style="margin-bottom:0"><label>Início manut.</label><input type="time" id="inicio-manut"/></div>
+              <div class="field" style="margin-bottom:0"><label>Fim manut.</label><input type="time" id="fim-manut"/></div>
             </div>
           </div>
 
@@ -593,18 +612,6 @@
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-title">Observações</div>
-            <div class="field">
-              <label>O que foi executado</label>
-              <textarea id="observacoes" rows="4" placeholder="Peças trocadas, ajustes realizados..."></textarea>
-            </div>
-            <div class="time-row">
-              <div class="field" style="margin-bottom:0"><label>Início manut.</label><input type="time" id="inicio-manut"/></div>
-              <div class="field" style="margin-bottom:0"><label>Fim manut.</label><input type="time" id="fim-manut"/></div>
-            </div>
-          </div>
-
           <div class="submit-area">
             <button class="btn-secondary" onclick="switchSection('operador', document.querySelectorAll('.tab-sw-btn')[0])" style="cursor:pointer">Cancelar</button>
             <button class="btn-primary" id="btn-salvar-manut" onclick="salvarManutencao()">Registrar atendimento</button>
@@ -632,6 +639,10 @@
             <div class="field"><label>Data *</label><input type="date" id="mn-data"/></div>
             <div class="field"><label>Operador (ref.)</label><input type="text" id="mn-operador-ref" placeholder="Nome do operador"/></div>
             <div class="field"><label>Início ocorrência *</label><input type="time" id="mn-inicio"/></div>
+            
+            <!-- Campo oculto auxiliar para nova parada -->
+            <input type="hidden" id="mn-fim" value="">
+
             <div class="field span-2">
               <label>Duração</label>
               <div class="dur-display">
@@ -659,6 +670,7 @@
           </div>
         </div>
 
+        <!-- BLOCO MANUTENTORES MOVIDO PARA CIMA NO MODO NOVO[cite: 14] -->
         <div class="card">
           <div class="card-title">Manutentores</div>
           <div class="manut-grid">
@@ -683,6 +695,19 @@
                 <div class="field"><label>Nome</label><input type="text" id="mn-m3-nome" placeholder="Nome"/></div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- BLOCO OBSERVAÇÕES ABAIXO NO MODO NOVO[cite: 14] -->
+        <div class="card">
+          <div class="card-title">Observações</div>
+          <div class="field">
+            <label>O que foi executado</label>
+            <textarea id="mn-observacoes" rows="3" placeholder="Peças trocadas, ajustes realizados..."></textarea>
+          </div>
+          <div class="time-row">
+            <div class="field" style="margin-bottom:0"><label>Início manut.</label><input type="time" id="mn-inicio-manut"/></div>
+            <div class="field" style="margin-bottom:0"><label>Fim manut.</label><input type="time" id="mn-fim-manut"/></div>
           </div>
         </div>
 
@@ -723,18 +748,6 @@
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-title">Observações</div>
-          <div class="field">
-            <label>O que foi executado</label>
-            <textarea id="mn-observacoes" rows="3" placeholder="Peças trocadas, ajustes realizados..."></textarea>
-          </div>
-          <div class="time-row">
-            <div class="field" style="margin-bottom:0"><label>Início manut.</label><input type="time" id="mn-inicio-manut"/></div>
-            <div class="field" style="margin-bottom:0"><label>Fim manut.</label><input type="time" id="mn-fim-manut"/></div>
-          </div>
-        </div>
-
         <div class="submit-area">
           <button class="btn-secondary" onclick="setManutMode('atender')" style="cursor:pointer">Cancelar</button>
           <button class="btn-primary" onclick="salvarNovoManut()">Registrar parada + atend.</button>
@@ -753,7 +766,6 @@
     const _urlParams = new URLSearchParams(window.location.search);
     const _isModeManut = _urlParams.get('modo') === 'manut' || _urlParams.get('relId') || _urlParams.get('modo') === 'novo-manut';
 
-    // Se for admin e estiver na aba operador, exibe o modal de identificação
     if (_isAdmin && !_isModeManut) {
       document.getElementById('op-modal').classList.remove('hidden');
       setTimeout(() => document.getElementById('op-modal-nome').focus(), 100);
@@ -773,12 +785,6 @@
       document.getElementById('op-modal').classList.add('hidden');
     }
 
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && !document.getElementById('op-modal').classList.contains('hidden')) {
-        confirmarOperador();
-      }
-    });
-
     const hoje = new Date().toISOString().slice(0, 10);
     document.getElementById('data-inicial').value = hoje;
     const agora = new Date();
@@ -791,79 +797,44 @@
       { num: 1, nome: 'Quebra', desc: 'Paradas não planejadas > 10 min', subs: ['1.1 Quebra fabricação','1.2 Quebra maquinário','1.3 Quebra forno','1.4 Quebra empacotamento','1.5 Quebra Lona'] },
       { num: 2, nome: 'Set-up', desc: 'Troca de produto ou formato', subs: ['2.1 Set-up formato','2.2 Set-up produto'] },
       { num: 3, nome: 'Troca Ferram.', desc: 'Substituição de ferramentas/insumos', subs: ['3.1 Troca teflon','3.2 Troca filllho','3.3 Troca de bobina','3.4 Troca data'] },
-      { num: 4, nome: 'Produção', desc: 'Início/fim de produção', subs: ['4.1 Início produção','4.2 Fim de produção'] },
       { num: 5, nome: 'Peq. Paradas', desc: 'Paradas não planejadas < 10 min', subs: ['5.1 Ajuste manutenção mecânica','5.2 Ajuste manutenção elétrica','5.3 Ajuste manutenção embalagem','5.4 Ajuste Operacional'] },
-      { num: 6, nome: 'Velocidade', desc: 'Linha abaixo da velocidade padrão', subs: ['6.1 Absorção de balle - Mão de obra','6.2 Absorção de balle - Máquina interna','6.3 Absorção de balle - Máquina multi','6.4 Absorção de balle - Máquina tubete','6.5 Absorção de balle - carregador','6.6 Absorção de balle - SETUP'] },
-      { num: 7, nome: 'Defeito', desc: 'Produção de não-conformes', subs: ['7.1 Peso leve'] },
-      { num: 8, nome: 'Programada', desc: 'Paradas no plano semanal', subs: ['8.1 Falta demanda','8.2 Preventiva','8.3 Teste novo produto','8.4 Treinamento','8.5 Feriado','8.6 Falta mão de obra','8.7 Refeição','8.8 Férias coletiva'] },
-      { num: 9, nome: 'Gestão', desc: 'Falta material, peças, utilidades', subs: ['9.1 Comunicação','9.2 Falta ar comprimido','9.3 Falta vapor','9.4 Acidente','9.5 Falta de insumos','9.6 Reuniões não programada','9.7 Falta energia'] },
-      { num: 10, nome: 'Mov. Operacionais', desc: 'Diferenças de habilidades', subs: ['10.1 Falta conhecimento','10.2 Falta procedimento','10.3 Falta habilidade'] },
-      { num: 11, nome: 'Organização', desc: 'Falta de operadores na linha', subs: ['11.1 Falta mão de obra','11.2 Pausa refeição','11.3 Espera técnico','11.4 Revezamento'] },
-      { num: 12, nome: 'Logística', desc: 'Ineficiência de entrega de matéria prima', subs: ['12.1 Falta massa','12.2 Falta biscoito','12.3 Falta abastecimento de insumos'] },
-      { num: 13, nome: 'Med. e Ajustes', desc: 'Ajustes para garantir qualidade', subs: ['13.1 Ajuste de peso','13.2 Limpeza não programada','13.3 Ajuste de lona','13.4 Ajuste maquinário (formação biscoito)','13.5 Ajuste forno','13.6 Ajuste empacotamento'] },
     ];
 
-    // ── Cadastro de equipamentos ──
-    // Carrega do localStorage ou usa lista padrão
     function getEquipamentos() {
-      const stored = localStorage.getItem('ms_equipamentos');
-      if (stored) return JSON.parse(stored);
-      // Lista de equipamentos da planta
       return [
-        { cod: '100001', nome: 'Silo de Farinha' },
-        { cod: '100002', nome: 'Misturador Industrial' },
-        { cod: '100003', nome: 'Dosador de Ingredientes' },
-        { cod: '200001', nome: 'Laminadora de Massa' },
-        { cod: '200002', nome: 'Cortadora Rotativa' },
-        { cod: '200003', nome: 'Extrusora de Biscoitos' },
-        { cod: '300001', nome: 'Forno de Túnel' },
-        { cod: '300002', nome: 'Esteira de Resfriamento' },
-        { cod: '400001', nome: 'Máquina Recheadora' },
-        { cod: '400002', nome: 'Banhadora de Chocolate' },
-        { cod: '500001', nome: 'Embaladora Flow-pack' },
-        { cod: '500002', nome: 'Detector de Metais' },
-        { cod: '500003', nome: 'Datadora Industrial' },
-        { cod: '500004', nome: 'Robô Paletizador' },
-      ];
+  { cod: '100001', nome: 'Silo de Farinha' },
+  { cod: '100002', nome: 'Misturador Industrial' },
+  { cod: '100003', nome: 'Dosador de Ingredientes' },
+
+  { cod: '200001', nome: 'Laminadora de Massa' },
+  { cod: '200002', nome: 'Cortadora Rotativa' },
+  { cod: '200003', nome: 'Extrusora de Biscoitos' },
+
+  { cod: '300001', nome: 'Forno de Túnel' },
+  { cod: '300002', nome: 'Esteira de Resfriamento' },
+
+  { cod: '400001', nome: 'Máquina Recheadora' },
+  { cod: '400002', nome: 'Banhadora de Chocolate' },
+
+  { cod: '500001', nome: 'Embaladora Flow-pack' },
+  { cod: '500002', nome: 'Detector de Metais' },
+  { cod: '500003', nome: 'Datadora Industrial' },
+  { cod: '500004', nome: 'Robô Paletizador' }
+];
     }
 
     function buscarNomeMaquina(cod) {
-      if (!cod) return '';
       const equips = getEquipamentos();
-      const found = equips.find(e => e.cod.trim().toLowerCase() === cod.trim().toLowerCase());
+      const found = equips.find(e => e.cod.trim() === cod.trim());
       return found ? found.nome : '';
     }
 
     function setupAutoFillEquip(codInputId, nomeInputId) {
       const codEl  = document.getElementById(codInputId);
       const nomeEl = document.getElementById(nomeInputId);
-      let lastCod = '';
-
       codEl.addEventListener('input', () => {
-        const cod = codEl.value.trim();
-        if (cod === lastCod) return;
-        lastCod = cod;
-        const nome = buscarNomeMaquina(cod);
-        if (nome) {
-          nomeEl.value = nome;
-          nomeEl.style.color = 'var(--green)';
-          nomeEl.style.borderColor = 'var(--green-border)';
-        } else {
-          // Só limpa se o usuário não preencheu manualmente
-          if (nomeEl.dataset.autoFilled === 'true') {
-            nomeEl.value = '';
-            nomeEl.style.color = '';
-            nomeEl.style.borderColor = '';
-          }
-        }
-        nomeEl.dataset.autoFilled = nome ? 'true' : 'false';
-      });
-
-      // Se o usuário editar o nome manualmente, desativa o auto-preenchimento
-      nomeEl.addEventListener('input', () => {
-        nomeEl.dataset.autoFilled = 'false';
-        nomeEl.style.color = '';
-        nomeEl.style.borderColor = '';
+        const nome = buscarNomeMaquina(codEl.value);
+        if (nome) nomeEl.value = nome;
       });
     }
 
@@ -875,99 +846,56 @@
 
     function buildCodGrid(containerId, onSelect, prefix) {
       const codGrid = document.getElementById(containerId);
-      codGrid.innerHTML = '';
       CODIGOS.forEach(c => {
         const group = document.createElement('div');
         group.className = 'cod-group';
-
         const header = document.createElement('div');
         header.className = 'cod-group-header';
-        header.innerHTML = `
-          <span class="cod-group-num">${c.num}</span>
-          <span class="cod-group-name">${c.nome}</span>
-          <span class="cod-group-desc">${c.desc}</span>
-          <span class="cod-group-arrow">›</span>
-        `;
-        header.addEventListener('click', () => {
-          const isOpen = header.classList.contains('open');
-          codGrid.querySelectorAll('.cod-group-header').forEach(h => h.classList.remove('open'));
-          codGrid.querySelectorAll('.cod-subitems').forEach(s => s.classList.remove('open'));
-          if (!isOpen) { header.classList.add('open'); subItems.classList.add('open'); }
-        });
-
+        header.innerHTML = `<span class="cod-group-num">${c.num}</span><span class="cod-group-name">${c.nome}</span><span class="cod-group-arrow">›</span>`;
+        
         const subItems = document.createElement('div');
         subItems.className = 'cod-subitems';
-        const subGrid = document.createElement('div');
-        subGrid.className = 'sub-grid';
-
         c.subs.forEach(sub => {
-          const [subNum, ...nameParts] = sub.split(' ');
-          const subName = nameParts.join(' ');
           const item = document.createElement('div');
           item.className = 'sub-item';
-          item.innerHTML = `<input type="radio" name="${prefix}-cod-sub"/><span class="sub-num">${subNum}</span><span class="sub-label">${subName}</span>`;
-          item.addEventListener('click', () => {
-            codGrid.querySelectorAll('.sub-item').forEach(i => i.classList.remove('selected'));
-            codGrid.querySelectorAll('.cod-group-header').forEach(h => h.classList.remove('has-sel'));
-            item.classList.add('selected');
-            item.querySelector('input').checked = true;
-            header.classList.add('has-sel');
-            const result = { cod: String(c.num), sub: subNum, nome: `${c.nome} — ${subName}` };
-            onSelect(result, `${subNum} ${subName}`);
-          });
-          subGrid.appendChild(item);
+          item.innerHTML = `<span class="sub-label">${sub}</span>`;
+          item.onclick = () => {
+             selectedSubCod = {cod: c.num, nome: sub};
+             document.getElementById(prefix === 'op' ? 'cod-motivo' : 'mn-cod-motivo').value = sub;
+             onSelect({cod: c.num, sub: sub, nome: sub}, sub);
+          };
+          subItems.appendChild(item);
         });
 
-        subItems.appendChild(subGrid);
+        header.onclick = () => subItems.classList.toggle('open');
         group.appendChild(header);
         group.appendChild(subItems);
         codGrid.appendChild(group);
       });
     }
 
-    buildCodGrid('cod-grid', (result, label) => { selectedSubCod = result; document.getElementById('cod-motivo').value = label; }, 'op');
-    buildCodGrid('mn-cod-grid', (result, label) => { selectedSubCodNovo = result; document.getElementById('mn-cod-motivo').value = label; }, 'mn');
+    buildCodGrid('cod-grid', (res, lbl) => selectedSubCod = res, 'op');
+    buildCodGrid('mn-cod-grid', (res, lbl) => selectedSubCodNovo = res, 'mn');
 
-    const codigos = {
-      '1':'Quebra','2':'Set-up','3':'Troca fer.','4':'Produção','5':'Pequenas paradas',
-      '6':'Velocidade','7':'Defeito','8':'Programada','9':'Gestão','10':'Mov. operacionais',
-      '11':'Organização','12':'Logística','13':'Medições e ajuste'
-    };
-
-    const tarefas = ['Ajustar','Consertar','Destravar','Limpar','Reapertar','Regular','Trocar','Acompanhar'];
-    const motivos = [
-      {num:'16',nome:'Entupimento'},{num:'99',nome:'Desgaste'},{num:'100',nome:'Quebra'},
-      {num:'101',nome:'Folga'},{num:'105',nome:'Sujidade'},{num:'106',nome:'Desalinhamento'},
-      {num:'107',nome:'Vazamento'},{num:'114',nome:'Curto circuito'},{num:'118',nome:'Mal contato'},
-      {num:'129',nome:'Ruído'},{num:'130',nome:'Vibração'},{num:'133',nome:'Sobrecarga'},
-    ];
-    const causas = [
-      {num:'07',nome:'Falha sensor'},{num:'16',nome:'Vibração'},{num:'25',nome:'Folga'},
-      {num:'27',nome:'Rolamento travado'},{num:'36',nome:'Sobrecarga'},{num:'37',nome:'Cabo rompido'},
-      {num:'50',nome:'Desarme disjuntor'},{num:'70',nome:'Emergência acionada'},
-      {num:'72',nome:'Mal contato'},{num:'73',nome:'Fio solto'},{num:'87',nome:'Parafuso quebrado'},{num:'90',nome:'Ruído'},
-    ];
+    const tarefas = ['Ajustar','Consertar','Limpar','Trocar'];
+    const motivos = [{num:'100',nome:'Quebra'},{num:'101',nome:'Folga'}];
+    const causas = [{num:'07',nome:'Falha sensor'},{num:'72',nome:'Mal contato'}];
 
     let selTarefa = null, selMotivo = null, selCausa = null, currentRelIdx = -1;
     let mnSelTarefa = null, mnSelMotivo = null, mnSelCausa = null;
-
-    // ── Video state ──
     const videoFiles = { atender: null, novo: null };
 
     function buildCheckList(containerId, items, isMotivo, onSelect) {
       const el = document.getElementById(containerId);
-      el.innerHTML = '';
       items.forEach(item => {
         const d = document.createElement('div');
         d.className = 'check-item';
-        d.innerHTML = isMotivo
-          ? `<input type="checkbox"/><span class="check-num">${item.num}</span><span class="check-label">${item.nome}</span>`
-          : `<input type="checkbox"/><span class="check-label">${typeof item === 'string' ? item : item.nome}</span>`;
-        d.addEventListener('click', () => {
-          el.querySelectorAll('.check-item').forEach(i => { i.classList.remove('sel'); i.querySelector('input').checked = false; });
-          d.classList.add('sel'); d.querySelector('input').checked = true;
-          onSelect(typeof item === 'string' ? item : (item.num + ' - ' + item.nome));
-        });
+        d.innerHTML = `<span class="check-label">${item.nome || item}</span>`;
+        d.onclick = () => {
+          el.querySelectorAll('.check-item').forEach(i => i.classList.remove('sel'));
+          d.classList.add('sel');
+          onSelect(item.nome || item);
+        };
         el.appendChild(d);
       });
     }
@@ -984,371 +912,107 @@
       const [h1, m1] = inicio.split(':').map(Number);
       const [h2, m2] = fim.split(':').map(Number);
       let mins = (h2 * 60 + m2) - (h1 * 60 + m1);
-      if (mins < 0) mins += 24 * 60;
+      if (mins < 0) mins += 1440;
       return mins;
     }
 
-    function calcDur(inicioId, fimId, displayId) {
-      const inicio = document.getElementById(inicioId).value;
-      const fim    = document.getElementById(fimId).value;
-      const valEl  = document.getElementById(displayId);
-      const mins   = calcDurFromTimes(inicio, fim);
-      valEl.textContent = mins !== null ? mins : '—';
-      return mins;
-    }
-
-    // ── Duração total real: início da ocorrência → fim da manutenção ──
-    function calcDurTotal() {
-      const inicio   = document.getElementById('inicio-ocorrencia').value;
-      const fimManut = document.getElementById('fim-manut').value;
-      const valEl    = document.getElementById('dur-value');
-      if (!inicio) { valEl.textContent = '—'; return null; }
-      if (!fimManut) {
-        // Sem fim manut. ainda — mostra só a diferença até fim ocorrência (parcial)
-        const fimOc = document.getElementById('fim-ocorrencia').value;
-        const mins  = calcDurFromTimes(inicio, fimOc);
-        valEl.textContent = mins !== null ? mins + ' ⏳' : '—';
-        return mins;
-      }
-      const mins = calcDurFromTimes(inicio, fimManut);
-      valEl.textContent = mins !== null ? mins : '—';
-      return mins;
-    }
-
-    // Duração total para o painel "Nova parada pelo manutentor": início → fim manut
-    function calcDurTotalNovo() {
-      const inicio   = document.getElementById('mn-inicio').value;
-      const fimManut = document.getElementById('mn-fim-manut').value;
-      const valEl    = document.getElementById('mn-dur-value');
-      if (!inicio) { valEl.textContent = '—'; return null; }
-      if (!fimManut) {
-        const fimOc = document.getElementById('mn-fim').value;
-        const mins  = calcDurFromTimes(inicio, fimOc);
-        valEl.textContent = mins !== null ? mins + ' ⏳' : '—';
-        return mins;
-      }
-      const mins = calcDurFromTimes(inicio, fimManut);
-      valEl.textContent = mins !== null ? mins : '—';
-      return mins;
-    }
-
-    // Eventos — seção operador
-    document.getElementById('inicio-ocorrencia').addEventListener('change', calcDurTotal);
-    document.getElementById('fim-ocorrencia').addEventListener('change', calcDurTotal);
-
-    // Fim manut. está na aba manutenção; ouve quando carregado/alterado
-    function hookFimManut() {
-      const el = document.getElementById('fim-manut');
-      if (el) el.addEventListener('change', calcDurTotal);
-    }
-    hookFimManut();
-
-    // Nova parada pelo manutentor
-    document.getElementById('mn-inicio').addEventListener('change', calcDurTotalNovo);
-    document.getElementById('mn-fim').addEventListener('change', calcDurTotalNovo);
-    document.getElementById('mn-fim-manut').addEventListener('change', calcDurTotalNovo);
-
-    // ── Video helpers ──
     function formatFileSize(bytes) {
-      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-      if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-      return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     }
 
     function onVideoSelect(event, panel) {
       const file = event.target.files[0];
-      if (file) handleVideoFile(file, panel);
-    }
-
-    function onDragOver(event, panel) {
-      event.preventDefault();
-      document.getElementById('video-zone-' + panel).classList.add('dragover');
-    }
-
-    function onDragLeave(panel) {
-      document.getElementById('video-zone-' + panel).classList.remove('dragover');
-    }
-
-    function onDrop(event, panel) {
-      event.preventDefault();
-      document.getElementById('video-zone-' + panel).classList.remove('dragover');
-      const file = event.dataTransfer.files[0];
-      if (file && file.type.startsWith('video/')) handleVideoFile(file, panel);
-    }
-
-    function handleVideoFile(file, panel) {
-      if (file.size > 500 * 1024 * 1024) {
-        alert('Vídeo muito grande. Tamanho máximo: 500 MB.');
-        return;
+      if (file) {
+        videoFiles[panel] = file;
+        document.getElementById(`video-preview-${panel}`).classList.add('visible');
+        document.getElementById(`video-name-${panel}`).textContent = file.name;
+        document.getElementById(`video-size-${panel}`).textContent = formatFileSize(file.size);
+        document.getElementById(`video-player-${panel}`).src = URL.createObjectURL(file);
+        document.getElementById(`video-zone-${panel}`).classList.add('has-file');
       }
-      videoFiles[panel] = file;
-      const zone = document.getElementById('video-zone-' + panel);
-      zone.classList.remove('error-zone');
-      zone.classList.add('has-file');
-
-      document.getElementById('video-name-' + panel).textContent = file.name;
-      document.getElementById('video-size-' + panel).textContent = formatFileSize(file.size);
-
-      const player = document.getElementById('video-player-' + panel);
-      player.style.display = '';
-      player.src = URL.createObjectURL(file);
-
-      document.getElementById('video-preview-' + panel).classList.add('visible');
     }
 
     function removeVideo(panel) {
       videoFiles[panel] = null;
-      const zone = document.getElementById('video-zone-' + panel);
-      zone.classList.remove('has-file', 'error-zone');
-
-      const player = document.getElementById('video-player-' + panel);
-      if (player.src) URL.revokeObjectURL(player.src);
-      player.src = '';
-
-      document.getElementById('video-preview-' + panel).classList.remove('visible');
-      document.getElementById('video-input-' + panel).value = '';
+      document.getElementById(`video-preview-${panel}`).classList.remove('visible');
+      document.getElementById(`video-zone-${panel}`).classList.remove('has-file');
     }
 
-    // ── Relatórios ──
     function populateRelSelect() {
       const rels = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
-      const abertos = rels.filter(r => !r.manutencao);
       const sel = document.getElementById('rel-select');
       sel.innerHTML = '<option value="">— Selecione —</option>';
-      abertos.forEach(r => {
-        const opt = document.createElement('option');
-        opt.value = r.id;
-        opt.textContent = `${r.equipamento || '—'} · ${r.dataInicial || '—'} · Cód.${r.codMotivo}`;
-        sel.appendChild(opt);
+      rels.filter(r => !r.manutencao).forEach(r => {
+        sel.innerHTML += `<option value="${r.id}">${r.equipamento} - ${r.inicioOcorrencia}</option>`;
       });
-      const atendidos = rels.filter(r => r.manutencao);
-      if (atendidos.length > 0) {
-        const og = document.createElement('optgroup');
-        og.label = '── Já atendidos ──';
-        atendidos.forEach(r => {
-          const opt = document.createElement('option');
-          opt.value = r.id;
-          opt.textContent = `✓ ${r.equipamento || '—'} · ${r.dataInicial || '—'}`;
-          og.appendChild(opt);
-        });
-        sel.appendChild(og);
-      }
-      document.getElementById('manut-form').style.display = 'none';
-      document.getElementById('manut-empty').style.display = rels.length === 0 ? 'block' : 'none';
     }
 
     function loadRel() {
       const id = parseInt(document.getElementById('rel-select').value);
-      if (!id) { document.getElementById('manut-form').style.display = 'none'; return; }
       const rels = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
-      const idx  = rels.findIndex(r => r.id === id);
-      const rel  = rels[idx];
-      if (!rel) return;
-      currentRelIdx = idx;
-      document.getElementById('manut-form').style.display = 'block';
-      document.getElementById('manut-empty').style.display = 'none';
-      document.getElementById('c-equip').textContent = rel.equipamento || '—';
-      document.getElementById('c-meta').innerHTML =
-        `Linha ${rel.linha||'—'} · Op: ${rel.operador||'—'} · ${rel.dataInicial||'—'}<br>` +
-        `Cód: <strong>${rel.subCodigo || rel.codMotivo} — ${rel.subNome || codigos[rel.codMotivo]||'?'}</strong>`;
-      const done = document.getElementById('done-banner');
-      if (rel.manutencao) {
-        const m = rel.manutencao;
-        done.style.display = 'block';
-        document.getElementById('done-banner-txt').textContent = `✓ Já atendido por ${m.manut1Nome||'—'} · Tarefa: ${m.tarefa||'—'}`;
-        document.getElementById('chamado-box').classList.add('done');
-        document.getElementById('m1-cracha').value = m.manut1Cracha||'';
-        document.getElementById('m1-nome').value   = m.manut1Nome||'';
-        document.getElementById('m2-cracha').value = m.manut2Cracha||'';
-        document.getElementById('m2-nome').value   = m.manut2Nome||'';
-        document.getElementById('m3-cracha').value = m.manut3Cracha||'';
-        document.getElementById('m3-nome').value   = m.manut3Nome||'';
-        document.getElementById('observacoes').value = m.observacoes||'';
-        document.getElementById('inicio-manut').value = m.inicioManut||'';
-        document.getElementById('fim-manut').value   = m.fimManut||'';
-        document.getElementById('btn-salvar-manut').textContent = 'Atualizar atendimento';
-
-        if (m.videoNome) {
-          document.getElementById('video-name-atender').textContent = m.videoNome;
-          document.getElementById('video-size-atender').textContent = m.videoSize || 'Vídeo já enviado';
-          document.getElementById('video-player-atender').style.display = 'none';
-          document.getElementById('video-preview-atender').classList.add('visible');
-          document.getElementById('video-zone-atender').classList.add('has-file');
-          videoFiles.atender = 'existing';
-        }
-      } else {
-        done.style.display = 'none';
-        document.getElementById('chamado-box').classList.remove('done');
-        document.getElementById('btn-salvar-manut').textContent = 'Registrar atendimento';
-        if (videoFiles.atender !== 'existing') removeVideo('atender');
+      currentRelIdx = rels.findIndex(r => r.id === id);
+      if (currentRelIdx >= 0) {
+        document.getElementById('manut-form').style.display = 'block';
+        document.getElementById('c-equip').textContent = rels[currentRelIdx].equipamento;
+        document.getElementById('c-meta').textContent = `Linha: ${rels[currentRelIdx].linha}`;
       }
     }
 
     function salvarOperador() {
-      const linha = document.getElementById('linha').value.trim();
-      const codEquip = document.getElementById('cod-equip').value.trim();
-      const equip = document.getElementById('equipamento').value.trim();
-      const dataIni = document.getElementById('data-inicial').value;
+      const linha = document.getElementById('linha').value;
+      const equip = document.getElementById('equipamento').value;
       const inicio = document.getElementById('inicio-ocorrencia').value;
-      const desc = document.getElementById('descricao').value.trim();
-      const err = document.getElementById('error-bar');
-      err.style.display = 'none';
-      if (!linha || !codEquip || !equip || !dataIni || !inicio || !desc || !selectedSubCod) {
-        err.textContent = 'Preencha todos os campos obrigatórios e selecione o código de parada.';
-        err.style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+      const desc = document.getElementById('descricao').value;
+
+      if (!linha || !equip || !inicio || !desc || !selectedSubCod) {
+        document.getElementById('error-bar').style.display = 'block';
         return;
       }
 
-      const duracao = calcDurTotal();
-
-      const relatorio = {
-        id: Date.now(), linha,
-        lote: document.getElementById('lote').value.trim(),
-        cracha: document.getElementById('cracha').value,
-        operador: document.getElementById('operador').value,
-        codEquipamento: codEquip, equipamento: equip,
-        dataInicial: dataIni, dataFinal: document.getElementById('data-final').value,
-        inicioOcorrencia: inicio, fimOcorrencia: document.getElementById('fim-ocorrencia').value,
-        duracao: duracao,
-        codMotivo: selectedSubCod.cod, subCodigo: selectedSubCod.sub, subNome: selectedSubCod.nome,
-        descricao: desc, dataISO: hoje, turno: user.turno, criadoEm: new Date().toISOString(),
+      const rel = {
+        id: Date.now(), linha, equipamento: equip, inicioOcorrencia: inicio,
+        descricao: desc, subCodigo: selectedSubCod.sub, dataInicial: document.getElementById('data-inicial').value,
+        operador: document.getElementById('operador').value, cracha: document.getElementById('cracha').value
       };
+
       const lista = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
-      lista.push(relatorio);
+      lista.push(rel);
       localStorage.setItem('ms_relatorios', JSON.stringify(lista));
-      document.getElementById('toast').textContent = '✓ Parada registrada!';
       showToast();
-      setTimeout(() => window.location.href = 'home.html', 1600);
+      setTimeout(() => window.location.href = 'home.html', 1500);
     }
 
     function salvarManutencao() {
-      const m1cracha = document.getElementById('m1-cracha').value.trim();
-      const m1nome   = document.getElementById('m1-nome').value.trim();
-      const err = document.getElementById('error-bar');
-      err.style.display = 'none';
-
-      const missing = [];
-      if (currentRelIdx < 0) missing.push('Relatório');
-      if (!m1cracha || !m1nome) missing.push('Manutentor 1');
-      if (!selTarefa) missing.push('Tarefa');
-      if (!videoFiles.atender) missing.push('Vídeo do atendimento');
-
-      if (missing.length > 0) {
-        err.innerHTML = '⚠ Campos obrigatórios: <strong>' + missing.join(', ') + '</strong>';
-        err.style.display = 'block';
-        if (!videoFiles.atender) document.getElementById('video-zone-atender').classList.add('error-zone');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (currentRelIdx < 0 || !selTarefa || !videoFiles.atender) {
+        alert("Preencha a tarefa e anexe o vídeo!");
         return;
       }
-
       const rels = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
-      const videoMeta = (videoFiles.atender && videoFiles.atender !== 'existing')
-        ? { videoNome: videoFiles.atender.name, videoSize: formatFileSize(videoFiles.atender.size) }
-        : { videoNome: rels[currentRelIdx]?.manutencao?.videoNome || '', videoSize: rels[currentRelIdx]?.manutencao?.videoSize || '' };
-
-      const fimManutVal = document.getElementById('fim-manut').value;
-      const inicioOcorr = rels[currentRelIdx]?.inicioOcorrencia;
-      // Recalcula duração total: início ocorrência → fim manutenção
-      if (inicioOcorr && fimManutVal) {
-        const [h1, m1] = inicioOcorr.split(':').map(Number);
-        const [h2, m2] = fimManutVal.split(':').map(Number);
-        let totalMins = (h2 * 60 + m2) - (h1 * 60 + m1);
-        if (totalMins < 0) totalMins += 24 * 60;
-        rels[currentRelIdx].duracao = totalMins;
-        rels[currentRelIdx].fimManutencao = fimManutVal;
-      }
-
       rels[currentRelIdx].manutencao = {
-        manut1Cracha: m1cracha, manut1Nome: m1nome,
-        manut2Cracha: document.getElementById('m2-cracha').value.trim(),
-        manut2Nome: document.getElementById('m2-nome').value.trim(),
-        manut3Cracha: document.getElementById('m3-cracha').value.trim(),
-        manut3Nome: document.getElementById('m3-nome').value.trim(),
-        tarefa: selTarefa, motivo: selMotivo, causa: selCausa,
-        observacoes: document.getElementById('observacoes').value.trim(),
-        inicioManut: document.getElementById('inicio-manut').value,
-        fimManut: document.getElementById('fim-manut').value,
-        registradoEm: new Date().toISOString(),
-        ...videoMeta,
+        tarefa: selTarefa,
+        videoNome: videoFiles.atender.name,
+        registradoEm: new Date().toISOString()
       };
       localStorage.setItem('ms_relatorios', JSON.stringify(rels));
-      document.getElementById('toast').textContent = '✓ Atendimento registrado!';
       showToast();
-      setTimeout(() => window.location.href = 'relatorios.html', 1600);
+      setTimeout(() => window.location.href = 'home.html', 1500);
     }
 
     function salvarNovoManut() {
-      const linha = document.getElementById('mn-linha').value.trim();
-      const codEquip = document.getElementById('mn-cod-equip').value.trim();
-      const equip = document.getElementById('mn-equipamento').value.trim();
-      const data = document.getElementById('mn-data').value;
-      const inicio = document.getElementById('mn-inicio').value;
-      const fim = document.getElementById('mn-fim').value;
-      const desc = document.getElementById('mn-descricao').value.trim();
-      const m1cracha = document.getElementById('mn-m1-cracha').value.trim();
-      const m1nome = document.getElementById('mn-m1-nome').value.trim();
-      const err = document.getElementById('error-bar');
-      err.style.display = 'none';
-
-      const missing = [];
-      if (!linha || !codEquip || !equip || !data || !inicio || !desc || !selectedSubCodNovo)
-        missing.push('dados da parada');
-      if (!m1cracha || !m1nome) missing.push('Manutentor 1');
-      if (!mnSelTarefa) missing.push('Tarefa');
-      if (!videoFiles.novo) missing.push('Vídeo do atendimento');
-
-      if (missing.length > 0) {
-        err.innerHTML = '⚠ Campos obrigatórios: <strong>' + missing.join(', ') + '</strong>';
-        err.style.display = 'block';
-        if (!videoFiles.novo) document.getElementById('video-zone-novo').classList.add('error-zone');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+      const linha = document.getElementById('mn-linha').value;
+      if (!linha || !mnSelTarefa || !videoFiles.novo) {
+        alert("Preencha os campos obrigatórios e o vídeo!");
         return;
       }
-
-      const duracao = calcDurTotalNovo();
-      const operadorRef = document.getElementById('mn-operador-ref').value.trim();
-
-      const relatorio = {
+      const rel = {
         id: Date.now(), linha,
-        lote: document.getElementById('mn-lote').value.trim(),
-        cracha: user.cracha,
-        operador: operadorRef || `Reg. por manutentor: ${user.nome}`,
-        codEquipamento: codEquip, equipamento: equip,
-        dataInicial: data, dataFinal: '',
-        inicioOcorrencia: inicio, fimOcorrencia: fim,
-        duracao: duracao,
-        codMotivo: selectedSubCodNovo.cod, subCodigo: selectedSubCodNovo.sub, subNome: selectedSubCodNovo.nome,
-        descricao: desc, dataISO: data, turno: user.turno, criadoEm: new Date().toISOString(),
-        manutencao: {
-          manut1Cracha: m1cracha, manut1Nome: m1nome,
-          manut2Cracha: document.getElementById('mn-m2-cracha').value.trim(),
-          manut2Nome: document.getElementById('mn-m2-nome').value.trim(),
-          manut3Cracha: document.getElementById('mn-m3-cracha').value.trim(),
-          manut3Nome: document.getElementById('mn-m3-nome').value.trim(),
-          tarefa: mnSelTarefa, motivo: mnSelMotivo, causa: mnSelCausa,
-          observacoes: document.getElementById('mn-observacoes').value.trim(),
-          inicioManut: document.getElementById('mn-inicio-manut').value,
-          fimManut: document.getElementById('mn-fim-manut').value,
-          registradoEm: new Date().toISOString(),
-          videoNome: videoFiles.novo.name,
-          videoSize: formatFileSize(videoFiles.novo.size),
-        }
+        manutencao: { tarefa: mnSelTarefa, videoNome: videoFiles.novo.name }
       };
       const lista = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
-      lista.push(relatorio);
+      lista.push(rel);
       localStorage.setItem('ms_relatorios', JSON.stringify(lista));
-      document.getElementById('toast').textContent = '✓ Parada e atendimento registrados!';
       showToast();
-      setTimeout(() => window.location.href = 'relatorios.html', 1800);
-    }
-
-    function setManutMode(mode) {
-      document.getElementById('mode-btn-atender').classList.toggle('active', mode === 'atender');
-      document.getElementById('mode-btn-novo').classList.toggle('active', mode === 'novo');
-      document.getElementById('panel-atender').style.display = mode === 'atender' ? 'block' : 'none';
-      document.getElementById('panel-novo-manut').style.display = mode === 'novo' ? 'block' : 'none';
-      document.getElementById('error-bar').style.display = 'none';
+      setTimeout(() => window.location.href = 'home.html', 1500);
     }
 
     function showToast() {
@@ -1362,18 +1026,14 @@
       document.querySelectorAll('.tab-sw-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('sec-' + sec).classList.add('active');
       btn.classList.add('active');
-      document.getElementById('error-bar').style.display = 'none';
       if (sec === 'manutencao') populateRelSelect();
     }
 
-    if (_urlParams.get('modo') === 'manut') switchSection('manutencao', document.querySelectorAll('.tab-sw-btn')[1]);
-    if (_urlParams.get('relId')) {
-      switchSection('manutencao', document.querySelectorAll('.tab-sw-btn')[1]);
-      setTimeout(() => { document.getElementById('rel-select').value = _urlParams.get('relId'); loadRel(); }, 100);
-    }
-    if (_urlParams.get('modo') === 'novo-manut') {
-      switchSection('manutencao', document.querySelectorAll('.tab-sw-btn')[1]);
-      setManutMode('novo');
+    function setManutMode(mode) {
+      document.getElementById('panel-atender').style.display = mode === 'atender' ? 'block' : 'none';
+      document.getElementById('panel-novo-manut').style.display = mode === 'novo' ? 'block' : 'none';
+      document.getElementById('mode-btn-atender').classList.toggle('active', mode === 'atender');
+      document.getElementById('mode-btn-novo').classList.toggle('active', mode === 'novo');
     }
   </script>
 </body>
