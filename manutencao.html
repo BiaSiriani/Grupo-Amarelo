@@ -21,9 +21,11 @@
     .back-btn { text-decoration: none; color: var(--muted); font-size: 13px; cursor: pointer; }
     .topbar-title { font-size: 15px; font-weight: 600; }
 
-    .main { max-width: 680px; margin: 0 auto; padding: 24px 20px; }
+    .main { max-width: 680px; margin: 0 auto; padding: 16px 12px; }
+    @media (min-width: 480px) { .main { padding: 24px 20px; } }
 
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 14px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px 14px; margin-bottom: 12px; }
+    @media (min-width: 480px) { .card { padding: 22px; border-radius: 16px; margin-bottom: 14px; } }
     .card-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
 
     .manut-grid { display: flex; flex-direction: column; gap: 0; }
@@ -51,10 +53,55 @@
     .video-remove-btn { padding: 6px 12px; background: none; border: 1px solid var(--green-border); border-radius: 6px; font-size: 12px; color: var(--green); cursor: pointer; }
     video.preview-player { width: 100%; border-radius: 10px; background: #000; max-height: 280px; }
 
-    /* CLASSIFICAÇÃO — 3 colunas com scroll */
-    .class-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-    .class-col-title { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
-    .class-col { display: flex; flex-direction: column; gap: 4px; max-height: 340px; overflow-y: auto; }
+    /* CLASSIFICAÇÃO — Abas no mobile, 3 colunas no desktop */
+
+    /* Tab bar */
+    .tmc-tabs {
+      display: flex; gap: 4px; margin-bottom: 12px;
+      background: var(--bg); border-radius: 10px; padding: 4px;
+      border: 1px solid var(--border);
+    }
+    .tmc-tab {
+      flex: 1; padding: 8px 4px; border: none; background: none;
+      border-radius: 7px; font-family: 'DM Sans', sans-serif;
+      font-size: 11px; font-weight: 600; color: var(--muted);
+      cursor: pointer; transition: all 0.15s; text-align: center;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .tmc-tab.active {
+      background: var(--surface); color: var(--accent);
+      box-shadow: 0 1px 4px rgba(232,98,10,0.15);
+    }
+    .tmc-tab .tab-check { display: none; }
+    .tmc-tab.has-sel .tab-check { display: inline; }
+    .tmc-tab.has-sel { color: var(--accent); }
+
+    /* Painéis */
+    .tmc-panel { display: none; }
+    .tmc-panel.active { display: block; }
+
+    /* Desktop: mostra tudo lado a lado */
+    @media (min-width: 560px) {
+      .tmc-tabs { display: none; }
+      .tmc-desktop-grid {
+        display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+      }
+      .tmc-panel { display: block !important; }
+    }
+    @media (max-width: 559px) {
+      .tmc-desktop-grid { display: block; }
+    }
+
+    .class-col-title {
+      font-size: 10px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.6px;
+      margin-bottom: 8px; padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .class-col {
+      display: flex; flex-direction: column; gap: 4px;
+      max-height: 260px; overflow-y: auto;
+    }
 
     .check-item {
       display: flex; align-items: center; gap: 6px;
@@ -138,24 +185,41 @@
     <!-- 3. CLASSIFICAÇÃO COMPLETA -->
     <div class="card">
       <div class="card-title">Tarefa · Motivo · Causa *</div>
-      <div class="class-grid">
-        <div>
+
+      <!-- Abas visíveis apenas no mobile -->
+      <div class="tmc-tabs">
+        <button class="tmc-tab active" id="tab-tarefa" onclick="switchTMC('tarefa')">
+          <span class="tab-check">✓ </span>Tarefa
+        </button>
+        <button class="tmc-tab" id="tab-motivo" onclick="switchTMC('motivo')">
+          <span class="tab-check">✓ </span>Motivo
+        </button>
+        <button class="tmc-tab" id="tab-causa" onclick="switchTMC('causa')">
+          <span class="tab-check">✓ </span>Causa
+        </button>
+        <button class="tmc-tab" id="tab-area" onclick="switchTMC('area')">
+          <span class="tab-check">✓ </span>Área
+        </button>
+      </div>
+
+      <!-- Grid desktop / painéis mobile -->
+      <div class="tmc-desktop-grid">
+        <div class="tmc-panel active" id="panel-tarefa">
           <div class="class-col-title">Tarefa</div>
           <div class="class-col" id="tarefa-list"></div>
         </div>
-        <div>
+        <div class="tmc-panel" id="panel-motivo">
           <div class="class-col-title">Motivo</div>
           <div class="class-col" id="motivo-list"></div>
         </div>
-        <div>
+        <div class="tmc-panel" id="panel-causa">
           <div class="class-col-title">Causa</div>
           <div class="class-col" id="causa-list"></div>
         </div>
-      </div>
-      <!-- ÁREA -->
-      <div style="margin-top: 14px;">
-        <div class="class-col-title" style="margin-bottom: 8px;">Área</div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="area-list"></div>
+        <div class="tmc-panel" id="panel-area">
+          <div class="class-col-title" style="margin-bottom: 8px;">Área</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="area-list"></div>
+        </div>
       </div>
     </div>
 
@@ -270,6 +334,29 @@
       });
     }
 
+    // ─── ABAS MOBILE (Tarefa/Motivo/Causa/Área) ───
+    const TMC_PANELS = ['tarefa','motivo','causa','area'];
+    function switchTMC(name) {
+      TMC_PANELS.forEach(p => {
+        document.getElementById('panel-' + p).classList.remove('active');
+        document.getElementById('tab-' + p).classList.remove('active');
+      });
+      document.getElementById('panel-' + name).classList.add('active');
+      document.getElementById('tab-' + name).classList.add('active');
+    }
+
+    // Marca a aba como "tem seleção" e avança para a próxima automaticamente
+    function markTab(type) {
+      const map = { t: 'tarefa', m: 'motivo', c: 'causa', a: 'area' };
+      const next = { t: 'motivo', m: 'causa', c: 'area', a: null };
+      const tabEl = document.getElementById('tab-' + map[type]);
+      if (tabEl) tabEl.classList.add('has-sel');
+      // No mobile avança automaticamente para a próxima aba
+      if (next[type] && window.innerWidth < 560) {
+        setTimeout(() => switchTMC(next[type]), 180);
+      }
+    }
+
     // ─── RENDER LISTAS ───
     function renderList(containerId, items, type, isObj) {
       const el = document.getElementById(containerId);
@@ -283,10 +370,10 @@
         d.onclick = () => {
           el.querySelectorAll('.check-item').forEach(i => i.classList.remove('sel'));
           d.classList.add('sel');
-          if (type==='t') selT = val;
-          if (type==='m') selM = val;
-          if (type==='c') selC = val;
-          if (type==='a') selA = val;
+          if (type==='t') { selT = val; markTab('t'); }
+          if (type==='m') { selM = val; markTab('m'); }
+          if (type==='c') { selC = val; markTab('c'); }
+          if (type==='a') { selA = val; markTab('a'); }
         };
         el.appendChild(d);
       });
@@ -304,6 +391,7 @@
           el.querySelectorAll('.check-item').forEach(i => i.classList.remove('sel'));
           d.classList.add('sel');
           selA = a;
+          markTab('a');
         };
         el.appendChild(d);
       });
@@ -402,6 +490,10 @@
       restoreSelection('motivo-list', m.motivo);
       restoreSelection('causa-list',  m.causa);
       restoreSelection('area-list',   m.area);
+      if (m.tarefa) { const t = document.getElementById('tab-tarefa'); if(t) t.classList.add('has-sel'); }
+      if (m.motivo) { const t = document.getElementById('tab-motivo'); if(t) t.classList.add('has-sel'); }
+      if (m.causa)  { const t = document.getElementById('tab-causa');  if(t) t.classList.add('has-sel'); }
+      if (m.area)   { const t = document.getElementById('tab-area');   if(t) t.classList.add('has-sel'); }
 
       // Tenta carregar vídeo do IndexedDB
       if (m.videoSalvo) {
