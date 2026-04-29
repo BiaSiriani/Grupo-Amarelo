@@ -50,7 +50,6 @@
     }
     .tab-sw-btn.active { background: var(--surface); color: #E8620A; box-shadow: 0 1px 4px rgba(232,98,10,0.15); }
     .tab-sw-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-    .tab-sw-btn:disabled:hover { background: none; color: var(--muted); }
 
     .main { max-width: 720px; margin: 0 auto; padding: 14px 12px 80px; }
     @media (min-width: 480px) { .main { padding: 16px 14px 80px; } }
@@ -85,13 +84,6 @@
     .field input:focus, .field select:focus, .field textarea:focus { border-color: #aaa; }
     .field input[readonly] { background: var(--bg); color: var(--muted); cursor: not-allowed; }
     @media (max-width: 479px) { .field-grid { grid-template-columns: 1fr; } .field.span-2 { grid-column: span 1; } }
-
-    .dur-display {
-      padding: 11px 12px; background: var(--bg); border: 1px solid var(--border);
-      border-radius: 9px; font-size: 16px; font-weight: 600;
-      color: var(--accent); display: flex; align-items: center;
-      justify-content: space-between; min-height: 46px;
-    }
 
     /* COD PARADA */
     .cod-group { margin-bottom: 6px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
@@ -134,10 +126,7 @@
     .sub-cod { font-size: 10px; font-weight: 700; color: var(--muted); min-width: 26px; flex-shrink: 0; }
     .sub-item.selected .sub-cod { color: var(--accent); }
     .sub-label { font-size: 12px; flex: 1; line-height: 1.3; }
-    .sub-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      border: 1.5px solid var(--border); flex-shrink: 0;
-    }
+    .sub-dot { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--border); flex-shrink: 0; }
     .sub-item.selected .sub-dot { background: var(--accent); border-color: var(--accent); }
 
     /* MANUT */
@@ -149,17 +138,20 @@
     .manut-num-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
     .manut-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
+    /* CLASSIFICAÇÃO — 4 colunas */
     .check-col-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-    .three-col { display: grid; grid-template-columns: 1fr; gap: 14px; }
-    @media (min-width: 500px) { .three-col { grid-template-columns: 1fr 1fr 1fr; gap: 14px; } }
+    .four-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (min-width: 600px) { .four-col { grid-template-columns: 1fr 1fr 1fr 1fr; } }
     .check-item {
-      display: flex; align-items: center; gap: 8px; padding: 10px 12px;
-      border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px;
-      cursor: pointer; transition: all 0.12s; min-height: 44px;
+      display: flex; align-items: center; gap: 6px; padding: 9px 11px;
+      border: 1px solid var(--border); border-radius: 8px; margin-bottom: 5px;
+      cursor: pointer; transition: all 0.12s; min-height: 38px;
     }
     .check-item:hover { border-color: #bbb; background: var(--bg); }
     .check-item.sel { border-color: var(--accent); background: #f0efe9; }
-    .check-label { font-size: 13px; flex: 1; line-height: 1.3; }
+    .check-label { font-size: 12px; flex: 1; line-height: 1.3; }
+    .check-num { font-size: 10px; font-weight: 700; color: var(--muted); min-width: 28px; flex-shrink: 0; }
+    .check-item.sel .check-num { color: var(--accent); }
 
     /* VIDEO */
     .video-upload-zone {
@@ -315,7 +307,6 @@
       cursor: pointer; transition: all 0.15s; text-decoration: none; display: block; text-align: center;
     }
 
-    /* Availability mini indicator */
     .cod-sel-display {
       margin-top: 8px; padding: 10px 12px;
       background: #f0efe9; border: 1px solid var(--accent);
@@ -410,7 +401,6 @@
     <!-- ========== MANUTENTOR ========== -->
     <div class="section" id="sec-manutencao">
 
-      <!-- BLOQUEIO ADMIN -->
       <div id="admin-block" style="display:none">
         <div class="admin-block-banner">
           <div class="icon">🔒</div>
@@ -490,10 +480,12 @@
               </div>
             </div>
 
+            <!-- ── TAREFA · ÁREA · MOTIVO · CAUSA (4 colunas, dados do papel) ── -->
             <div class="card">
-              <div class="card-title">Tarefa · Motivo · Causa *</div>
-              <div class="three-col">
+              <div class="card-title">Tarefa · Área · Motivo · Causa *</div>
+              <div class="four-col">
                 <div><div class="check-col-title">Tarefa</div><div id="tarefa-list"></div></div>
+                <div><div class="check-col-title">Área</div><div id="area-list"></div></div>
                 <div><div class="check-col-title">Motivo</div><div id="motivo-list"></div></div>
                 <div><div class="check-col-title">Causa</div><div id="causa-list"></div></div>
               </div>
@@ -609,10 +601,12 @@
             </div>
           </div>
 
+          <!-- ── TAREFA · ÁREA · MOTIVO · CAUSA (nova parada) ── -->
           <div class="card">
-            <div class="card-title">Tarefa · Motivo · Causa *</div>
-            <div class="three-col">
+            <div class="card-title">Tarefa · Área · Motivo · Causa *</div>
+            <div class="four-col">
               <div><div class="check-col-title">Tarefa</div><div id="mn-tarefa-list"></div></div>
+              <div><div class="check-col-title">Área</div><div id="mn-area-list"></div></div>
               <div><div class="check-col-title">Motivo</div><div id="mn-motivo-list"></div></div>
               <div><div class="check-col-title">Causa</div><div id="mn-causa-list"></div></div>
             </div>
@@ -657,7 +651,6 @@
     if (!user) window.location.href = 'index.html';
     const _isAdmin = user.cracha === 'admin';
 
-    // Mostrar modal de operador para admin
     if (_isAdmin) {
       document.getElementById('op-modal').classList.remove('hidden');
       setTimeout(() => document.getElementById('op-modal-nome').focus(), 100);
@@ -677,7 +670,6 @@
       document.getElementById('op-modal').classList.add('hidden');
     }
 
-    // Bloquear aba manutentor para admin
     function checkAdminBlock() {
       if (_isAdmin) {
         const tabBtn = document.getElementById('tab-btn-manutencao');
@@ -693,172 +685,71 @@
     const horaAgora = `${String(agora.getHours()).padStart(2,'0')}:${String(agora.getMinutes()).padStart(2,'0')}`;
     document.getElementById('data-inicial').value = hoje;
     document.getElementById('inicio-ocorrencia').value = horaAgora;
-    document.getElementById('mn-data').value  = hoje;
+    document.getElementById('mn-data').value   = hoje;
     document.getElementById('mn-inicio').value = horaAgora;
 
     // ═══ TODOS OS CÓDIGOS DE PARADA ═══
     const CODIGOS = [
-      {
-        num: 1, nome: 'Quebra',
-        desc: 'Paradas não planejadas > 10 min (perda de função)',
-        color: '#C93B3A',
-        subs: [
-          {cod:'1.1', nome:'Quebra fabricação'},
-          {cod:'1.2', nome:'Quebra maquinário'},
-          {cod:'1.3', nome:'Quebra forno'},
-          {cod:'1.4', nome:'Quebra empacotamento'},
-          {cod:'1.5', nome:'Quebra Lona'}
-        ]
-      },
-      {
-        num: 2, nome: 'Set-up',
-        desc: 'Troca de produto ou formato (inclusive ajustes)',
-        color: '#C93B3A',
-        subs: [
-          {cod:'2.1', nome:'Set-up formato'},
-          {cod:'2.2', nome:'Set-up produto'}
-        ]
-      },
-      {
-        num: 3, nome: 'Troca Ferramental',
-        desc: 'Substituição de ferramentas/insumos (desgaste normal)',
-        color: '#BA7517',
-        subs: [
-          {cod:'3.1', nome:'Troca teflon'},
-          {cod:'3.2', nome:'Troca filho'},
-          {cod:'3.3', nome:'Troca de bobina'},
-          {cod:'3.4', nome:'Troca data'}
-        ]
-      },
-      {
-        num: 4, nome: 'Produção',
-        desc: 'Início / Fim de produção (atingir velocidade e qualidade normal)',
-        color: '#185FA5',
-        subs: [
-          {cod:'4.1', nome:'Inicio produção'},
-          {cod:'4.2', nome:'Fim de produção'}
-        ]
-      },
-      {
-        num: 5, nome: 'Pequenas Paradas',
-        desc: 'Paradas não planejadas < 10 min',
-        color: '#BA7517',
-        subs: [
-          {cod:'5.1', nome:'Ajuste manutenção mecânica'},
-          {cod:'5.2', nome:'Ajuste manutenção elétrica'},
-          {cod:'5.3', nome:'Ajuste manutenção embalagem'},
-          {cod:'5.4', nome:'Ajuste Operacional'}
-        ]
-      },
-      {
-        num: 6, nome: 'Velocidade',
-        desc: 'Linha abaixo da velocidade padrão',
-        color: '#185FA5',
-        subs: [
-          {cod:'6.1', nome:'Absorção de baile - Mão de obra'},
-          {cod:'6.2', nome:'Absorção de baile - Máquina interna'},
-          {cod:'6.3', nome:'Absorção de baile - Máquina multi'},
-          {cod:'6.4', nome:'Absorção de baile - Máquina tubete'},
-          {cod:'6.5', nome:'Absorção de baile - Carregador'},
-          {cod:'6.6', nome:'Absorção de baile - SETUP'}
-        ]
-      },
-      {
-        num: 7, nome: 'Defeito',
-        desc: 'Produtos não-conformes / retrabalho',
-        color: '#BA7517',
-        subs: [
-          {cod:'7.1', nome:'Peso leve'}
-        ]
-      },
-      {
-        num: 8, nome: 'Programadas',
-        desc: 'Paradas no plano semanal de produção',
-        color: '#185FA5',
-        subs: [
-          {cod:'8.1', nome:'Falta demanda'},
-          {cod:'8.2', nome:'Preventiva'},
-          {cod:'8.3', nome:'Teste novo produto'},
-          {cod:'8.4', nome:'Treinamento'},
-          {cod:'8.5', nome:'Feriado'},
-          {cod:'8.6', nome:'Falta mão de obra'},
-          {cod:'8.7', nome:'Refeição'},
-          {cod:'8.8', nome:'Férias coletiva'}
-        ]
-      },
-      {
-        num: 9, nome: 'Gestão',
-        desc: 'Falta de material, peças, utilidades, espera de instruções',
-        color: '#3B6D11',
-        subs: [
-          {cod:'9.1', nome:'Comunicação'},
-          {cod:'9.2', nome:'Falta ar comprimido'},
-          {cod:'9.3', nome:'Falta vapor'},
-          {cod:'9.4', nome:'Acidente'},
-          {cod:'9.5', nome:'Falta de insumos'},
-          {cod:'9.6', nome:'Reuniões não programada'},
-          {cod:'9.7', nome:'Falta energia'}
-        ]
-      },
-      {
-        num: 10, nome: 'Movimentos Operacionais',
-        desc: 'Diferenças de habilidades e falta de instrução',
-        color: '#3B6D11',
-        subs: [
-          {cod:'10.1', nome:'Falta conhecimento'},
-          {cod:'10.2', nome:'Falta procedimento'},
-          {cod:'10.3', nome:'Falta habilidade'}
-        ]
-      },
-      {
-        num: 11, nome: 'Organização',
-        desc: 'Falta de operadores na linha / revezamento',
-        color: '#3B6D11',
-        subs: [
-          {cod:'11.1', nome:'Falta mão de obra'},
-          {cod:'11.2', nome:'Pausa refeição'},
-          {cod:'11.3', nome:'Espera técnico'},
-          {cod:'11.4', nome:'Revezamento'}
-        ]
-      },
-      {
-        num: 12, nome: 'Logística',
-        desc: 'Ineficiência na entrega de matéria prima ou embalagem',
-        color: '#3B6D11',
-        subs: [
-          {cod:'12.1', nome:'Falta massa'},
-          {cod:'12.2', nome:'Falta biscoito'},
-          {cod:'12.3', nome:'Falta abastecimento de insumos'}
-        ]
-      },
-      {
-        num: 13, nome: 'Medições e Ajustes',
-        desc: 'Ajustar máquina para garantir qualidade do produto',
-        color: '#3B6D11',
-        subs: [
-          {cod:'13.1', nome:'Ajuste de peso'},
-          {cod:'13.2', nome:'Limpeza não programada'},
-          {cod:'13.3', nome:'Ajuste de lona'},
-          {cod:'13.4', nome:'Ajuste maquinário (formação biscoito)'},
-          {cod:'13.5', nome:'Ajuste forno'},
-          {cod:'13.6', nome:'Ajuste empacotamento'}
-        ]
-      }
+      { num:1, nome:'Quebra', desc:'Paradas não planejadas > 10 min (perda de função)', color:'#C93B3A',
+        subs:[{cod:'1.1',nome:'Quebra fabricação'},{cod:'1.2',nome:'Quebra maquinário'},{cod:'1.3',nome:'Quebra forno'},{cod:'1.4',nome:'Quebra empacotamento'},{cod:'1.5',nome:'Quebra Lona'}]},
+      { num:2, nome:'Set-up', desc:'Troca de produto ou formato (inclusive ajustes)', color:'#C93B3A',
+        subs:[{cod:'2.1',nome:'Set-up formato'},{cod:'2.2',nome:'Set-up produto'}]},
+      { num:3, nome:'Troca Ferramental', desc:'Substituição de ferramentas/insumos (desgaste normal)', color:'#BA7517',
+        subs:[{cod:'3.1',nome:'Troca teflon'},{cod:'3.2',nome:'Troca filho'},{cod:'3.3',nome:'Troca de bobina'},{cod:'3.4',nome:'Troca data'}]},
+      { num:4, nome:'Produção', desc:'Início / Fim de produção', color:'#185FA5',
+        subs:[{cod:'4.1',nome:'Inicio produção'},{cod:'4.2',nome:'Fim de produção'}]},
+      { num:5, nome:'Pequenas Paradas', desc:'Paradas não planejadas < 10 min', color:'#BA7517',
+        subs:[{cod:'5.1',nome:'Ajuste manutenção mecânica'},{cod:'5.2',nome:'Ajuste manutenção elétrica'},{cod:'5.3',nome:'Ajuste manutenção embalagem'},{cod:'5.4',nome:'Ajuste Operacional'}]},
+      { num:6, nome:'Velocidade', desc:'Linha abaixo da velocidade padrão', color:'#185FA5',
+        subs:[{cod:'6.1',nome:'Absorção - Mão de obra'},{cod:'6.2',nome:'Absorção - Máquina interna'},{cod:'6.3',nome:'Absorção - Máquina multi'},{cod:'6.4',nome:'Absorção - Máquina tubete'},{cod:'6.5',nome:'Absorção - Carregador'},{cod:'6.6',nome:'Absorção - SETUP'}]},
+      { num:7, nome:'Defeito', desc:'Produtos não-conformes / retrabalho', color:'#BA7517',
+        subs:[{cod:'7.1',nome:'Peso leve'}]},
+      { num:8, nome:'Programadas', desc:'Paradas no plano semanal de produção', color:'#185FA5',
+        subs:[{cod:'8.1',nome:'Falta demanda'},{cod:'8.2',nome:'Preventiva'},{cod:'8.3',nome:'Teste novo produto'},{cod:'8.4',nome:'Treinamento'},{cod:'8.5',nome:'Feriado'},{cod:'8.6',nome:'Falta mão de obra'},{cod:'8.7',nome:'Refeição'},{cod:'8.8',nome:'Férias coletiva'}]},
+      { num:9, nome:'Gestão', desc:'Falta de material, peças, utilidades, espera de instruções', color:'#3B6D11',
+        subs:[{cod:'9.1',nome:'Comunicação'},{cod:'9.2',nome:'Falta ar comprimido'},{cod:'9.3',nome:'Falta vapor'},{cod:'9.4',nome:'Acidente'},{cod:'9.5',nome:'Falta de insumos'},{cod:'9.6',nome:'Reuniões não programada'},{cod:'9.7',nome:'Falta energia'}]},
+      { num:10, nome:'Movimentos Operacionais', desc:'Diferenças de habilidades e falta de instrução', color:'#3B6D11',
+        subs:[{cod:'10.1',nome:'Falta conhecimento'},{cod:'10.2',nome:'Falta procedimento'},{cod:'10.3',nome:'Falta habilidade'}]},
+      { num:11, nome:'Organização', desc:'Falta de operadores na linha / revezamento', color:'#3B6D11',
+        subs:[{cod:'11.1',nome:'Falta mão de obra'},{cod:'11.2',nome:'Pausa refeição'},{cod:'11.3',nome:'Espera técnico'},{cod:'11.4',nome:'Revezamento'}]},
+      { num:12, nome:'Logística', desc:'Ineficiência na entrega de matéria prima ou embalagem', color:'#3B6D11',
+        subs:[{cod:'12.1',nome:'Falta massa'},{cod:'12.2',nome:'Falta biscoito'},{cod:'12.3',nome:'Falta abastecimento de insumos'}]},
+      { num:13, nome:'Medições e Ajustes', desc:'Ajustar máquina para garantir qualidade do produto', color:'#3B6D11',
+        subs:[{cod:'13.1',nome:'Ajuste de peso'},{cod:'13.2',nome:'Limpeza não programada'},{cod:'13.3',nome:'Ajuste de lona'},{cod:'13.4',nome:'Ajuste maquinário (formação biscoito)'},{cod:'13.5',nome:'Ajuste forno'},{cod:'13.6',nome:'Ajuste empacotamento'}]}
     ];
 
-    let selectedSub = null;   // {cod, nome, mainCod}
-    let selectedSubNovo = null;
+    // ── DADOS DO PAPEL (Campo Manutentor) ──
+    const TAREFAS = ['Ajustar','Consertar','Destravar','Limpar','Reapertar','Regular','Trocar','Acompanhar'];
+    const AREAS   = ['Mecânica','Elétrica','Operacional'];
+    const MOTIVOS = [
+      {num:'16', nome:'Entupimento'},{num:'99', nome:'Desgaste'},
+      {num:'100',nome:'Quebra'},{num:'101',nome:'Folga'},
+      {num:'105',nome:'Sujidade'},{num:'106',nome:'Desalinhamento'},
+      {num:'107',nome:'Vazamento'},{num:'114',nome:'Curto circuito'},
+      {num:'118',nome:'Mal contato'},{num:'129',nome:'Ruído'},
+      {num:'130',nome:'Vibração'},{num:'133',nome:'Sobrecarga'}
+    ];
+    const CAUSAS = [
+      {num:'07',nome:'Falha sensor'},{num:'16',nome:'Vibração'},
+      {num:'25',nome:'Folga'},{num:'27',nome:'Rolamento travado'},
+      {num:'36',nome:'Sobrecarga'},{num:'37',nome:'Cabo rompido'},
+      {num:'50',nome:'Desarme disjuntor'},{num:'70',nome:'Emergência acionada'},
+      {num:'72',nome:'Mal contato'},{num:'73',nome:'Fio solto'},
+      {num:'87',nome:'Parafuso quebrado'},{num:'90',nome:'Ruído'}
+    ];
+
+    let selectedSub = null, selectedSubNovo = null;
     const videoFiles = { atender: null, novo: null };
-    let selTarefa = null, selMotivo = null, selCausa = null;
-    let mnSelTarefa = null, mnSelMotivo = null, mnSelCausa = null;
+    let selTarefa = null, selArea = null, selMotivo = null, selCausa = null;
+    let mnSelTarefa = null, mnSelArea = null, mnSelMotivo = null, mnSelCausa = null;
     let currentRelIdx = -1;
 
+    // ── COD GRID ──
     function buildCodGrid(containerId, onSelect) {
       const container = document.getElementById(containerId);
       CODIGOS.forEach(c => {
         const group = document.createElement('div');
         group.className = 'cod-group';
-        group.id = `grp-${containerId}-${c.num}`;
 
         const header = document.createElement('div');
         header.className = 'cod-group-header';
@@ -869,10 +760,7 @@
           <span class="cod-group-sel-badge" id="badge-${containerId}-${c.num}"></span>
           <span class="cod-group-arrow">›</span>
         `;
-        header.onclick = () => {
-          subEl.classList.toggle('open');
-          header.classList.toggle('open');
-        };
+        header.onclick = () => { subEl.classList.toggle('open'); header.classList.toggle('open'); };
 
         const subEl = document.createElement('div');
         subEl.className = 'cod-subitems';
@@ -882,28 +770,19 @@
         c.subs.forEach(sub => {
           const item = document.createElement('div');
           item.className = 'sub-item';
-          item.id = `sub-${containerId}-${sub.cod.replace('.', '_')}`;
-          item.innerHTML = `
-            <div class="sub-dot"></div>
-            <span class="sub-cod">${sub.cod}</span>
-            <span class="sub-label">${sub.nome}</span>
-          `;
+          item.innerHTML = `<div class="sub-dot"></div><span class="sub-cod">${sub.cod}</span><span class="sub-label">${sub.nome}</span>`;
           item.onclick = () => {
-            // Deselecionar tudo
             container.querySelectorAll('.sub-item').forEach(i => i.classList.remove('selected'));
             container.querySelectorAll('.cod-group-header').forEach(h => {
               h.classList.remove('has-sel');
               const badge = h.querySelector('.cod-group-sel-badge');
               if (badge) badge.style.display = 'none';
             });
-            // Selecionar novo
             item.classList.add('selected');
             header.classList.add('has-sel');
             const badge = document.getElementById(`badge-${containerId}-${c.num}`);
             if (badge) { badge.textContent = sub.cod; badge.style.display = 'inline-flex'; }
-
-            const result = { cod: sub.cod, nome: sub.nome, mainCod: String(c.num) };
-            onSelect(result);
+            onSelect({ cod: sub.cod, nome: sub.nome, mainCod: String(c.num) });
           };
           grid.appendChild(item);
         });
@@ -928,40 +807,35 @@
       document.getElementById('mn-cod-motivo').value = `${res.cod} — ${res.nome}`;
     });
 
-    // Tarefas, motivos, causas
-    const tarefas = ['Ajustar','Consertar','Limpar','Trocar','Lubrificar'];
-    const motivos = [
-      {num:'100',nome:'Quebra'},{num:'101',nome:'Folga/Desgaste'},
-      {num:'102',nome:'Sujeira'},{num:'103',nome:'Falta de insumo'},
-      {num:'104',nome:'Mau uso'}
-    ];
-    const causas = [
-      {num:'07',nome:'Falha sensor'},{num:'72',nome:'Mal contato'},
-      {num:'15',nome:'Peça velha'},{num:'30',nome:'Falta manutenção preventiva'},
-      {num:'45',nome:'Erro operacional'}
-    ];
-
+    // ── CHECK LISTS ──
     function buildCheckList(containerId, items, onSelect) {
       const el = document.getElementById(containerId);
+      if (!el) return;
       items.forEach(item => {
         const d = document.createElement('div');
         d.className = 'check-item';
-        d.innerHTML = `<span class="check-label">${item.nome || item}</span>`;
+        if (item.num) {
+          d.innerHTML = `<span class="check-num">${item.num}</span><span class="check-label">${item.nome}</span>`;
+        } else {
+          d.innerHTML = `<span class="check-label">${item}</span>`;
+        }
         d.onclick = () => {
           el.querySelectorAll('.check-item').forEach(i => i.classList.remove('sel'));
           d.classList.add('sel');
-          onSelect(item.nome || item);
+          onSelect(item.num ? `${item.num} - ${item.nome}` : item);
         };
         el.appendChild(d);
       });
     }
 
-    buildCheckList('tarefa-list', tarefas, v => selTarefa = v);
-    buildCheckList('motivo-list', motivos, v => selMotivo = v);
-    buildCheckList('causa-list', causas, v => selCausa = v);
-    buildCheckList('mn-tarefa-list', tarefas, v => mnSelTarefa = v);
-    buildCheckList('mn-motivo-list', motivos, v => mnSelMotivo = v);
-    buildCheckList('mn-causa-list', causas, v => mnSelCausa = v);
+    buildCheckList('tarefa-list',    TAREFAS, v => selTarefa  = v);
+    buildCheckList('area-list',      AREAS,   v => selArea    = v);
+    buildCheckList('motivo-list',    MOTIVOS, v => selMotivo  = v);
+    buildCheckList('causa-list',     CAUSAS,  v => selCausa   = v);
+    buildCheckList('mn-tarefa-list', TAREFAS, v => mnSelTarefa = v);
+    buildCheckList('mn-area-list',   AREAS,   v => mnSelArea   = v);
+    buildCheckList('mn-motivo-list', MOTIVOS, v => mnSelMotivo = v);
+    buildCheckList('mn-causa-list',  CAUSAS,  v => mnSelCausa  = v);
 
     // Auto-fill equipamento
     function getEquipamentos() {
@@ -984,7 +858,7 @@
     setupAutoFill('cod-equip', 'equipamento');
     setupAutoFill('mn-cod-equip', 'mn-equipamento');
 
-    // Video
+    // ── VIDEO ──
     function onVideoSelect(event, panel) {
       const file = event.target.files[0];
       if (file) {
@@ -1002,7 +876,7 @@
       document.getElementById(`video-zone-${panel}`).classList.remove('has-file');
     }
 
-    // Rel select
+    // ── REL SELECT ──
     function populateRelSelect() {
       const rels = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
       const sel = document.getElementById('rel-select');
@@ -1032,7 +906,7 @@
       }
     }
 
-    // Salvar operador
+    // ── SALVAR OPERADOR ──
     function salvarOperador() {
       const linha = document.getElementById('linha').value.trim();
       const equip = document.getElementById('equipamento').value.trim();
@@ -1050,23 +924,16 @@
 
       const rel = {
         id: Date.now(),
-        linha,
-        lote: document.getElementById('lote').value,
-        equipamento: equip,
-        codEquipamento: document.getElementById('cod-equip').value,
-        inicioOcorrencia: inicio,
-        fimOcorrencia: '',
-        descricao: desc,
-        codMotivo: selectedSub.mainCod,
-        subCodigo: selectedSub.cod,
-        subCodigoNome: selectedSub.nome,
+        linha, lote: document.getElementById('lote').value,
+        equipamento: equip, codEquipamento: document.getElementById('cod-equip').value,
+        inicioOcorrencia: inicio, fimOcorrencia: '',
+        descricao: desc, codMotivo: selectedSub.mainCod,
+        subCodigo: selectedSub.cod, subCodigoNome: selectedSub.nome,
         dataInicial: document.getElementById('data-inicial').value,
         dataISO: document.getElementById('data-inicial').value,
         operador: document.getElementById('operador').value,
         cracha: document.getElementById('cracha').value,
-        turno: user.turno || '',
-        criadoEm: new Date().toISOString(),
-        duracao: null
+        turno: user.turno || '', criadoEm: new Date().toISOString(), duracao: null
       };
 
       const lista = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
@@ -1076,7 +943,7 @@
       setTimeout(() => window.location.href = 'home.html', 1500);
     }
 
-    // Salvar manutenção
+    // ── SALVAR MANUTENÇÃO ──
     function salvarManutencao() {
       if (currentRelIdx < 0 || !selTarefa || !videoFiles.atender) {
         alert('Preencha a tarefa, selecione o manutentor e anexe o vídeo!');
@@ -1085,22 +952,20 @@
       const rels = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
       rels[currentRelIdx].manutencao = {
         manut1Cracha: document.getElementById('m1-cracha').value,
-        manut1Nome: document.getElementById('m1-nome').value,
+        manut1Nome:   document.getElementById('m1-nome').value,
         manut2Cracha: document.getElementById('m2-cracha').value,
-        manut2Nome: document.getElementById('m2-nome').value,
+        manut2Nome:   document.getElementById('m2-nome').value,
         manut3Cracha: document.getElementById('m3-cracha').value,
-        manut3Nome: document.getElementById('m3-nome').value,
-        observacoes: document.getElementById('observacoes').value,
-        inicioManut: document.getElementById('inicio-manut').value,
-        fimManut: document.getElementById('fim-manut').value,
-        tarefa: selTarefa, motivo: selMotivo, causa: selCausa,
-        area: '', videoNome: videoFiles.atender.name,
-        registradoEm: new Date().toISOString()
+        manut3Nome:   document.getElementById('m3-nome').value,
+        observacoes:  document.getElementById('observacoes').value,
+        inicioManut:  document.getElementById('inicio-manut').value,
+        fimManut:     document.getElementById('fim-manut').value,
+        tarefa: selTarefa, area: selArea, motivo: selMotivo, causa: selCausa,
+        videoNome: videoFiles.atender.name, registradoEm: new Date().toISOString()
       };
-      // Calcular duração se possível
       const r = rels[currentRelIdx];
-      if (r.inicioOcorrencia && rels[currentRelIdx].manutencao.fimManut) {
-        const dur = calcDur(r.inicioOcorrencia, rels[currentRelIdx].manutencao.fimManut);
+      if (r.inicioOcorrencia && r.manutencao.fimManut) {
+        const dur = calcDur(r.inicioOcorrencia, r.manutencao.fimManut);
         if (dur !== null) rels[currentRelIdx].duracao = dur;
       }
       localStorage.setItem('ms_relatorios', JSON.stringify(rels));
@@ -1108,7 +973,7 @@
       setTimeout(() => window.location.href = 'home.html', 1500);
     }
 
-    // Salvar nova parada pelo manutentor
+    // ── SALVAR NOVA PARADA PELO MANUTENTOR ──
     function salvarNovoManut() {
       const linha = document.getElementById('mn-linha').value.trim();
       if (!linha || !selectedSubNovo || !mnSelTarefa || !videoFiles.novo) {
@@ -1117,37 +982,31 @@
       }
       const now = new Date().toISOString().slice(0,10);
       const rel = {
-        id: Date.now(),
-        linha,
+        id: Date.now(), linha,
         lote: document.getElementById('mn-lote').value,
         equipamento: document.getElementById('mn-equipamento').value,
         codEquipamento: document.getElementById('mn-cod-equip').value,
         inicioOcorrencia: document.getElementById('mn-inicio').value,
         fimOcorrencia: '',
         descricao: document.getElementById('mn-descricao').value,
-        codMotivo: selectedSubNovo.mainCod,
-        subCodigo: selectedSubNovo.cod,
-        subCodigoNome: selectedSubNovo.nome,
+        codMotivo: selectedSubNovo.mainCod, subCodigo: selectedSubNovo.cod, subCodigoNome: selectedSubNovo.nome,
         dataInicial: document.getElementById('mn-data').value || now,
         dataISO: document.getElementById('mn-data').value || now,
         operador: document.getElementById('mn-operador-ref').value || user.nome,
-        cracha: user.cracha,
-        turno: user.turno || '',
-        criadoEm: new Date().toISOString(),
-        duracao: null,
+        cracha: user.cracha, turno: user.turno || '',
+        criadoEm: new Date().toISOString(), duracao: null,
         manutencao: {
           manut1Cracha: document.getElementById('mn-m1-cracha').value,
-          manut1Nome: document.getElementById('mn-m1-nome').value,
+          manut1Nome:   document.getElementById('mn-m1-nome').value,
           manut2Cracha: document.getElementById('mn-m2-cracha').value,
-          manut2Nome: document.getElementById('mn-m2-nome').value,
+          manut2Nome:   document.getElementById('mn-m2-nome').value,
           manut3Cracha: document.getElementById('mn-m3-cracha').value,
-          manut3Nome: document.getElementById('mn-m3-nome').value,
-          observacoes: document.getElementById('mn-observacoes').value,
-          inicioManut: document.getElementById('mn-inicio-manut').value,
-          fimManut: document.getElementById('mn-fim-manut').value,
-          tarefa: mnSelTarefa, motivo: mnSelMotivo, causa: mnSelCausa,
-          area: '', videoNome: videoFiles.novo.name,
-          registradoEm: new Date().toISOString()
+          manut3Nome:   document.getElementById('mn-m3-nome').value,
+          observacoes:  document.getElementById('mn-observacoes').value,
+          inicioManut:  document.getElementById('mn-inicio-manut').value,
+          fimManut:     document.getElementById('mn-fim-manut').value,
+          tarefa: mnSelTarefa, area: mnSelArea, motivo: mnSelMotivo, causa: mnSelCausa,
+          videoNome: videoFiles.novo.name, registradoEm: new Date().toISOString()
         }
       };
       const lista = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
@@ -1173,7 +1032,6 @@
     }
 
     function switchSection(sec, btn) {
-      // Bloquear admin na aba manutenção
       if (sec === 'manutencao' && _isAdmin) {
         document.getElementById('admin-block').style.display = 'block';
         document.getElementById('manut-content').style.display = 'none';
@@ -1190,7 +1048,7 @@
     }
 
     function setManutMode(mode) {
-      document.getElementById('panel-atender').style.display = mode === 'atender' ? 'block' : 'none';
+      document.getElementById('panel-atender').style.display    = mode === 'atender' ? 'block' : 'none';
       document.getElementById('panel-novo-manut').style.display = mode === 'novo' ? 'block' : 'none';
       document.getElementById('mode-btn-atender').classList.toggle('active', mode === 'atender');
       document.getElementById('mode-btn-novo').classList.toggle('active', mode === 'novo');
