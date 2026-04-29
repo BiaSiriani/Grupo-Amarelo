@@ -9,277 +9,107 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #FFF8F2;
-      --surface: #FFFFFF;
-      --border: #F2D5BE;
-      --text: #2A1A0E;
-      --muted: #A0816A;
-      --accent: #E8620A;
-      --red: #C93B3A;
-      --red-bg: #FDF0F0;
-      --red-border: #f0caca;
-      --amber: #BA7517;
-      --amber-bg: #FAEEDA;
-      --amber-border: #FAC775;
-      --green: #3B6D11;
-      --green-bg: #EAF3DE;
-      --green-border: #c0dd97;
+      --bg: #FFF8F2; --surface: #FFFFFF; --border: #F2D5BE;
+      --text: #2A1A0E; --muted: #A0816A; --accent: #E8620A;
+      --red: #C93B3A; --red-bg: #FDF0F0; --red-border: #f0caca;
+      --amber: #BA7517; --amber-bg: #FAEEDA; --amber-border: #FAC775;
+      --green: #3B6D11; --green-bg: #EAF3DE; --green-border: #c0dd97;
     }
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      min-height: 100vh;
-      color: var(--text);
-    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); min-height: 100vh; color: var(--text); }
 
-    .topbar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
-
-    .back-btn {
-      display: flex; align-items: center; gap: 6px;
-      background: none; border: none; cursor: pointer;
-      font-family: 'DM Sans', sans-serif; font-size: 13px;
-      color: var(--muted); text-decoration: none;
-      transition: color 0.15s; white-space: nowrap; flex-shrink: 0;
-    }
+    .topbar { background: linear-gradient(135deg, #fff 0%, #FFF5EE 100%); border-bottom: 2px solid #F2C99A; padding: 12px 16px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 50; }
+    .back-btn { display: flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--muted); text-decoration: none; white-space: nowrap; flex-shrink: 0; }
     .back-btn:hover { color: var(--text); }
-
-    .topbar-title {
-      font-size: 14px; font-weight: 600; letter-spacing: -0.3px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-
-    .main { max-width: 720px; margin: 0 auto; padding: 16px 12px 60px; }
+    .topbar-title { font-size: 14px; font-weight: 600; letter-spacing: -0.3px; }
 
     @media (min-width: 480px) {
-      .main { padding: 24px 20px 60px; }
       .topbar { padding: 14px 24px; }
       .topbar-title { font-size: 15px; }
     }
 
-    .filter-row {
-      display: flex; gap: 8px;
-      margin-bottom: 16px; flex-wrap: wrap;
-    }
+    .main { max-width: 720px; margin: 0 auto; padding: 16px 12px 60px; }
+    @media (min-width: 480px) { .main { padding: 24px 20px 60px; } }
 
-    .filter-btn {
-      padding: 7px 12px;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      background: var(--surface);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px; font-weight: 500;
-      color: var(--muted); cursor: pointer;
-      transition: all 0.15s;
-      white-space: nowrap;
-    }
-    .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .filter-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .filter-btn { padding: 7px 12px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer; white-space: nowrap; }
+    .filter-btn.active { background: #E8620A; border-color: #E8620A; color: #fff; }
 
-    .search-input {
-      flex: 1; min-width: 140px;
-      padding: 8px 14px;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px; color: var(--text);
-      background: var(--surface); outline: none;
-      transition: border-color 0.15s;
-    }
+    .search-input { flex: 1; min-width: 140px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 20px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--surface); outline: none; }
     .search-input:focus { border-color: #aaa; }
 
-    /* STATS — 2 colunas no mobile, 4 no desktop */
-    .stats-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
+    .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+    @media (min-width: 480px) { .stats-row { grid-template-columns: repeat(4, 1fr); gap: 10px; } }
 
-    @media (min-width: 480px) {
-      .stats-row { grid-template-columns: repeat(4, 1fr); gap: 10px; }
-    }
-
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px; text-align: center;
-    }
-
-    .stat-val {
-      font-size: 22px; font-weight: 600;
-      letter-spacing: -1px; line-height: 1; margin-bottom: 3px;
-    }
-
-    @media (min-width: 480px) {
-      .stat-val { font-size: 24px; }
-    }
-
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; text-align: center; }
+    .stat-val { font-size: 22px; font-weight: 600; letter-spacing: -1px; line-height: 1; margin-bottom: 3px; }
+    @media (min-width: 480px) { .stat-val { font-size: 24px; } }
     .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
     /* CARD */
-    .rel-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      margin-bottom: 10px;
-      overflow: hidden;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-
-    .rel-card-header {
-      display: flex;
-      align-items: stretch;
-    }
-
-    .status-bar {
-      width: 4px;
-      flex-shrink: 0;
-    }
-
-    .rel-header-content {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 12px;
-      flex: 1;
-      min-width: 0;
-      cursor: pointer;
-    }
-
-    @media (min-width: 480px) {
-      .rel-header-content { padding: 14px 16px; gap: 12px; }
-    }
-
+    .rel-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 10px; overflow: hidden; }
+    .rel-card-header { display: flex; align-items: stretch; }
+    .status-bar { width: 4px; flex-shrink: 0; }
+    .rel-header-content { display: flex; align-items: center; gap: 10px; padding: 12px 12px; flex: 1; min-width: 0; cursor: pointer; }
+    @media (min-width: 480px) { .rel-header-content { padding: 14px 16px; gap: 12px; } }
     .rel-main { flex: 1; min-width: 0; }
-
-    .rel-top {
-      display: flex; align-items: center;
-      gap: 6px; margin-bottom: 4px;
-      flex-wrap: wrap;
-    }
-
+    .rel-top { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }
     .rel-equip { font-size: 13px; font-weight: 600; letter-spacing: -0.2px; }
+    @media (min-width: 400px) { .rel-equip { font-size: 14px; } }
 
-    @media (min-width: 400px) {
-      .rel-equip { font-size: 14px; }
-    }
-
-    .badge {
-      display: inline-flex; align-items: center;
-      padding: 2px 7px; border-radius: 20px;
-      font-size: 10px; font-weight: 500;
-      white-space: nowrap;
-    }
-
+    .badge { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 20px; font-size: 10px; font-weight: 500; white-space: nowrap; }
     .badge-red    { background: var(--red-bg);   color: #A32D2D; border: 1px solid var(--red-border); }
     .badge-amber  { background: var(--amber-bg);  color: #854F0B; border: 1px solid var(--amber-border); }
     .badge-green  { background: var(--green-bg);  color: var(--green); border: 1px solid var(--green-border); }
     .badge-blue   { background: #E6F1FB; color: #185FA5; border: 1px solid #b5d4f4; }
 
     .rel-meta { font-size: 11px; color: var(--muted); }
+    @media (min-width: 400px) { .rel-meta { font-size: 12px; } }
 
-    @media (min-width: 400px) {
-      .rel-meta { font-size: 12px; }
-    }
-
-    .btn-manut-wrap {
-      padding: 12px 12px 12px 0;
-      display: flex;
-      align-items: center;
-      flex-shrink: 0;
-    }
-
-    .btn-manut {
-      padding: 8px 12px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 11px; font-weight: 500;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: opacity 0.15s;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    @media (min-width: 400px) {
-      .btn-manut { font-size: 12px; padding: 9px 16px; }
-    }
-
+    .btn-manut-wrap { padding: 12px 12px 12px 0; display: flex; align-items: center; flex-shrink: 0; }
+    .btn-manut { padding: 8px 12px; background: linear-gradient(135deg, #E8620A 0%, #C44E05 100%); color: #fff; border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500; cursor: pointer; white-space: nowrap; text-decoration: none; display: inline-block; }
+    @media (min-width: 400px) { .btn-manut { font-size: 12px; padding: 9px 16px; } }
     .btn-manut:hover { opacity: 0.82; }
-
-    .btn-manut.done {
-      background: var(--green-bg);
-      color: var(--green);
-      border: 1px solid var(--green-border);
-    }
+    .btn-manut.done { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
 
     /* EXPAND */
-    .rel-body {
-      display: none;
-      padding: 0 14px 14px 18px;
-      border-top: 1px solid var(--border);
-    }
-
-    @media (min-width: 480px) {
-      .rel-body { padding: 0 16px 16px 20px; }
-    }
-
+    .rel-body { display: none; padding: 0 14px 14px 18px; border-top: 1px solid var(--border); }
+    @media (min-width: 480px) { .rel-body { padding: 0 16px 16px 20px; } }
     .rel-body.open { display: block; }
 
-    .detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px 16px;
-      margin-top: 12px;
-    }
-
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; margin-top: 12px; }
     .detail-key { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
     .detail-val { font-size: 12px; margin-top: 2px; }
 
-    .desc-box {
-      margin-top: 12px; padding: 10px 12px;
-      background: var(--bg); border-radius: 8px;
-      font-size: 12px; color: var(--text); line-height: 1.5;
-    }
+    .desc-box { margin-top: 12px; padding: 10px 12px; background: var(--bg); border-radius: 8px; font-size: 12px; color: var(--text); line-height: 1.5; }
 
-    .manut-preview {
-      margin-top: 10px; padding: 10px 12px;
-      background: var(--green-bg);
-      border: 1px solid var(--green-border);
-      border-radius: 8px; font-size: 12px; color: var(--green);
-    }
+    /* MANUTENÇÃO EXPANDIDA */
+    .manut-section { margin-top: 12px; border: 1px solid var(--green-border); border-radius: 10px; overflow: hidden; }
+    .manut-section-header { background: var(--green-bg); padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+    .manut-section-title { font-size: 11px; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.6px; }
+    .manut-section-body { padding: 12px 14px; display: none; }
+    .manut-section-body.open { display: block; }
 
-    .manut-preview strong { display: block; margin-bottom: 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .manut-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; margin-bottom: 10px; }
+    .manut-detail-key { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .manut-detail-val { font-size: 12px; margin-top: 2px; font-weight: 500; }
+
+    .tags-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .tag { display: inline-flex; padding: 3px 9px; background: #FFF3EC; border: 1px solid var(--accent); border-radius: 20px; font-size: 11px; font-weight: 600; color: var(--accent); }
+
+    .obs-box { padding: 10px 12px; background: var(--bg); border-radius: 8px; font-size: 12px; color: var(--text); line-height: 1.5; margin-bottom: 10px; }
+
+    /* VÍDEO NO RELATÓRIO */
+    .video-section { margin-top: 10px; }
+    .video-section-title { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+    .video-unavail { padding: 10px 14px; background: #f9f9f9; border: 1px dashed var(--border); border-radius: 8px; font-size: 12px; color: var(--muted); text-align: center; }
+    .video-loading { padding: 10px 14px; background: #E6F1FB; border: 1px solid #B5D4F4; border-radius: 8px; font-size: 12px; color: #185FA5; text-align: center; }
+    video.manut-video { width: 100%; border-radius: 10px; background: #000; max-height: 260px; display: block; }
 
     .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
     .empty-icon { font-size: 40px; margin-bottom: 12px; }
     .empty-title { font-size: 16px; font-weight: 500; margin-bottom: 6px; color: var(--text); }
     .empty-sub { font-size: 13px; }
-  
-    /* ── MARILAN THEME OVERRIDES ── */
-    .topbar { background: linear-gradient(135deg, #fff 0%, #FFF5EE 100%); border-bottom: 2px solid #F2C99A; }
-    .logo-icon, .avatar { background: linear-gradient(135deg, #E8620A 0%, #C44E05 100%) !important; }
-    .action-btn[href="relatorio.html"] { background: linear-gradient(135deg, #E8620A 0%, #C44E05 100%) !important; }
-    .btn { background: linear-gradient(135deg, #E8620A 0%, #C44E05 100%) !important; }
-    .btn-manut:not(.done) { background: linear-gradient(135deg, #E8620A 0%, #C44E05 100%) !important; }
-    .tab-btn.active { background: var(--surface); color: #E8620A !important; box-shadow: 0 1px 4px rgba(232,98,10,0.15); }
-    .filter-btn.active { background: #E8620A !important; border-color: #E8620A !important; }
-    .logout-btn:hover { border-color: #E8620A !important; color: #E8620A !important; }
-
   </style>
 </head>
 <body>
@@ -290,7 +120,6 @@
   </div>
 
   <div class="main">
-
     <div class="filter-row">
       <input class="search-input" id="search" type="text" placeholder="Buscar equipamento, operador..." oninput="renderList()"/>
       <button class="filter-btn active" onclick="setFiltro('todos', this)">Todos</button>
@@ -299,22 +128,10 @@
     </div>
 
     <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-val" id="s-total">0</div>
-        <div class="stat-label">Total</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" style="color:var(--red)" id="s-aberto">0</div>
-        <div class="stat-label">Em aberto</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" style="color:var(--green)" id="s-atendido">0</div>
-        <div class="stat-label">Atendidos</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" style="color:var(--amber)" id="s-hoje">0</div>
-        <div class="stat-label">Hoje</div>
-      </div>
+      <div class="stat-card"><div class="stat-val" id="s-total">0</div><div class="stat-label">Total</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--red)" id="s-aberto">0</div><div class="stat-label">Em aberto</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--green)" id="s-atendido">0</div><div class="stat-label">Atendidos</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--amber)" id="s-hoje">0</div><div class="stat-label">Hoje</div></div>
     </div>
 
     <div id="list-container"></div>
@@ -332,6 +149,28 @@
     };
 
     let filtro = 'todos';
+
+    // ─── INDEXEDDB ───
+    function openDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open('paperless_videos', 1);
+        req.onupgradeneeded = e => e.target.result.createObjectStore('videos');
+        req.onsuccess  = e => resolve(e.target.result);
+        req.onerror    = e => reject(e);
+      });
+    }
+
+    async function getVideoFromDB(relId) {
+      try {
+        const d = await openDB();
+        return new Promise((resolve) => {
+          const tx  = d.transaction('videos', 'readonly');
+          const req = tx.objectStore('videos').get('video_' + relId);
+          req.onsuccess = e => resolve(e.target.result || null);
+          req.onerror   = () => resolve(null);
+        });
+      } catch { return null; }
+    }
 
     function setFiltro(f, btn) {
       filtro = f;
@@ -357,9 +196,63 @@
       return `${d}/${m}/${y}`;
     }
 
+    function formatDatetime(iso) {
+      if (!iso) return '—';
+      const d = new Date(iso);
+      return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+    }
+
+    // Carrega vídeo dinamicamente quando a seção é expandida
+    async function loadVideo(relId, m, containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      if (!m.videoSalvo && !m.videoNome) {
+        container.innerHTML = '<div class="video-unavail">📵 Nenhum vídeo registrado</div>';
+        return;
+      }
+
+      container.innerHTML = '<div class="video-loading">⏳ Carregando vídeo...</div>';
+      const file = await getVideoFromDB(relId);
+
+      if (file) {
+        const url = URL.createObjectURL(file);
+        container.innerHTML = `
+          <div style="font-size: 11px; color: var(--muted); margin-bottom: 6px;">📹 ${file.name || m.videoNome}</div>
+          <video class="manut-video" controls playsinline src="${url}"></video>
+        `;
+      } else if (m.videoNome) {
+        container.innerHTML = `
+          <div class="video-unavail">
+            📁 Vídeo: <strong>${m.videoNome}</strong><br>
+            <span style="font-size:11px;">Arquivo não disponível neste dispositivo/navegador</span>
+          </div>`;
+      } else {
+        container.innerHTML = '<div class="video-unavail">📵 Vídeo não disponível</div>';
+      }
+    }
+
+    let videoLoadQueued = {};
+
+    function toggleManutBody(bodyId, relId, m) {
+      const body = document.getElementById(bodyId);
+      if (!body) return;
+      body.classList.toggle('open');
+      // Carrega vídeo na primeira abertura
+      if (body.classList.contains('open') && !videoLoadQueued[relId]) {
+        videoLoadQueued[relId] = true;
+        loadVideo(relId, m, 'video-container-' + relId);
+      }
+    }
+
+    function toggleCard(id) {
+      const body = document.getElementById(id);
+      if (body) body.classList.toggle('open');
+    }
+
     function renderList() {
-      const rels = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
-      const hoje = new Date().toISOString().slice(0, 10);
+      const rels   = JSON.parse(localStorage.getItem('ms_relatorios') || '[]');
+      const hoje   = new Date().toISOString().slice(0, 10);
       const search = document.getElementById('search').value.toLowerCase();
 
       document.getElementById('s-total').textContent    = rels.length;
@@ -380,6 +273,7 @@
 
       const container = document.getElementById('list-container');
       container.innerHTML = '';
+      videoLoadQueued = {};
 
       if (lista.length === 0) {
         container.innerHTML = `
@@ -392,12 +286,50 @@
       }
 
       lista.forEach(r => {
-        const status   = getStatusBadge(r);
-        const codBadge = getCodBadge(r.codMotivo);
-        const barColor = r.manutencao ? 'var(--green)' : (['1','2'].includes(r.codMotivo) ? 'var(--red)' : 'var(--amber)');
+        const status    = getStatusBadge(r);
+        const codBadge  = getCodBadge(r.codMotivo);
+        const barColor  = r.manutencao ? 'var(--green)' : (['1','2'].includes(r.codMotivo) ? 'var(--red)' : 'var(--amber)');
         const nomeMotivo = codigos[r.codMotivo] || `Cód. ${r.codMotivo}`;
-        const btnLabel = r.manutencao ? 'Ver' : 'Manut.';
-        const btnCls   = r.manutencao ? 'btn-manut done' : 'btn-manut';
+        const btnLabel  = r.manutencao ? '✓ Ver' : 'Manut.';
+        const btnCls    = r.manutencao ? 'btn-manut done' : 'btn-manut';
+
+        // Seção de manutenção detalhada
+        let manutHTML = '';
+        if (r.manutencao) {
+          const m = r.manutencao;
+          const manutores = [
+            m.manut1Nome ? `${m.manut1Nome}${m.manut1Cracha ? ' (' + m.manut1Cracha + ')' : ''}` : null,
+            m.manut2Nome ? `${m.manut2Nome}${m.manut2Cracha ? ' (' + m.manut2Cracha + ')' : ''}` : null,
+            m.manut3Nome ? `${m.manut3Nome}${m.manut3Cracha ? ' (' + m.manut3Cracha + ')' : ''}` : null,
+          ].filter(Boolean).join(', ') || '—';
+
+          const tags = [m.tarefa, m.motivo, m.causa, m.area].filter(Boolean)
+            .map(t => `<span class="tag">${t}</span>`).join('');
+
+          manutHTML = `
+            <div class="manut-section">
+              <div class="manut-section-header" onclick="toggleManutBody('manut-body-${r.id}', ${r.id}, ${JSON.stringify(m).replace(/"/g, '&quot;')})">
+                <span class="manut-section-title">✅ Manutenção registrada</span>
+                <span style="font-size: 11px; color: var(--green);">▼ ver detalhes</span>
+              </div>
+              <div class="manut-section-body" id="manut-body-${r.id}">
+                <div class="manut-detail-grid">
+                  <div><div class="manut-detail-key">Manutentor(es)</div><div class="manut-detail-val">${manutores}</div></div>
+                  <div><div class="manut-detail-key">Registrado em</div><div class="manut-detail-val">${formatDatetime(m.dataRegistro)}</div></div>
+                  <div><div class="manut-detail-key">Início manut.</div><div class="manut-detail-val">${m.inicioManut || '—'}</div></div>
+                  <div><div class="manut-detail-key">Fim manut.</div><div class="manut-detail-val">${m.fimManut || '—'}</div></div>
+                </div>
+                ${tags ? `<div class="tags-row">${tags}</div>` : ''}
+                ${m.observacoes ? `<div class="obs-box">${m.observacoes}</div>` : ''}
+                <div class="video-section">
+                  <div class="video-section-title">🎥 Vídeo do atendimento</div>
+                  <div id="video-container-${r.id}">
+                    <div class="video-unavail">Expanda para carregar o vídeo</div>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+        }
 
         const card = document.createElement('div');
         card.className = 'rel-card';
@@ -432,20 +364,11 @@
               <div><div class="detail-key">Turno</div><div class="detail-val">${r.turno || '—'}</div></div>
             </div>
             <div class="desc-box">${r.descricao || '—'}</div>
-            ${r.manutencao ? `
-              <div class="manut-preview">
-                <strong>Registrado por ${r.manutencao.manut1Nome || '—'}</strong>
-                Tarefa: ${r.manutencao.tarefa || '—'} · Área: ${r.manutencao.area || '—'}
-              </div>` : ''}
+            ${manutHTML}
           </div>
         `;
         container.appendChild(card);
       });
-    }
-
-    function toggleCard(id) {
-      const body = document.getElementById(id);
-      if (body) body.classList.toggle('open');
     }
 
     renderList();
